@@ -50,9 +50,11 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @lp/site exec playwright install --with-deps chromium
-      - run: pnpm test:e2e
+      - run: pnpm test:e2e # the site, then the learning app
       - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: playwright-report
-          path: apps/site/playwright-report
+          path: |
+            apps/site/playwright-report
+            apps/shell/playwright-report
