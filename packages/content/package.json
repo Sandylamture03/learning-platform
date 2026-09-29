@@ -13,7 +13,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@lp/contracts": "workspace:*"
+    "@lp/contracts": "workspace:*",
+    "@lp/markdown": "workspace:*"
   },
   "devDependencies": {
     "@lp/config": "workspace:*",

@@ -1,55 +1,32 @@
-import type {
-  Challenge,
-  CodeExample,
-  Level,
-  Topic,
-  TopicOutline,
-  TopicResource,
-  Track,
-  WebResource,
+import {
+  type CodeExample,
+  hostOf,
+  type LessonTask,
+  type LessonView,
+  type Level,
+  RESOURCE_TYPE_LABELS,
+  type TopicRef,
 } from '@lp/contracts';
 import { html, join, type SafeHtml } from '../html.ts';
 import { layout, type Page } from '../layout.ts';
-import { type LinkResolver, MarkdownError, renderInline, renderMarkdown } from '../markdown.ts';
-import { linkFrom, ROUTES } from '../routes.ts';
-import { hostOf, moduleAnchor, priorityBadge, section, TYPE_LABELS, weeksLabel } from './parts.ts';
+import { MarkdownError, renderInline, renderMarkdown } from '../markdown.ts';
+import { type Link, linkFrom, ROUTES } from '../routes.ts';
+import { moduleAnchor, priorityBadge, section, weeksLabel } from './parts.ts';
 import { topicAnchor } from './track.ts';
-
-/** A topic with the five-part template filled in: a draft or a published lesson. */
-export type WrittenTopic = Exclude<Topic, TopicOutline>;
-
-export const isWritten = (topic: Topic): topic is WrittenTopic => topic.status !== 'outline';
-
-/** A coding task, with the files the page shows. */
-export interface LessonTask {
-  challenge: Challenge;
-  starter: string;
-  solution: string;
-  /** What the challenge's tests check: the names of its test cases. */
-  checks: string[];
-}
-
-export interface LessonPageInput {
-  track: Track;
-  topic: WrittenTopic;
-  /** The theory's Markdown source. */
-  theory: string;
-  tasks: LessonTask[];
-  resources: ReadonlyMap<string, WebResource>;
-  /** How many questions the topic's quiz has; 0 when it has none. */
-  quizSize: number;
-  /** Every topic by id, with its track, for prerequisites and links between lessons. */
-  topics: ReadonlyMap<string, { track: Track; topic: Topic }>;
-  previous?: WrittenTopic | undefined;
-  next?: WrittenTopic | undefined;
-}
 
 const LEVEL_LABELS: Record<Level, string> = { foundation: 'Foundation', core: 'Core', advanced: 'Advanced' };
 
 /** Ids the page itself uses, which a heading in the theory must not make again. */
 const PAGE_IDS = new Set(['goals', 'toc-title', 'examples', 'resources', 'check'].flatMap((id) => [id, `${id}-title`]));
 
-function exampleBlock(example: CodeExample, md: (text: string, where: string) => SafeHtml): SafeHtml {
+type Md = (text: string, where: string) => SafeHtml;
+
+/** A written topic links to its lesson; an outline to its row on the track page. */
+function topicHref(ref: TopicRef): string {
+  return ref.written ? ROUTES.lesson(ref.id) : `${ROUTES.track(ref.trackId)}#${topicAnchor(ref)}`;
+}
+
+function exampleBlock(example: CodeExample, md: Md): SafeHtml {
   const id = `example-${example.id}`;
   return html`<section class="example" aria-labelledby="${id}">
       <h3 id="${id}">${example.title}</h3>
@@ -59,13 +36,12 @@ function exampleBlock(example: CodeExample, md: (text: string, where: string) =>
 `;
 }
 
-function resourceItem(r: TopicResource, resources: ReadonlyMap<string, WebResource>, note: SafeHtml): SafeHtml {
-  const web = resources.get(r.id);
-  if (!web) throw new Error(`Unknown resource "${r.id}"`);
-  return html`<li><a href="${web.url}">${web.title}</a> <span class="resource-list__meta">${TYPE_LABELS[web.type]} · ${hostOf(web.url)}</span><span class="resource-list__note">${note}</span></li>\n`;
+function resourceItem({ resource, note }: LessonView['resources'][number], md: Md): SafeHtml {
+  const meta = `${RESOURCE_TYPE_LABELS[resource.type]} · ${hostOf(resource.url)}`;
+  return html`<li><a href="${resource.url}">${resource.title}</a> <span class="resource-list__meta">${meta}</span><span class="resource-list__note">${md(note, `resources.${resource.id}.note`)}</span></li>\n`;
 }
 
-function codeTask({ challenge, starter, solution, checks }: LessonTask, md: (text: string, where: string) => SafeHtml) {
+function codeTask({ challenge, starter, solution, checks }: LessonTask, md: Md) {
   const where = (field: string) => `challenge ${challenge.id} ${field}`;
   const hints = challenge.hints.map(
     (hint, i) => html`<details><summary>Hint ${i + 1}</summary><p>${md(hint, where(`hints[${i}]`))}</p></details>\n`,
@@ -84,50 +60,50 @@ ${checks.map((check) => html`<li>${check}</li>\n`)}      </ul>
     </div>`;
 }
 
-export function lessonPage(input: LessonPageInput): Page {
-  const { track, topic, resources, quizSize, previous, next } = input;
+function pager(link: Link, previous: TopicRef | null, next: TopicRef | null): SafeHtml | false {
+  return (
+    (previous !== null || next !== null) &&
+    html`<nav class="pager" aria-label="Lessons">
+    ${previous && html`<a class="pager__link" rel="prev" href="${link(ROUTES.lesson(previous.id))}"><span aria-hidden="true">←</span> ${previous.title}</a>`}
+    ${next && html`<a class="pager__link pager__link--next" rel="next" href="${link(ROUTES.lesson(next.id))}">${next.title} <span aria-hidden="true">→</span></a>`}
+  </nav>`
+  );
+}
+
+export function lessonPage(view: LessonView): Page {
+  const { track, module, topic } = view;
   const path = ROUTES.lesson(topic.id);
   const link = linkFrom(path);
 
-  // Lesson text may link to the web, or to another written lesson as "lesson:<topic-id>".
-  const resolveLink: LinkResolver = (target) => {
-    if (target.startsWith('https://')) return target;
-    const id = /^lesson:([a-z0-9-]+)$/.exec(target)?.[1];
-    const found = id === undefined ? undefined : input.topics.get(id)?.topic;
-    return found && isWritten(found) ? link(ROUTES.lesson(found.id)) : undefined;
+  // Lesson text may link to another written lesson as lesson:<topic-id>; the view lists them.
+  const lessonHref = (id: string) => {
+    const target = view.links.find((ref) => ref.id === id);
+    return target && link(ROUTES.lesson(target.id));
   };
-  const md = (text: string, where: string) => renderInline(text, { name: `${topic.id} ${where}`, resolveLink });
-  const theory = renderMarkdown(input.theory, { name: topic.theory, resolveLink });
+  const md: Md = (text, where) => renderInline(text, { name: `${topic.id} ${where}`, lessonHref });
+  const theory = renderMarkdown(view.theory, { name: topic.theory, lessonHref });
   const clash = theory.headings.find((h) => PAGE_IDS.has(h.id) || h.id.startsWith('example-'));
   if (clash) {
     throw new MarkdownError(`${topic.theory}: the heading id "${clash.id}" is already used by the lesson page`);
   }
 
-  const module = track.modules.find((m) => m.id === topic.module);
   const moduleLink =
     module &&
     html`<a href="${link(`${ROUTES.track(track.id)}#${moduleAnchor(module)}`)}">${[weeksLabel(module), module.title].filter(Boolean).join(': ')}</a>`;
-  const prerequisites = topic.prerequisites.map((id) => {
-    const found = input.topics.get(id);
-    if (!found) throw new Error(`Unknown prerequisite "${id}"`);
-    const href = isWritten(found.topic)
-      ? ROUTES.lesson(id)
-      : `${ROUTES.track(found.track.id)}#${topicAnchor(found.topic)}`;
-    return html`<a href="${link(href)}">${found.topic.title}</a>`;
-  });
+  const prerequisites = view.prerequisites.map((ref) => html`<a href="${link(topicHref(ref))}">${ref.title}</a>`);
 
-  const required = topic.resources.filter((r) => r.required);
-  const optional = topic.resources.filter((r) => !r.required);
-  const resourceGroup = (title: string, items: TopicResource[]) =>
+  const required = view.resources.filter((r) => r.required);
+  const optional = view.resources.filter((r) => !r.required);
+  const resourceGroup = (title: string, items: LessonView['resources']) =>
     items.length > 0 &&
     html`<div><h3>${title}</h3><ul class="resource-list" role="list">
-${items.map((r) => resourceItem(r, resources, md(r.note, `resources.${r.id}.note`)))}</ul></div>\n`;
+${items.map((r) => resourceItem(r, md))}</ul></div>\n`;
 
   const quiz =
-    quizSize > 0 &&
+    view.quiz &&
     html`<div class="task">
       <h3>Quiz</h3>
-      <p>${quizSize} questions, each with an explanation. Get ${Math.round(topic.assessment.passMark * 100)}% right to complete the lesson.</p>
+      <p>${view.quiz.size} questions, each with an explanation. Get ${Math.round(view.quiz.passMark * 100)}% right to complete the lesson.</p>
       <p><a class="button" href="${link(ROUTES.quiz(topic.id))}">Take the quiz</a></p>
     </div>`;
 
@@ -137,13 +113,6 @@ ${items.map((r) => resourceItem(r, resources, md(r.note, `resources.${r.id}.note
     ['resources', 'Resources'],
     ['check', 'Check yourself'],
   ];
-
-  const pager =
-    (previous || next) &&
-    html`<nav class="pager" aria-label="Lessons">
-    ${previous && html`<a class="pager__link" rel="prev" href="${link(ROUTES.lesson(previous.id))}"><span aria-hidden="true">←</span> ${previous.title}</a>`}
-    ${next && html`<a class="pager__link pager__link--next" rel="next" href="${link(ROUTES.lesson(next.id))}">${next.title} <span aria-hidden="true">→</span></a>`}
-  </nav>`;
 
   const main = html`<div class="container">
   <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -202,11 +171,11 @@ ${resourceGroup('Start here', required)}${resourceGroup('Go further', optional)}
     'Check yourself',
     html`<div class="tasks">
     ${quiz}
-    ${input.tasks.map((task) => codeTask(task, md))}
+    ${view.tasks.map((task) => codeTask(task, md))}
   </div>`,
   )}
 
-  ${pager}
+  ${pager(link, view.previous, view.next)}
 </div>`;
 
   return {

@@ -1,8 +1,8 @@
+import type { TopicQuiz } from '@lp/content';
 import type { QuizQuestion } from '@lp/contracts';
 import { html, type SafeHtml } from '../html.ts';
 import { layout, type Page } from '../layout.ts';
 import { linkFrom, ROUTES } from '../routes.ts';
-import type { TopicQuiz } from '../widget-data.ts';
 import { topicAnchor } from './track.ts';
 
 interface QuizPageInput extends TopicQuiz {

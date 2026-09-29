@@ -4,7 +4,7 @@ import { watch } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { DATA_DIR, loadContent } from '@lp/content';
 import type { Content } from '@lp/contracts';
-import { buildSite, DIST_DIR, WIDGETS_DIR } from './build.ts';
+import { buildSite, DIST_DIR, STYLES_DIR, WIDGETS_DIR } from './build.ts';
 import { createSiteServer } from './server.ts';
 
 const port = Number(process.env.PORT ?? 4321);
@@ -36,12 +36,7 @@ createSiteServer({
 }).listen(port, () => console.log(`Site running at http://localhost:${port} (Ctrl+C to stop)`));
 
 let timer: ReturnType<typeof setTimeout> | undefined;
-const watched = [
-  DATA_DIR,
-  fileURLToPath(new URL('./styles/', import.meta.url)),
-  fileURLToPath(import.meta.resolve('@lp/design-tokens/tokens.css')),
-  WIDGETS_DIR,
-];
+const watched = [DATA_DIR, STYLES_DIR, fileURLToPath(import.meta.resolve('@lp/design-tokens/tokens.css')), WIDGETS_DIR];
 for (const path of watched) {
   watch(path, { recursive: true }, () => {
     clearTimeout(timer);

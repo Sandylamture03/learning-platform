@@ -3,11 +3,11 @@
 import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { DATA_DIR, loadContent } from '@lp/content';
-import type { Content, Topic, Track, WebResource } from '@lp/contracts';
+import { DATA_DIR, lessonView, loadContent, resourceCatalogue, topicQuizzes } from '@lp/content';
+import { type Content, isWritten, type WebResource } from '@lp/contracts';
 import type { Page } from './layout.ts';
 import { homePage } from './pages/home.ts';
-import { isWritten, type LessonTask, lessonPage } from './pages/lesson.ts';
+import { lessonPage } from './pages/lesson.ts';
 import { quizPage } from './pages/quiz.ts';
 import { resourcesPage } from './pages/resources.ts';
 import { signupPage } from './pages/signup.ts';
@@ -15,57 +15,24 @@ import { notFoundPage, thanksPage } from './pages/status.ts';
 import { trackPage } from './pages/track.ts';
 import { tracksPage } from './pages/tracks.ts';
 import { ROUTES } from './routes.ts';
-import { resourceCatalogue, topicQuizzes } from './widget-data.ts';
 
 export const SITE_DIR = fileURLToPath(new URL('..', import.meta.url));
 export const DIST_DIR = join(SITE_DIR, 'dist');
 const STATIC_DIR = join(SITE_DIR, 'static');
 /** @lp/widgets' source folder: plain JavaScript and CSS, served exactly as written. */
 export const WIDGETS_DIR = dirname(fileURLToPath(import.meta.resolve('@lp/widgets/resource-finder')));
-
-/** One cascade-layer order for the whole site, declared before any styles. */
-const LAYER_ORDER = '@layer reset, tokens, base, layout, components, utilities;';
-
-/** The names of a challenge's test cases, it('…'): the lesson lists them as what "done" means. */
-function testNames(source: string): string[] {
-  return [...source.matchAll(/^\s*it\('([^']+)'/gm)].map((match) => match[1] ?? '');
-}
+/** @lp/styles' folder: the stylesheet the site shares with the learning app. */
+export const STYLES_DIR = dirname(fileURLToPath(import.meta.resolve('@lp/styles/styles.css')));
 
 /** A page for every written topic, with its theory and coding tasks read from the content folder. */
-function lessonPages(
-  content: Content,
-  dataDir: string,
-  resources: ReadonlyMap<string, WebResource>,
-  quizSizes: ReadonlyMap<string, number>,
-): Page[] {
-  const read = (file: string) => readFileSync(join(dataDir, file), 'utf8').trimEnd();
-  const challenges = new Map(content.challenges.map((c) => [c.id, c]));
-  const topics = new Map<string, { track: Track; topic: Topic }>(
-    content.tracks.flatMap((track) => track.topics.map((topic) => [topic.id, { track, topic }] as const)),
+function lessonPages(content: Content, dataDir: string): Page[] {
+  return content.tracks.flatMap((track) =>
+    track.topics.filter(isWritten).map((topic) => {
+      const view = lessonView(content, topic.id, dataDir);
+      if (!view) throw new Error(`No lesson for "${topic.id}"`);
+      return lessonPage(view);
+    }),
   );
-  return content.tracks.flatMap((track) => {
-    const written = track.topics.filter(isWritten);
-    return written.map((topic, i) => {
-      const tasks = topic.assessment.challengeIds.map((id): LessonTask => {
-        const challenge = challenges.get(id);
-        if (!challenge) throw new Error(`Unknown challenge "${id}"`);
-        const checks = testNames(read(challenge.files.tests));
-        if (checks.length === 0) throw new Error(`${challenge.files.tests}: no it('…') test cases found`);
-        return { challenge, starter: read(challenge.files.starter), solution: read(challenge.files.solution), checks };
-      });
-      return lessonPage({
-        track,
-        topic,
-        theory: read(topic.theory),
-        tasks,
-        resources,
-        quizSize: quizSizes.get(topic.id) ?? 0,
-        topics,
-        previous: written[i - 1],
-        next: written[i + 1],
-      });
-    });
-  });
 }
 
 export function renderPages(content: Content, dataDir: string = DATA_DIR): Page[] {
@@ -80,7 +47,7 @@ export function renderPages(content: Content, dataDir: string = DATA_DIR): Page[
       trackPage({ track, resources, quizzes: quizSizes, previous: tracks[i - 1], next: tracks[i + 1] }),
     ),
     resourcesPage(content),
-    ...lessonPages(content, dataDir, resources, quizSizes),
+    ...lessonPages(content, dataDir),
     ...quizzes.map((q, i) => {
       const next = quizzes[i + 1];
       return quizPage({ ...q, next: next?.track.id === q.track.id ? next : undefined });
@@ -100,10 +67,10 @@ export function renderData(content: Content): { path: string; json: string }[] {
   ];
 }
 
+/** One file: the cascade-layer order first, then the tokens, then the shared styles. */
 export function buildCss(): string {
-  const tokens = readFileSync(fileURLToPath(import.meta.resolve('@lp/design-tokens/tokens.css')), 'utf8');
-  const site = readFileSync(new URL('./styles/site.css', import.meta.url), 'utf8');
-  return `${LAYER_ORDER}\n\n${tokens}\n${site}`;
+  const read = (specifier: string) => readFileSync(fileURLToPath(import.meta.resolve(specifier)), 'utf8');
+  return `${read('@lp/styles/layers.css')}\n${read('@lp/design-tokens/tokens.css')}\n${read('@lp/styles/styles.css')}`;
 }
 
 function write(file: string, text: string) {

@@ -1,0 +1,19 @@
+{
+  "name": "@lp/markdown",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The strict Markdown subset lessons are written in: a parser that turns text into a small tree, for the site and the app to render.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p .",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@lp/config": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

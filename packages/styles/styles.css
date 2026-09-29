@@ -1,6 +1,7 @@
 /*
- * The public site's styles. Colours, type and spacing come from @lp/design-tokens (the tokens layer),
- * which the build puts in front of this file. Later layers win: reset < tokens < base < layout < components < utilities.
+ * The styles the public site and the learning app share, so a lesson looks the same in both. Colours, type and
+ * spacing come from @lp/design-tokens (the tokens layer). Load layers.css first, then the tokens, then this file.
+ * Later layers win: reset < tokens < base < layout < components < utilities.
  */
 
 @layer reset {

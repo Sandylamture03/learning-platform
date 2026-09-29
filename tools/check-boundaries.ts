@@ -8,7 +8,7 @@ import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
-const NEUTRAL = new Set(['@lp/contracts', '@lp/platform-kit', '@lp/widgets']);
+const NEUTRAL = new Set(['@lp/contracts', '@lp/markdown', '@lp/platform-kit', '@lp/widgets']);
 const SOURCE = /\.(?:ts|tsx|js|jsx|mjs)$/;
 const IMPORT = /\bfrom\s*['"]([^'"]+)['"]|\bimport\s*\(\s*['"]([^'"]+)['"]\s*\)|\bimport\s+['"]([^'"]+)['"]/g;
 
