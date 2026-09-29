@@ -4,6 +4,7 @@ import {
   API,
   type ApiError,
   type LessonView,
+  type Me,
   type Progress,
   type QuizData,
   type TopicProgress,
@@ -16,19 +17,33 @@ import { createMockApi } from '../mock-api/handler.ts';
 const content = loadContent();
 const NOW = new Date('2026-09-29T10:00:00Z');
 
+/** A mock API and one browser talking to it, keeping the session cookie it is given. */
 function setup() {
-  const api = createMockApi({ content: () => content, now: () => NOW });
+  let cookies: string | undefined;
+  const api = createMockApi({
+    content: () => content,
+    now: () => NOW,
+    onSetCookie: (cookie) => {
+      const [pair = ''] = cookie.split(';');
+      cookies = pair.endsWith('=') ? undefined : pair;
+    },
+  });
   const call = async <T>(path: string, init?: RequestInit) => {
-    const response = await api.handle(new Request(`http://localhost${path}`, init));
-    return { status: response.status, headers: response.headers, body: (await response.json()) as T };
+    const response = await api.handle(new Request(`http://localhost${path}`, init), cookies);
+    const body = response.status === 204 ? undefined : await response.json();
+    return { status: response.status, headers: response.headers, body: body as T };
   };
-  const put = (topicId: string, body: unknown) =>
-    call<TopicProgress | ApiError>(API.topicProgress(topicId), {
-      method: 'PUT',
+  const send = <T>(method: string, path: string, body: unknown) =>
+    call<T>(path, {
+      method,
       headers: { 'content-type': 'application/json' },
       body: typeof body === 'string' ? body : JSON.stringify(body),
     });
-  return { api, call, put };
+  const put = (topicId: string, body: unknown) =>
+    send<TopicProgress | ApiError>('PUT', API.topicProgress(topicId), body);
+  const signUp = (email = 'asha@example.com') =>
+    send<Me & ApiError>('POST', API.signUp, { name: 'Asha Rao', email, password: 'correct horse battery' });
+  return { api, call, send, put, signUp, cookies: () => cookies };
 }
 
 describe('the mock API', () => {
@@ -68,8 +83,51 @@ describe('the mock API', () => {
     expect(headers.get('allow')).toBe('GET');
   });
 
-  it('records a finished topic, and moves it to the end when it is finished again', async () => {
+  it('signs up, in and out, with a session cookie like the real API’s', async () => {
+    const { call, send, signUp, cookies } = setup();
+    expect((await call<Me>(API.me)).body).toEqual({ user: null });
+    const up = await signUp();
+    expect(up.status).toBe(201);
+    expect(up.body.user).toEqual({ id: expect.any(String), name: 'Asha Rao', email: 'asha@example.com' });
+    expect(cookies()).toMatch(/^lp_session=/);
+    expect((await call<Me>(API.me)).body.user?.name).toBe('Asha Rao');
+
+    expect((await send('POST', API.signOut, {})).status).toBe(204);
+    expect(cookies()).toBeUndefined();
+    expect((await call<Me>(API.me)).body).toEqual({ user: null });
+
+    const wrong = await send<ApiError>('POST', API.signIn, { email: 'asha@example.com', password: 'nope' });
+    expect(wrong).toMatchObject({ status: 401, body: { error: 'That email and password do not match an account' } });
+    const right = await send<Me>('POST', API.signIn, { email: 'ASHA@example.com', password: 'correct horse battery' });
+    expect(right.body.user?.email).toBe('asha@example.com');
+  });
+
+  it('refuses a taken email and names bad fields, as the real API does', async () => {
+    const { signUp, send } = setup();
+    await signUp();
+    const again = await signUp('Asha@Example.com');
+    expect(again).toMatchObject({
+      status: 409,
+      body: { fields: { email: expect.stringContaining('Sign in instead') } },
+    });
+    const bad = await send<ApiError>('POST', API.signUp, { name: '', email: 'nope', password: 'short' });
+    expect(bad.body.fields).toEqual({
+      name: 'Enter your name',
+      email: 'Enter an email address like name@example.com',
+      password: 'Use at least 8 characters',
+    });
+    expect((await send('POST', API.signIn, 'email=a')).status).toBe(400);
+  });
+
+  it('keeps progress for signed-in learners only', async () => {
     const { call, put } = setup();
+    expect(await call(API.progress)).toMatchObject({ status: 401, body: { error: 'Sign in to see your progress' } });
+    expect((await put('event-loop', { trackId: 'javascript', score: 1 })).status).toBe(401);
+  });
+
+  it('records a finished topic, and moves it to the end when it is finished again', async () => {
+    const { call, put, signUp } = setup();
+    await signUp();
     expect((await call<Progress>(API.progress)).body).toEqual({ completed: [] });
 
     const first = await put('event-loop', { trackId: 'javascript', score: 0.8 });
@@ -89,23 +147,27 @@ describe('the mock API', () => {
   });
 
   it('checks the progress body at the edge', async () => {
-    const { put } = setup();
+    const { put, signUp } = setup();
+    await signUp();
     expect((await put('event-loop', 'not json')).status).toBe(400);
     const invalid = await put('event-loop', { trackId: 'javascript', score: 2, extra: true });
     expect(invalid.status).toBe(400);
-    expect((invalid.body as ApiError).error).toMatch(/score: .*; body: Unrecognized key/);
+    expect(Object.keys((invalid.body as ApiError).fields ?? {})).toEqual(['score', 'body']);
     expect(await put('event-loop', { trackId: 'react', score: 1 })).toEqual(
       expect.objectContaining({ status: 404, body: { error: 'No topic "event-loop" in track "react"' } }),
     );
   });
 
-  it('keeps each instance’s progress to itself, and forgets it on reset', async () => {
+  it('keeps each instance’s accounts and progress to itself, and forgets them on reset', async () => {
     const one = setup();
     const two = setup();
+    await one.signUp();
     await one.put('event-loop', { trackId: 'javascript', score: 1 });
+    expect((await two.signUp()).status).toBe(201); // the same email is free in another instance
     expect((await two.call<Progress>(API.progress)).body.completed).toEqual([]);
     one.api.reset();
-    expect((await one.call<Progress>(API.progress)).body.completed).toEqual([]);
+    expect((await one.call<Me>(API.me)).body).toEqual({ user: null });
+    expect((await one.signUp()).status).toBe(201);
   });
 
   it('answers 500 with the reason when the content is broken', async () => {

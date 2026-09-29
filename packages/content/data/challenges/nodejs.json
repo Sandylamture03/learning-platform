@@ -1,0 +1,117 @@
+[
+  {
+    "id": "notes-api",
+    "title": "A REST API with node:http",
+    "kind": "endpoint",
+    "mode": "build",
+    "difficulty": 2,
+    "priority": "P0",
+    "topics": ["http-and-rest"],
+    "estMinutes": 40,
+    "prompt": "Write `createNotesHandler()`, a request handler for `http.createServer`, with no framework. `GET /api/notes` lists the notes as JSON. `POST /api/notes` with `{ \"text\": \"…\" }` creates one (text trimmed) and answers **201** with a `Location` header; broken JSON or a missing text is **400**, and a body that is not JSON is **415**. `GET /api/notes/:id` reads one and `DELETE` removes it with **204**; either is **404** for a note that does not exist. A method a path does not take is **405** with an `Allow` header, and any other path is **404**. Every body is JSON, with `sendJson`.",
+    "files": {
+      "starter": "challenges/nodejs/notes-api/starter.js",
+      "solution": "challenges/nodejs/notes-api/solution.js",
+      "tests": "challenges/nodejs/notes-api/tests.js"
+    },
+    "hints": [
+      "Route on `pathname` first, then on `req.method`. For the single note, a regular expression such as `/^\\/api\\/notes\\/(\\d+)$/` gives you the id.",
+      "In `create`, check `req.headers['content-type']` before reading, then wrap `JSON.parse(await readBody(req))` in `try`/`catch`: the `catch` is your 400. `typeof body?.text === 'string'` guards against `null`, numbers and missing fields.",
+      "A 204 has no body: `res.writeHead(204); res.end();`. For a 405, pass the `allow` header as the fourth argument of `sendJson`."
+    ],
+    "status": "published",
+    "version": 1
+  },
+  {
+    "id": "tasks-express",
+    "title": "Routes, middleware and one error handler",
+    "kind": "endpoint",
+    "mode": "build",
+    "difficulty": 2,
+    "priority": "P0",
+    "topics": ["express-5"],
+    "estMinutes": 40,
+    "prompt": "Write `createApp(store)`, an Express 5 app over an async `store` (`list()`, `get(id)`, `create(title)`). `GET /api/tasks` lists the tasks; `GET /api/tasks/:id` answers one, or **404** `{ \"error\": \"No task 9\" }` by throwing an `HttpError` from the async handler; `POST /api/tasks` with `{ \"title\": \"…\" }` answers **201** with a `Location`, or **400** `{ \"error\": \"Enter a title\" }`. Broken JSON is **400** `{ \"error\": \"The body is not valid JSON\" }`, an unknown route is **404** `{ \"error\": \"No route for GET /api/projects\" }`, and anything else that fails is **500** `{ \"error\": \"Something went wrong\" }`, never the real message. Every answer, errors too, carries its own `x-request-id` header.",
+    "files": {
+      "starter": "challenges/nodejs/tasks-express/starter.js",
+      "solution": "challenges/nodejs/tasks-express/solution.js",
+      "tests": "challenges/nodejs/tasks-express/tests.js"
+    },
+    "hints": [
+      "Order matters: the request-id middleware first (so even body-parser errors get an id), then `express.json()`, then the routes, then a 404 middleware, and the four-argument error handler last.",
+      "You need no `try`/`catch` in the handlers: in Express 5, `throw new HttpError(404, …)` inside an `async` handler reaches the error handler.",
+      "In the error handler, body-parser marks broken JSON with `err.type === 'entity.parse.failed'`. For everything else, use `err.status` only when it is an `HttpError`; otherwise log the error and answer a generic 500."
+    ],
+    "status": "published",
+    "version": 1
+  },
+  {
+    "id": "signup-schema",
+    "title": "Validate a sign-up with Zod",
+    "kind": "function",
+    "mode": "build",
+    "difficulty": 2,
+    "priority": "P0",
+    "topics": ["input-validation-zod"],
+    "estMinutes": 30,
+    "prompt": "Finish the `SignUp` schema and `parseSignUp(body)`, which returns `{ ok: true, data }` or `{ ok: false, fields }` with one message per field. `name` is trimmed, 1–100 characters (“Enter your name”, “Use at most 100 characters”). `email` is trimmed, lowercased and checked (“Enter an email address like name@example.com”). `password` is 8–128 characters (“Use at least 8 characters”, “Use at most 128 characters”). `age` is optional, arrives as text, and must be a whole number from 13 (“You must be 13 or older”) to 120. `newsletter` is a boolean that defaults to `false`. Unknown fields are refused, under the key `body`.",
+    "files": {
+      "starter": "challenges/nodejs/signup-schema/starter.js",
+      "solution": "challenges/nodejs/signup-schema/solution.js",
+      "tests": "challenges/nodejs/signup-schema/tests.js"
+    },
+    "hints": [
+      "Use `z.strictObject`, so unknown keys such as `role` are refused instead of dropped. Their issue has an empty `path`, which is why they land under `body`.",
+      "Each check takes its message: `z.string().trim().min(1, 'Enter your name')`. For the email, clean it before checking: `z.string().trim().toLowerCase().pipe(z.email('…'))`.",
+      "`z.coerce.number().int().min(13, '…').max(120).optional()` turns `\"27\"` into `27`. In `parseSignUp`, use `safeParse` and keep the first message for each `issue.path.join('.')`."
+    ],
+    "status": "published",
+    "version": 1
+  },
+  {
+    "id": "task-queries",
+    "title": "Write the queries for a task tracker",
+    "kind": "function",
+    "mode": "build",
+    "difficulty": 3,
+    "priority": "P0",
+    "topics": ["sql-postgresql-prisma"],
+    "estMinutes": 45,
+    "prompt": "Write five functions over a `pg`-style `db` (`db.query(text, values)` resolves to `{ rows, rowCount }`), for the tables described at the top of the file. `createTask` returns `{ id, projectId, title, done }`. `listTasks(db, projectId, { done })` lists a project’s tasks in id order, optionally only open or done ones. `completeTask` returns whether a task was found. `projectSummary` returns every project by name with `{ name, open, done }` counts, as numbers, including projects with no tasks. `renameProject` returns `'renamed'`, `'taken'` (another project has the name) or `'missing'`. Every value goes in as a parameter. The tests run your SQL on a real PostgreSQL.",
+    "files": {
+      "starter": "challenges/nodejs/task-queries/starter.js",
+      "solution": "challenges/nodejs/task-queries/solution.js",
+      "tests": "challenges/nodejs/task-queries/tests.js"
+    },
+    "hints": [
+      "Rename columns in SQL to get camelCase keys: `RETURNING id, project_id AS \"projectId\", title, done`. The double quotes keep the capital I.",
+      "For the optional filter, one query can do both: `AND ($2::boolean IS NULL OR done = $2)`, passing `done ?? null`. For the summary, `LEFT JOIN` keeps empty projects, and `count(t.id) FILTER (WHERE t.done)::int` counts done tasks as a number, not a string.",
+      "In `renameProject`, let the UNIQUE constraint decide: run the `UPDATE`, and catch the error whose `code` is `'23505'` (unique violation). `rowCount` tells `'renamed'` from `'missing'`."
+    ],
+    "status": "published",
+    "version": 1
+  },
+  {
+    "id": "sessions-and-roles",
+    "title": "Hash passwords, make session tokens, check roles",
+    "kind": "function",
+    "mode": "build",
+    "difficulty": 2,
+    "priority": "P0",
+    "topics": ["auth"],
+    "estMinutes": 35,
+    "prompt": "Write the pieces of sign-in with `node:crypto`. `hashPassword(password)` returns `\"salt:hash\"` in hex: a new 16-byte salt each time and a 32-byte scrypt hash. `verifyPassword(password, stored)` checks a password in constant time, and returns `false` (never throws) for anything that is not such a value. `newSessionToken()` returns `{ token, tokenHash }`: 32 random bytes in base64url for the cookie, and the token’s SHA-256 in hex for the database. `requireRole(...roles)` returns Express middleware that answers **401** without `req.user`, **403** when the user’s role is not allowed, and otherwise calls `next()`.",
+    "files": {
+      "starter": "challenges/nodejs/sessions-and-roles/starter.js",
+      "solution": "challenges/nodejs/sessions-and-roles/solution.js",
+      "tests": "challenges/nodejs/sessions-and-roles/tests.js"
+    },
+    "hints": [
+      "`randomBytes(16)` makes the salt, and `await scryptAsync(password, salt, 32)` the hash; join their `.toString('hex')` with a colon.",
+      "In `verifyPassword`, check the shape first (32 hex characters, a colon, 64 hex characters) and return `false` otherwise. Then hash the attempt with the stored salt and compare with `timingSafeEqual`, which needs two Buffers of the same length.",
+      "`randomBytes(32).toString('base64url')` is the token; `createHash('sha256').update(token).digest('hex')` its hash. In `requireRole`, check `req.user` before its role, and `return` after answering so `next()` never runs as well."
+    ],
+    "status": "published",
+    "version": 1
+  }
+]

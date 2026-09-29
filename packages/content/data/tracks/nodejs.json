@@ -3,7 +3,7 @@
   "order": 5,
   "title": "Node.js",
   "technologies": ["nodejs"],
-  "status": "outline",
+  "status": "draft",
   "summary": "A typical Node.js backend job: receive an HTTP request, validate it, check who the user is, read or write a database, return JSON, and keep it running safely in production.",
   "pace": {
     "weeks": 8,
@@ -347,19 +347,151 @@
     },
     {
       "id": "http-and-rest",
-      "title": "HTTP basics: methods, status codes, headers, JSON, REST design",
+      "title": "HTTP and REST APIs",
       "priority": "P0",
       "module": "week-3",
       "why": "The contract behind every API",
-      "status": "outline"
+      "status": "published",
+      "summary": "Read and design HTTP APIs: methods, status codes, headers and JSON, and the REST habits that make an API predictable.",
+      "level": "foundation",
+      "difficulty": 1,
+      "estMinutes": 45,
+      "prerequisites": ["async-code"],
+      "objectives": [
+        "Name what each part of an HTTP request and response is for: method, path, headers, status code and body",
+        "Choose the right method and status code, and explain what safe and idempotent mean",
+        "Design REST URLs around resources, and answer errors in one consistent shape"
+      ],
+      "examples": [
+        {
+          "id": "json-server",
+          "title": "An API with node:http and nothing else",
+          "language": "js",
+          "code": "import { createServer } from 'node:http';\n\nconst tasks = [{ id: 1, title: 'Write the report', done: false }];\n\nfunction sendJson(res, status, body) {\n  res.writeHead(status, { 'content-type': 'application/json; charset=utf-8' });\n  res.end(JSON.stringify(body));\n}\n\nconst server = createServer((req, res) => {\n  const { pathname } = new URL(req.url, 'http://localhost');\n  if (pathname === '/api/tasks' && req.method === 'GET') return sendJson(res, 200, tasks);\n  if (pathname === '/api/tasks') {\n    res.setHeader('allow', 'GET');\n    return sendJson(res, 405, { error: `${req.method} is not allowed here` });\n  }\n  sendJson(res, 404, { error: `No route for ${pathname}` });\n});\n\nserver.listen(3000, () => console.log('Listening on http://localhost:3000'));",
+          "takeaway": "Without a framework you set the status, the `Content-Type` and the body yourself; Express does the same work with less typing."
+        },
+        {
+          "id": "fetch-client",
+          "title": "Calling an API with fetch",
+          "language": "js",
+          "code": "async function createTask(title) {\n  const response = await fetch('http://localhost:3000/api/tasks', {\n    method: 'POST',\n    headers: { 'content-type': 'application/json' },\n    body: JSON.stringify({ title }),\n  });\n  // fetch only rejects when the network fails: a 400 or a 500 arrives here too.\n  if (!response.ok) {\n    const { error } = await response.json();\n    throw new Error(`Could not create the task (${response.status}): ${error}`);\n  }\n  console.log('Created at', response.headers.get('location')); // Created at /api/tasks/2\n  return response.json();\n}",
+          "takeaway": "`fetch` resolves for a 404 or a 500 too, so check `response.ok`; and a JSON body needs its `Content-Type` header."
+        },
+        {
+          "id": "rest-routes",
+          "title": "One resource, every status",
+          "language": "http",
+          "code": "GET    /api/tasks?done=false&page=2   → 200 OK, one page of the list\nGET    /api/tasks/42                  → 200 OK, or 404 Not Found\nPOST   /api/tasks  {\"title\":\"…\"}      → 201 Created, Location: /api/tasks/43\nPOST   /api/tasks  {\"title\":\"\"}       → 400 Bad Request, {\"error\":\"Enter a title\"}\nPATCH  /api/tasks/42  {\"done\":true}   → 200 OK, the updated task\nDELETE /api/tasks/42                  → 204 No Content\nDELETE /api/tasks                     → 405 Method Not Allowed, Allow: GET, POST\nGET    /api/projects/7/tasks          → 200 OK, the tasks of project 7",
+          "takeaway": "The URL names the thing and the method says what to do with it; the status tells the client how it went before it reads a byte of the body."
+        }
+      ],
+      "resources": [
+        {
+          "id": "mdn-an-overview-of-http",
+          "note": "The clearest short introduction to requests, responses, methods and headers.",
+          "required": true
+        },
+        {
+          "id": "mdn-http",
+          "note": "The reference to keep open: every status code, header and method, each with its own page.",
+          "required": false
+        },
+        {
+          "id": "microsoft-web-api-design-best-practices",
+          "note": "How to name resources, version an API, page through results and choose status codes.",
+          "required": false
+        }
+      ],
+      "assessment": {
+        "passMark": 0.8,
+        "questionIds": [
+          "http-and-rest.q01",
+          "http-and-rest.q02",
+          "http-and-rest.q03",
+          "http-and-rest.q04",
+          "http-and-rest.q05"
+        ],
+        "challengeIds": ["notes-api"]
+      },
+      "theory": "theory/nodejs/http-and-rest.md",
+      "version": 1,
+      "updatedAt": "2026-09-29"
     },
     {
       "id": "express-5",
-      "title": "Express 5: routing, middleware, error-handling middleware",
+      "title": "Express 5: routes, middleware and errors",
       "priority": "P0",
       "module": "week-3",
       "why": "The most widely used Node.js web framework",
-      "status": "outline"
+      "status": "published",
+      "summary": "Build an API with Express 5: routes and routers, middleware that runs in order, and one error handler that answers every failure.",
+      "level": "core",
+      "difficulty": 2,
+      "estMinutes": 50,
+      "prerequisites": ["http-and-rest"],
+      "objectives": [
+        "Build routes and routers, and read `req.params`, `req.query` and `req.body`",
+        "Write middleware, and explain why the order you register it in matters",
+        "Handle every error, async ones included, in one error-handling middleware that never leaks internals"
+      ],
+      "examples": [
+        {
+          "id": "router",
+          "title": "A router for one resource",
+          "language": "js",
+          "code": "import express from 'express';\n\nconst tasks = express.Router();\nconst store = new Map([[1, { id: 1, title: 'Write the report', done: false }]]);\nlet nextId = 2;\n\ntasks.get('/', (req, res) => {\n  res.json([...store.values()]);\n});\n\ntasks.get('/:id', (req, res) => {\n  const task = store.get(Number(req.params.id)); // params are always strings\n  if (!task) return res.status(404).json({ error: `No task ${req.params.id}` });\n  res.json(task);\n});\n\ntasks.post('/', (req, res) => {\n  const task = { id: nextId++, title: req.body.title, done: false };\n  store.set(task.id, task);\n  res.status(201).location(`/api/tasks/${task.id}`).json(task);\n});\n\nconst app = express();\napp.use(express.json());\napp.use('/api/tasks', tasks);\napp.listen(3000);",
+          "takeaway": "A router groups a resource’s routes, and `app.use('/api/tasks', tasks)` mounts them under one prefix."
+        },
+        {
+          "id": "middleware",
+          "title": "Middleware for every request",
+          "language": "js",
+          "code": "import { randomUUID } from 'node:crypto';\nimport express from 'express';\n\nconst app = express();\n\n// Runs first for every request: gives it an id that shows in the logs and in the answer.\napp.use((req, res, next) => {\n  req.id = randomUUID();\n  res.set('x-request-id', req.id);\n  next();\n});\n\n// Runs second: logs each request once the answer has been sent.\napp.use((req, res, next) => {\n  const started = performance.now();\n  res.on('finish', () => {\n    const ms = Math.round(performance.now() - started);\n    console.log(`${req.id} ${req.method} ${req.originalUrl} → ${res.statusCode} in ${ms}ms`);\n  });\n  next();\n});\n\napp.use(express.json({ limit: '10kb' }));\n\napp.get('/api/health', (req, res) => {\n  res.json({ ok: true });\n});\n\napp.listen(3000);",
+          "takeaway": "Middleware runs in the order it is registered, and each one calls `next()` to pass the request on."
+        },
+        {
+          "id": "async-errors",
+          "title": "Async errors and one error handler",
+          "language": "js",
+          "code": "import express from 'express';\n\nclass HttpError extends Error {\n  constructor(status, message) {\n    super(message);\n    this.status = status;\n  }\n}\n\nconst db = { findTask: async (id) => (id === 1 ? { id: 1, title: 'Write the report' } : null) };\nconst app = express();\n\n// No try/catch: in Express 5 a rejected promise goes to the error handler by itself.\napp.get('/api/tasks/:id', async (req, res) => {\n  const task = await db.findTask(Number(req.params.id));\n  if (!task) throw new HttpError(404, `No task ${req.params.id}`);\n  res.json(task);\n});\n\n// Nothing else matched.\napp.use((req, res) => {\n  res.status(404).json({ error: `No route for ${req.method} ${req.path}` });\n});\n\n// Four parameters make it the error handler. It goes last.\napp.use((err, req, res, next) => {\n  const status = err.status ?? 500;\n  if (status >= 500) console.error(err);\n  res.status(status).json({ error: status >= 500 ? 'Something went wrong' : err.message });\n});\n\napp.listen(3000);",
+          "takeaway": "In Express 5 a rejected promise reaches the error handler by itself, so handlers `throw` instead of answering errors one by one."
+        }
+      ],
+      "resources": [
+        {
+          "id": "express-routing",
+          "note": "Route methods, paths, parameters and `express.Router`.",
+          "required": true
+        },
+        {
+          "id": "express-writing-middleware",
+          "note": "How middleware and `next` work, with the Express 5 examples.",
+          "required": true
+        },
+        {
+          "id": "express-error-handling",
+          "note": "The default error handler, writing your own, and errors from async code.",
+          "required": false
+        },
+        {
+          "id": "migrating-to-express-5",
+          "note": "Everything that changed since Express 4, which most tutorials still use.",
+          "required": false
+        },
+        {
+          "id": "traversy-media-express-crash-course",
+          "note": "A video walk-through that builds a small API from scratch.",
+          "required": false
+        }
+      ],
+      "assessment": {
+        "passMark": 0.8,
+        "questionIds": ["express-5.q01", "express-5.q02", "express-5.q03", "express-5.q04", "express-5.q05"],
+        "challengeIds": ["tasks-express"]
+      },
+      "theory": "theory/nodejs/express-5.md",
+      "version": 1,
+      "updatedAt": "2026-09-29"
     },
     {
       "id": "input-validation-zod",
@@ -367,23 +499,224 @@
       "priority": "P0",
       "module": "week-3",
       "why": "Stops bad data and a whole class of security bugs",
-      "status": "outline"
+      "status": "published",
+      "summary": "Treat every input as untrusted: describe it with a Zod schema, check it once at the edge, and answer bad input with messages people can act on.",
+      "level": "core",
+      "difficulty": 2,
+      "estMinutes": 40,
+      "prerequisites": ["express-5", "narrowing"],
+      "objectives": [
+        "Explain why the server validates every input, even when the form already checks it",
+        "Write Zod schemas with trimming, coercion, defaults and limits, and refuse unknown keys",
+        "Validate once at the edge with `safeParse`, and turn issues into one message per field"
+      ],
+      "examples": [
+        {
+          "id": "safe-parse",
+          "title": "Checking a body with safeParse",
+          "language": "js",
+          "code": "import { z } from 'zod';\n\nconst NewTask = z.strictObject({\n  title: z.string().trim().min(1, 'Enter a title').max(200),\n  priority: z.enum(['low', 'normal', 'high']).default('normal'),\n});\n\nconsole.log(NewTask.safeParse({ title: '  Write the report ' }));\n// { success: true, data: { title: 'Write the report', priority: 'normal' } }\n\nconst bad = NewTask.safeParse({ title: '', priority: 'urgent', owner: 'admin' });\nconsole.log(bad.success); // false\nconsole.log(bad.error.issues.map((issue) => `${issue.path.join('.') || 'body'}: ${issue.message}`));\n// [ 'title: Enter a title', 'priority: Invalid option: expected one of \"low\"|\"normal\"|\"high\"',\n//   'body: Unrecognized key: \"owner\"' ]",
+          "takeaway": "The parsed data comes back cleaned (trimmed, with defaults), and every problem arrives as an issue with a `path` and a `message`."
+        },
+        {
+          "id": "validate-middleware",
+          "title": "A validation middleware for Express",
+          "language": "js",
+          "code": "import express from 'express';\nimport { z } from 'zod';\n\n/** One message per field, for a form to show beside each input. */\nfunction fieldErrors(error) {\n  const fields = {};\n  for (const issue of error.issues) fields[issue.path.join('.') || 'body'] ??= issue.message;\n  return fields;\n}\n\n/** Checks req.body against `schema`, and replaces it with the parsed, cleaned data. */\nfunction validate(schema) {\n  return (req, res, next) => {\n    const result = schema.safeParse(req.body);\n    if (!result.success) {\n      return res.status(400).json({ error: 'Check the fields and try again', fields: fieldErrors(result.error) });\n    }\n    req.body = result.data;\n    next();\n  };\n}\n\nconst SignUp = z.strictObject({\n  name: z.string().trim().min(1, 'Enter your name').max(100),\n  email: z.email('Enter an email address like name@example.com'),\n  password: z.string().min(8, 'Use at least 8 characters').max(128),\n});\n\nconst app = express();\napp.use(express.json({ limit: '10kb' }));\napp.post('/api/sign-up', validate(SignUp), (req, res) => {\n  res.status(201).json({ name: req.body.name, email: req.body.email }); // never echo the password\n});\napp.listen(3000);",
+          "takeaway": "Validate once, at the edge, and replace `req.body` with the parsed data: the handler behind it can trust what it gets."
+        },
+        {
+          "id": "query-coerce",
+          "title": "Query strings with coercion and defaults",
+          "language": "js",
+          "code": "import { z } from 'zod';\n\n// The query string is always text, so a schema for it converts as it checks.\nconst TaskQuery = z.object({\n  page: z.coerce.number().int().min(1).default(1),\n  pageSize: z.coerce.number().int().min(1).max(100).default(20),\n  done: z.enum(['true', 'false']).transform((value) => value === 'true').optional(),\n});\n\nconsole.log(TaskQuery.parse({})); // { page: 1, pageSize: 20 }\nconsole.log(TaskQuery.parse({ page: '3', done: 'false' })); // { page: 3, pageSize: 20, done: false }\nconsole.log(TaskQuery.safeParse({ page: 'two' }).success); // false\nconsole.log(TaskQuery.safeParse({ pageSize: '5000' }).success); // false",
+          "takeaway": "The query string is always text, so its schema converts as it checks, and limits stop a client asking for 5,000 rows."
+        }
+      ],
+      "resources": [
+        {
+          "id": "zod-docs",
+          "note": "Start with “Basic usage” and “Defining schemas”; come back for coercion and error formatting.",
+          "required": true
+        },
+        {
+          "id": "owasp-node-js-security-cheat-sheet",
+          "note": "Input validation among the other habits that keep a Node.js API safe.",
+          "required": false
+        },
+        {
+          "id": "express-security-best-practices",
+          "note": "Express’s own list, from validating input to limiting request sizes.",
+          "required": false
+        }
+      ],
+      "assessment": {
+        "passMark": 0.8,
+        "questionIds": [
+          "input-validation-zod.q01",
+          "input-validation-zod.q02",
+          "input-validation-zod.q03",
+          "input-validation-zod.q04",
+          "input-validation-zod.q05"
+        ],
+        "challengeIds": ["signup-schema"]
+      },
+      "theory": "theory/nodejs/input-validation-zod.md",
+      "version": 1,
+      "updatedAt": "2026-09-29"
     },
     {
       "id": "sql-postgresql-prisma",
-      "title": "SQL, PostgreSQL, an ORM (Prisma), migrations",
+      "title": "SQL, PostgreSQL and ORMs",
       "priority": "P0",
       "module": "week-4",
       "why": "Almost every backend stores relational data",
-      "status": "outline"
+      "status": "published",
+      "summary": "Store data in PostgreSQL: tables, keys and constraints, the everyday queries and joins, parameters against SQL injection, transactions, migrations and where an ORM fits.",
+      "level": "core",
+      "difficulty": 2,
+      "estMinutes": 60,
+      "prerequisites": ["async-code", "http-and-rest"],
+      "objectives": [
+        "Design tables with primary keys, foreign keys and constraints that keep the data valid",
+        "Write `SELECT`, `INSERT`, `UPDATE`, `DELETE` and joins, always passing values as parameters",
+        "Use transactions and migrations, and explain what an ORM such as Prisma adds"
+      ],
+      "examples": [
+        {
+          "id": "constraints",
+          "title": "Constraints do the checking",
+          "language": "sql",
+          "code": "CREATE TABLE users (\n  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n  email text NOT NULL UNIQUE CHECK (email = lower(email)),\n  name text NOT NULL CHECK (length(name) BETWEEN 1 AND 100),\n  created_at timestamptz NOT NULL DEFAULT now()\n);\n\nINSERT INTO users (email, name) VALUES ('asha@example.com', 'Asha');  -- OK\nINSERT INTO users (email, name) VALUES ('asha@example.com', 'Sam');   -- ERROR: duplicate key value violates unique constraint \"users_email_key\"\nINSERT INTO users (email, name) VALUES ('Sam@Example.com', 'Sam');    -- ERROR: new row for relation \"users\" violates check constraint \"users_email_check\"\nINSERT INTO users (email) VALUES ('sam@example.com');                  -- ERROR: null value in column \"name\" of relation \"users\" violates not-null constraint\n\n-- Taken or not, in one statement that no race can break: no row back means the email was taken.\nINSERT INTO users (email, name) VALUES ('asha@example.com', 'Asha again')\nON CONFLICT (email) DO NOTHING\nRETURNING id;",
+          "takeaway": "Every write, from every part of the code, meets the same rules; and `ON CONFLICT` answers “is it taken?” in one statement no race can break."
+        },
+        {
+          "id": "parameters",
+          "title": "Queries with node-postgres",
+          "language": "js",
+          "code": "// `db` is a pg Pool: new Pool({ connectionString: process.env.DATABASE_URL })\n\nexport async function findTasks(db, { projectId, search = '', limit = 20 }) {\n  const { rows } = await db.query(\n    `SELECT id, title, done FROM tasks\n      WHERE project_id = $1 AND title ILIKE $2\n      ORDER BY created_at\n      LIMIT $3`,\n    [projectId, `%${search}%`, limit],\n  );\n  return rows;\n}\n\nexport async function createTask(db, { projectId, title }) {\n  const { rows } = await db.query('INSERT INTO tasks (project_id, title) VALUES ($1, $2) RETURNING id, title, done', [\n    projectId,\n    title,\n  ]);\n  return rows[0];\n}\n\n/** True when a task was marked done; false when there is no such task. */\nexport async function completeTask(db, id) {\n  const { rowCount } = await db.query('UPDATE tasks SET done = true WHERE id = $1', [id]);\n  return rowCount === 1;\n}",
+          "takeaway": "Values always go in as `$1`, `$2` parameters, and `RETURNING` gives back the new row without a second query."
+        },
+        {
+          "id": "n-plus-one",
+          "title": "One query instead of N+1",
+          "language": "js",
+          "code": "// N+1: one query for the projects, then one more for each project. 50 projects, 51 round trips.\nasync function projectsWithTasksSlow(db) {\n  const { rows: projects } = await db.query('SELECT id, name FROM projects ORDER BY name');\n  for (const project of projects) {\n    const { rows } = await db.query('SELECT id, title FROM tasks WHERE project_id = $1 ORDER BY id', [project.id]);\n    project.tasks = rows;\n  }\n  return projects;\n}\n\n// One query: Postgres builds each project's task list itself.\nasync function projectsWithTasks(db) {\n  const { rows } = await db.query(`\n    SELECT p.id, p.name,\n           coalesce(json_agg(json_build_object('id', t.id, 'title', t.title) ORDER BY t.id)\n                    FILTER (WHERE t.id IS NOT NULL), '[]') AS tasks\n      FROM projects p\n      LEFT JOIN tasks t ON t.project_id = p.id\n     GROUP BY p.id, p.name\n     ORDER BY p.name`);\n  return rows;\n}",
+          "takeaway": "A join with `json_agg` builds each project’s task list in the database: one round trip instead of one per project."
+        }
+      ],
+      "resources": [
+        {
+          "id": "sqlbolt",
+          "note": "Short interactive lessons: write real queries in the browser, from `SELECT` to joins.",
+          "required": true
+        },
+        {
+          "id": "node-postgres",
+          "note": "The `pg` package: pools, parameters, transactions and how types are converted.",
+          "required": true
+        },
+        {
+          "id": "prisma-postgresql-quickstart",
+          "note": "Set up Prisma with PostgreSQL, and see the schema, client and migrations.",
+          "required": false
+        },
+        {
+          "id": "freecodecamp-learn-postgresql-full-course-for",
+          "note": "A long video course, if you want PostgreSQL in depth.",
+          "required": false
+        },
+        {
+          "id": "prisma-transactions",
+          "note": "Transactions and batching the Prisma way.",
+          "required": false
+        }
+      ],
+      "assessment": {
+        "passMark": 0.8,
+        "questionIds": [
+          "sql-postgresql-prisma.q01",
+          "sql-postgresql-prisma.q02",
+          "sql-postgresql-prisma.q03",
+          "sql-postgresql-prisma.q04",
+          "sql-postgresql-prisma.q05"
+        ],
+        "challengeIds": ["task-queries"]
+      },
+      "theory": "theory/nodejs/sql-postgresql-prisma.md",
+      "version": 1,
+      "updatedAt": "2026-09-29"
     },
     {
       "id": "auth",
-      "title": "Auth: password hashing, JWT, cookies, role-based access",
+      "title": "Auth: passwords, sessions and roles",
       "priority": "P0",
       "module": "week-5",
       "why": "Every product has users",
-      "status": "outline"
+      "status": "published",
+      "summary": "Sign people in safely: authentication versus authorization, password hashing, session cookies, when a JWT fits, and checking roles and ownership on the server.",
+      "level": "core",
+      "difficulty": 3,
+      "estMinutes": 60,
+      "prerequisites": ["express-5", "sql-postgresql-prisma"],
+      "objectives": [
+        "Tell authentication from authorization, and answer 401 and 403 correctly",
+        "Store passwords with a slow, salted hash, and keep sessions in secure cookies with hashed tokens",
+        "Compare sessions with JWTs, and check roles and ownership on the server"
+      ],
+      "examples": [
+        {
+          "id": "scrypt",
+          "title": "Hashing passwords with scrypt",
+          "language": "js",
+          "code": "import { randomBytes, scrypt, timingSafeEqual } from 'node:crypto';\nimport { promisify } from 'node:util';\n\nconst scryptAsync = promisify(scrypt);\n\nexport async function hashPassword(password) {\n  const salt = randomBytes(16);\n  const hash = await scryptAsync(password, salt, 32);\n  return `${salt.toString('hex')}:${hash.toString('hex')}`;\n}\n\nexport async function verifyPassword(password, stored) {\n  const [salt, hash] = stored.split(':');\n  const expected = Buffer.from(hash, 'hex');\n  const actual = await scryptAsync(password, Buffer.from(salt, 'hex'), expected.length);\n  return timingSafeEqual(actual, expected);\n}\n\nconst stored = await hashPassword('correct horse battery staple');\nconsole.log(stored); // 'a3f1…:9c0e…', different every time, because the salt is random\nconsole.log(await verifyPassword('correct horse battery staple', stored)); // true\nconsole.log(await verifyPassword('Correct horse battery staple', stored)); // false",
+          "takeaway": "A random salt makes every hash different, and `timingSafeEqual` compares without revealing how much matched."
+        },
+        {
+          "id": "sign-in",
+          "title": "A sign-in route with a session cookie",
+          "language": "js",
+          "code": "import { createHash, randomBytes } from 'node:crypto';\n\napp.post('/api/sign-in', async (req, res) => {\n  const { email, password } = req.body; // already checked by a schema\n  const user = await db.findUserByEmail(email.toLowerCase());\n  // One answer for both mistakes, so nobody can learn which emails have accounts.\n  if (!user || !(await verifyPassword(password, user.passwordHash))) {\n    return res.status(401).json({ error: 'That email and password do not match an account' });\n  }\n  const token = randomBytes(32).toString('base64url');\n  const tokenHash = createHash('sha256').update(token).digest('hex');\n  await db.createSession({ tokenHash, userId: user.id, expiresInDays: 30 });\n  res.cookie('session', token, { httpOnly: true, secure: true, sameSite: 'lax', maxAge: 30 * 24 * 60 * 60 * 1000 });\n  res.json({ user: { id: user.id, name: user.name } });\n});",
+          "takeaway": "One answer for an unknown email and a wrong password, a random token in an `httpOnly` cookie, and only its hash in the database."
+        },
+        {
+          "id": "roles-and-ownership",
+          "title": "Roles in middleware, ownership in the query",
+          "language": "js",
+          "code": "function requireRole(...roles) {\n  return (req, res, next) => {\n    if (!req.user) return res.status(401).json({ error: 'Sign in first' });\n    if (!roles.includes(req.user.role)) return res.status(403).json({ error: 'You cannot do that' });\n    next();\n  };\n}\n\n// Only admins can delete a project.\napp.delete('/api/projects/:id', requireRole('admin'), async (req, res) => {\n  await db.query('DELETE FROM projects WHERE id = $1', [req.params.id]);\n  res.status(204).end();\n});\n\n// Anyone signed in can edit a task, but only their own: the check is part of the query.\napp.patch('/api/tasks/:id', requireRole('member', 'admin'), async (req, res) => {\n  const { rowCount } = await db.query('UPDATE tasks SET title = $1 WHERE id = $2 AND owner_id = $3', [\n    req.body.title,\n    req.params.id,\n    req.user.id,\n  ]);\n  if (rowCount === 0) return res.status(404).json({ error: 'No such task' }); // not \"forbidden\": don't confirm it exists\n  res.status(204).end();\n});",
+          "takeaway": "Middleware answers 401 or 403 before the route runs; `AND owner_id = $3` makes “only your own” part of the query, so no path can forget it."
+        }
+      ],
+      "resources": [
+        {
+          "id": "owasp-password-storage-cheat-sheet",
+          "note": "Which hashing algorithm to use, with which settings, and why.",
+          "required": true
+        },
+        {
+          "id": "owasp-node-js-security-cheat-sheet",
+          "note": "Sessions, cookies, rate limits and more, for Node.js specifically.",
+          "required": false
+        },
+        {
+          "id": "jwt-io-introduction-to-json-web-tokens",
+          "note": "What a JWT contains, and how its signature works.",
+          "required": false
+        },
+        {
+          "id": "express-rate-limit",
+          "note": "The package most Express apps use to slow down password guessing.",
+          "required": false
+        }
+      ],
+      "assessment": {
+        "passMark": 0.8,
+        "questionIds": ["auth.q01", "auth.q02", "auth.q03", "auth.q04", "auth.q05"],
+        "challengeIds": ["sessions-and-roles"]
+      },
+      "theory": "theory/nodejs/auth.md",
+      "version": 1,
+      "updatedAt": "2026-09-29"
     },
     {
       "id": "security-basics",

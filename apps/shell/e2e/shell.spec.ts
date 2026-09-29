@@ -1,5 +1,6 @@
-// The learning app in a real browser: accessibility in both themes, 320px layouts, the keyboard, deep links, the
-// Phase 2 widgets mounted through ModuleOutlet, and a passed quiz showing up as progress.
+// The learning app in a real browser, against the real API and PostgreSQL: accessibility in both themes, 320px
+// layouts, the keyboard, deep links, the Phase 2 widgets mounted through ModuleOutlet, and a learner who signs up,
+// passes a quiz and still has it after a reload and signing in again.
 import { AxeBuilder } from '@axe-core/playwright';
 import { expect, type Page, test } from '@playwright/test';
 
@@ -11,7 +12,10 @@ const PAGES = [
   '/tracks/javascript/event-loop',
   '/tracks/typescript/discriminated-unions-ui-state',
   '/tracks/react/useeffect',
+  '/tracks/nodejs/sql-postgresql-prisma',
   '/resources',
+  '/sign-in',
+  '/sign-up',
   '/no-such-page',
 ];
 
@@ -127,7 +131,14 @@ test('client-side navigation moves focus to the main content and swaps the mount
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Async code');
 });
 
-test('passing a quiz marks the lesson done on the lesson and the learning path', async ({ page }) => {
+test('a learner passes a quiz, signs up to save it, and keeps it after a reload and signing in again', async ({
+  page,
+}) => {
+  const email = `learner-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.com`;
+  const password = 'correct horse battery staple';
+  const nav = page.getByRole('navigation', { name: 'Main' });
+  const javascript = page.getByRole('listitem').filter({ has: page.getByRole('link', { name: 'JavaScript' }) });
+
   await page.goto('/tracks/javascript/event-loop');
   await ready(page);
   const quiz = page.locator('lp-quiz');
@@ -145,11 +156,35 @@ test('passing a quiz marks the lesson done on the lesson and the learning path',
   await question(4).getByLabel('A setTimeout(callback, 0) callback').check();
   await question(4).getByLabel('A click listener running after the user clicks').check();
   await check(4);
-
   await expect(quiz.getByRole('status')).toHaveText('Finished: 5 of 5 right. You passed.');
-  await expect(page.getByText('Done: you passed the quiz with 100%.')).toBeVisible();
 
-  await page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Learning path' }).click();
-  const javascript = page.getByRole('listitem').filter({ has: page.getByRole('link', { name: 'JavaScript' }) });
-  await expect(javascript.getByText(/^[1-5] of 5 lessons done$/)).toBeVisible();
+  // Signed out, the result waits for an account.
+  const notice = page.getByText('You passed the quiz with 100%.');
+  await expect(notice).toBeVisible();
+  await notice.getByRole('link', { name: 'create an account' }).click();
+  await page.getByLabel('Name').fill('Asha Rao');
+  await page.getByLabel('Email').fill(email);
+  await page.getByLabel('Password').fill(password);
+  await page.getByRole('button', { name: 'Create account' }).click();
+
+  // Back on the lesson, saved. A reload asks the API again, so this comes from the database.
+  await expect(page).toHaveURL(/\/tracks\/javascript\/event-loop$/);
+  await expect(page.getByText('Done: you passed the quiz with 100%.')).toBeVisible();
+  await page.reload();
+  await ready(page);
+  await expect(page.getByText('Done: you passed the quiz with 100%.')).toBeVisible();
+  await expect(nav.getByText('Asha Rao')).toBeVisible();
+
+  await nav.getByRole('link', { name: 'Learning path' }).click();
+  await expect(javascript.getByText('1 of 5 lessons done')).toBeVisible();
+
+  // Signing out hides it; signing in again brings it back.
+  await nav.getByRole('button', { name: 'Sign out' }).click();
+  await expect(javascript.getByText('5 lessons to read')).toBeVisible();
+  await nav.getByRole('link', { name: 'Sign in' }).click();
+  await page.getByLabel('Email').fill(email);
+  await page.getByLabel('Password').fill(password);
+  await page.getByRole('button', { name: 'Sign in' }).click();
+  await expect(javascript.getByText('1 of 5 lessons done')).toBeVisible();
+  await expect(page).toHaveURL(/\/$/);
 });

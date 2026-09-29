@@ -125,4 +125,26 @@
     display: block;
     margin-block-start: var(--space-6);
   }
+  /* The header's account area: who is signed in, and the button to sign out. */
+  .account {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+  }
+
+  .account__name {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+
+  /* A problem the API found with a field shows at once, not only after :user-invalid. */
+  .field__error--shown {
+    display: block;
+  }
+
+  .field input[aria-invalid="true"] {
+    border-color: var(--color-danger);
+    box-shadow: 0 0 0 1px var(--color-danger);
+  }
 }

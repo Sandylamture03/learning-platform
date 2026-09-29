@@ -11,7 +11,12 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "pnpm --filter @lp/site dev",
-    "dev:app": "pnpm --filter @lp/shell dev",
+    "dev:app": "turbo run dev --filter=@lp/api --filter=@lp/shell",
+    "dev:app:mock": "pnpm --filter @lp/shell dev:mock",
+    "dev:api": "pnpm --filter @lp/api dev",
+    "db:up": "docker compose up --detach --wait postgres",
+    "db:down": "docker compose down",
+    "db:migrate": "pnpm --filter @lp/api migrate",
     "test": "turbo run test",
     "test:e2e": "pnpm --filter @lp/site test:e2e && pnpm --filter @lp/shell test:e2e",
     "typecheck": "turbo run typecheck && tsc -p .",

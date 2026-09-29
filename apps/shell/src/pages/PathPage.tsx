@@ -1,15 +1,16 @@
 import type { TopicSummary, TrackSummary } from '@lp/contracts';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router';
-import { queries } from '../api.ts';
+import { queries, useProgress } from '../api.ts';
 import { paths } from '../paths.ts';
 import { LoadError, Loading, PriorityBadge, Title } from '../ui.tsx';
 
 const hasLesson = (topic: TopicSummary) => topic.status !== 'outline';
 
-function TrackCard({ track, done }: { track: TrackSummary; done: ReadonlySet<string> }) {
+/** `done` is null when nobody is signed in: there is no progress to show. */
+function TrackCard({ track, done }: { track: TrackSummary; done: ReadonlySet<string> | null }) {
   const lessons = track.topics.filter(hasLesson);
-  const finished = lessons.filter((t) => done.has(t.id)).length;
+  const finished = lessons.filter((t) => done?.has(t.id)).length;
   const labelId = `progress-${track.id}`;
   return (
     <li className="card">
@@ -18,7 +19,9 @@ function TrackCard({ track, done }: { track: TrackSummary; done: ReadonlySet<str
         <Link to={paths.track(track.id)}>{track.title}</Link>
       </h3>
       <p>{track.summary}</p>
-      {lessons.length > 0 ? (
+      {lessons.length === 0 ? (
+        <p className="progress__label">Lessons for this track are on the way.</p>
+      ) : done ? (
         <div className="progress">
           <p id={labelId} className="progress__label">
             {finished} of {lessons.length} {lessons.length === 1 ? 'lesson' : 'lessons'} done
@@ -26,7 +29,9 @@ function TrackCard({ track, done }: { track: TrackSummary; done: ReadonlySet<str
           <progress value={finished} max={lessons.length} aria-labelledby={labelId} />
         </div>
       ) : (
-        <p className="progress__label">Lessons for this track are on the way.</p>
+        <p className="progress__label">
+          {lessons.length} {lessons.length === 1 ? 'lesson' : 'lessons'} to read
+        </p>
       )}
       <ul className="card__meta" role="list">
         <li>{track.pace.weeks} weeks</li>
@@ -77,8 +82,8 @@ function UpNext({ tracks, done }: { tracks: readonly TrackSummary[]; done: Reado
 
 export function PathPage() {
   const tracks = useQuery(queries.tracks());
-  const progress = useQuery(queries.progress());
-  const done = new Set(progress.data?.completed.map((p) => p.topicId));
+  const { user, progress, done: finished } = useProgress();
+  const done = new Set(finished.keys());
 
   return (
     <div className="container">
@@ -100,12 +105,20 @@ export function PathPage() {
           {progress.isError && (
             <LoadError what="Your progress" error={progress.error} onRetry={() => void progress.refetch()} />
           )}
+          {user === null && (
+            <div className="notice">
+              <p>
+                <Link to={paths.signUp()}>Create a free account</Link> or <Link to={paths.signIn()}>sign in</Link> to
+                save the quizzes you pass and see your progress here.
+              </p>
+            </div>
+          )}
           <UpNext tracks={tracks.data} done={done} />
           <section className="section" aria-labelledby="tracks-title">
             <h2 id="tracks-title">Tracks</h2>
             <ol className="card-grid" role="list">
               {tracks.data.map((track) => (
-                <TrackCard key={track.id} track={track} done={done} />
+                <TrackCard key={track.id} track={track} done={user ? done : null} />
               ))}
             </ol>
           </section>

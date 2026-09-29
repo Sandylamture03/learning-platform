@@ -37,3 +37,8 @@ export function waitlistSignup(trackIds: readonly [string, ...string[]]) {
 }
 
 export type WaitlistSignup = z.infer<ReturnType<typeof waitlistSignup>>;
+
+/** Where the site's sign-up form posts. The site's dev server stands in for it; the API stores the sign-up. */
+export const WAITLIST_ENDPOINT = '/api/waitlist';
+/** Where a successful sign-up is sent (303 See Other, so a refresh never posts the form again). */
+export const WAITLIST_THANKS = '/thanks.html';

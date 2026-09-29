@@ -17,16 +17,19 @@
     "@lp/markdown": "workspace:*"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "catalog:",
     "@lp/config": "workspace:*",
     "@testing-library/dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@testing-library/user-event": "catalog:",
     "@types/node": "catalog:",
     "@vitejs/plugin-react": "catalog:",
+    "express": "catalog:",
     "happy-dom": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "typescript": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "zod": "catalog:"
   }
 }

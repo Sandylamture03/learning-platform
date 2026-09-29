@@ -30,6 +30,7 @@ const WRITTEN: Record<string, string[]> = {
     'useeffect',
     'custom-hooks',
   ],
+  nodejs: ['http-and-rest', 'express-5', 'input-validation-zod', 'sql-postgresql-prisma', 'auth'],
 };
 const WRITTEN_TOPICS = Object.values(WRITTEN).flat();
 const LESSON_PAGES = WRITTEN_TOPICS.map((topic) => `lessons/${topic}.html`);

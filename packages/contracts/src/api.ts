@@ -2,8 +2,8 @@ import { z } from 'zod';
 import type { Challenge, Id, Module, Priority, Topic, Track, WebResource, WrittenTopic } from './content.ts';
 import { Id as IdSchema } from './content.ts';
 
-// The HTTP API the learning app reads. Phase 3 answers it with a mock (apps/shell/mock-api) that serves the
-// content as it is; the Node.js API takes over in Phase 4 with the same paths and shapes.
+// The HTTP API the learning app reads. The Node.js API (apps/api) answers it from PostgreSQL; the mock in
+// apps/shell/mock-api answers the same paths and shapes from memory, for tests and for working without a database.
 
 export const API = {
   /** GET: TrackSummary[], in catalogue order. */
@@ -16,15 +16,27 @@ export const API = {
   quiz: (topicId: string) => `/api/quizzes/${topicId}`,
   /** GET: ResourceCatalogue, what the resource finder loads. */
   resources: '/api/resources',
-  /** GET: Progress. */
+  /** GET: Progress, for the signed-in learner (401 when nobody is signed in). */
   progress: '/api/progress',
-  /** PUT a ProgressUpdate: marks a topic done and answers with its TopicProgress. */
+  /** PUT a ProgressUpdate: marks a topic done for the signed-in learner and answers with its TopicProgress. */
   topicProgress: (topicId: string) => `/api/progress/${topicId}`,
+  /** GET: Me. */
+  me: '/api/me',
+  /** POST a SignUp: creates the account, signs it in (a session cookie) and answers 201 with Me. */
+  signUp: '/api/auth/sign-up',
+  /** POST a SignIn: answers with Me and a session cookie, or 401. */
+  signIn: '/api/auth/sign-in',
+  /** POST {}: ends the session and answers 204. */
+  signOut: '/api/auth/sign-out',
 } as const;
 
-/** Every error answer: { "error": "No track called react-native" }. */
+/**
+ * Every error answer: { "error": "No track called react-native" }. A body that fails its schema also names
+ * each field's first problem: { "error": "…", "fields": { "email": "Enter an email address like name@example.com" } }.
+ */
 export interface ApiError {
   error: string;
+  fields?: Record<string, string>;
 }
 
 /** A topic as lists show it. */
@@ -100,7 +112,7 @@ export interface TopicProgress {
   completedAt: string;
 }
 
-/** GET /api/progress: the learner's finished topics, oldest first. Accounts arrive in Phase 4. */
+/** GET /api/progress: the signed-in learner's finished topics, oldest first. */
 export interface Progress {
   completed: TopicProgress[];
 }

@@ -23,8 +23,8 @@ export const ROUTES = {
 
 export type WidgetName = 'resource-finder' | 'quiz';
 
-/** The form's endpoint. The dev server answers it now; the Node.js API takes over in Phase 4. */
-export const WAITLIST_ENDPOINT = '/api/waitlist';
+/** The form's endpoint: the site's dev server stands in for it, and the API stores the sign-up. */
+export { WAITLIST_ENDPOINT } from '@lp/contracts';
 
 export type Link = (to: string) => string;
 

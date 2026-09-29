@@ -6,17 +6,24 @@ packages:
 catalog:
   "@axe-core/playwright": ^4.13.0
   "@biomejs/biome": 2.5.14 # exact: formatter output can change between Biome releases
+  "@electric-sql/pglite": ^0.5.8
   "@playwright/test": ^1.63.0
   "@tanstack/react-query": ^5.104.0
   "@testing-library/dom": ^10.4.2
   "@testing-library/react": ^16.3.3
   "@testing-library/user-event": ^14.6.7
+  "@types/express": ^5.0.6
   "@types/node": ^24.19.0
+  "@types/pg": ^8.23.1
   "@types/react": ^19.3.0
   "@types/react-dom": ^19.3.0
   "@vitejs/plugin-react": ^6.1.1
+  express: ^5.2.1
+  express-rate-limit: ^8.7.0
   happy-dom: ^20.14.5
+  helmet: ^8.3.0
   html-validate: ^11.16.1
+  pg: ^8.23.0
   react: ^19.3.0
   react-dom: ^19.3.0
   react-router: ^8.4.0

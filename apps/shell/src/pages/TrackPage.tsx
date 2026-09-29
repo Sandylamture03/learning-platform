@@ -1,7 +1,7 @@
 import type { Module, TopicSummary, TrackView } from '@lp/contracts';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useParams } from 'react-router';
-import { isNotFound, queries } from '../api.ts';
+import { isNotFound, queries, useProgress } from '../api.ts';
 import { paths } from '../paths.ts';
 import { Breadcrumb, LoadError, Loading, NotFound, PriorityBadge, Title } from '../ui.tsx';
 
@@ -67,7 +67,7 @@ function ModuleSection({ track, module, done }: { track: TrackView; module: Modu
 export function TrackPage() {
   const { trackId = '' } = useParams();
   const track = useQuery(queries.track(trackId));
-  const progress = useQuery(queries.progress());
+  const { user, done: finishedTopics } = useProgress();
 
   if (track.isPending) {
     return (
@@ -88,7 +88,7 @@ export function TrackPage() {
   }
 
   const view = track.data;
-  const done = new Set(progress.data?.completed.map((p) => p.topicId));
+  const done = new Set(finishedTopics.keys());
   const lessons = view.topics.filter((t) => t.status !== 'outline');
   const finished = lessons.filter((t) => done.has(t.id)).length;
 
@@ -118,12 +118,14 @@ export function TrackPage() {
               {lessons.length} of {view.topics.length} topics
             </dd>
           </div>
-          <div>
-            <dt>Done</dt>
-            <dd>
-              {finished} of {lessons.length}
-            </dd>
-          </div>
+          {user && (
+            <div>
+              <dt>Done</dt>
+              <dd>
+                {finished} of {lessons.length}
+              </dd>
+            </div>
+          )}
         </dl>
       </header>
 
