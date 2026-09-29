@@ -206,6 +206,14 @@ The platform is set up for **Render** (`render.yaml`, a Blueprint): one Docker w
 4. **Delete any AAAA (IPv6) records** for `@` and `www`: Render uses IPv4, and a leftover AAAA record breaks HTTPS for some visitors.
 5. If the domain has **CAA** records, add ones allowing `letsencrypt.org` and `pki.goog`, or Render can't issue the certificate.
 6. On Cloudflare, set both records to **DNS only** (grey cloud), at least until Render has issued the certificate. Proxied through Cloudflare, requests pass one more proxy, and `TRUST_PROXY=1` would then see Cloudflare's address instead of the learner's.
+**On Hostinger** (where ai-developer.in is registered): hPanel → **Domains** → ai-developer.in → **DNS / Nameservers** → **DNS records**.
+
+- Turn off Hostinger's CDN for the domain first, if it is on, and delete every **A** and **AAAA** record whose name is `@` or `www` (they point at Hostinger's servers).
+- Add type **CNAME**, name `@`, target `<your-service>.onrender.com`. At the root, Hostinger stores this as an ALIAS record, which is what Render prefers. The target is a host name, never an IP or a URL.
+- Add, or edit the existing, type **CNAME**, name `www`, target `<your-service>.onrender.com`.
+- If the list has **CAA** records, add two more: flag `0`, tag `issue`, values `letsencrypt.org` and `pki.goog`.
+- Leave MX and TXT records alone: they carry email and verifications, and don't affect the website.
+
 7. Back in Render, press **Verify**. DNS changes usually show within minutes (sometimes up to a few hours); Render then issues the HTTPS certificate and redirects `http://` to `https://` by itself.
 
 Plans: `render.yaml` starts on the free plans, to try it. The free web service sleeps after 15 idle minutes (the next visit waits about a minute), and **the free database is deleted after 30 days**. For real learners, change the database to `basic-256mb` (or larger) and the service to `starter` in `render.yaml` or the dashboard. A custom domain is added in the service's settings; Render provides the certificate.
