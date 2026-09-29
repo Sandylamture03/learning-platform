@@ -12,6 +12,9 @@ catalogs:
     '@biomejs/biome':
       specifier: 2.5.14
       version: 2.5.14
+    '@electric-sql/pglite':
+      specifier: ^0.5.8
+      version: 0.5.8
     '@playwright/test':
       specifier: ^1.63.0
       version: 1.63.0
@@ -284,6 +287,9 @@ importers:
         specifier: workspace:*
         version: link:../markdown
     devDependencies:
+      '@electric-sql/pglite':
+        specifier: 'catalog:'
+        version: 0.5.8
       '@lp/config':
         specifier: workspace:*
         version: link:../config
@@ -302,6 +308,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: 'catalog:'
         version: 6.1.1(vite@8.3.1(@types/node@24.19.0))
+      express:
+        specifier: 'catalog:'
+        version: 5.2.1
       happy-dom:
         specifier: 'catalog:'
         version: 20.14.5
@@ -317,6 +326,9 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 5.0.2(@types/node@24.19.0)(happy-dom@20.14.5)(vite@8.3.1(@types/node@24.19.0))
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.5
 
   packages/contracts:
     dependencies:
@@ -474,6 +486,9 @@ packages:
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [win32]
+
+  '@electric-sql/pglite@0.5.8':
+    resolution: {integrity: sha512-n9tsbUOhwx2epK1V0ZG9Ar4SHWUju04dhmzZXiSBXwBoleOvIfals33NAaWgagQVAL4Rbvx/Ptsu3P+pA09f6Q==}
 
   '@html-validate/stylish@6.0.0':
     resolution: {integrity: sha512-d1/lI3qIXhGVJF3+MmKEBn1dRX6U4Z+BDaOdDI3E6SXcO+OQ7hC/3mSo6BIjwQlcuV6NdDOKm6QCrzIQL1EezQ==}
@@ -1679,6 +1694,8 @@ snapshots:
 
   '@biomejs/cli-win32-x64@2.5.14':
     optional: true
+
+  '@electric-sql/pglite@0.5.8': {}
 
   '@html-validate/stylish@6.0.0': {}
 

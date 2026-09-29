@@ -13,14 +13,16 @@
       "dependsOn": ["transit"]
     },
     "test": {
-      "dependsOn": ["transit"]
+      "dependsOn": ["transit"],
+      "passThroughEnv": ["TEST_DATABASE_URL"]
     },
     "check": {
       "dependsOn": ["transit"]
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "passThroughEnv": ["DATABASE_URL", "API_URL", "MOCK_API_DELAY"]
     }
   }
 }

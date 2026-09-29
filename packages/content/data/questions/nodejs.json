@@ -1,0 +1,704 @@
+[
+  {
+    "id": "http-and-rest.q01",
+    "topic": "http-and-rest",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["methods", "idempotency"],
+    "prompt": "A client sends DELETE /api/tasks/42, loses the answer to a network error, and sends it again. Why is that harmless?",
+    "options": [
+      {
+        "id": "a",
+        "text": "DELETE is idempotent: sending it twice leaves the server as sending it once does"
+      },
+      {
+        "id": "b",
+        "text": "DELETE is safe: it never changes anything on the server"
+      },
+      {
+        "id": "c",
+        "text": "Browsers cache DELETE answers, so the second request never leaves the client"
+      },
+      {
+        "id": "d",
+        "text": "Servers ignore a second request with the same URL within a few seconds"
+      }
+    ],
+    "answer": "a",
+    "explanation": "Idempotent means repeating the request has no further effect: the task is gone either way (the second answer may be 404, but the state is the same). DELETE changes state, so it is not safe; GET and HEAD are the safe methods. POST is neither, which is why retrying it can create duplicates."
+  },
+  {
+    "id": "http-and-rest.q02",
+    "topic": "http-and-rest",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["status-codes", "auth"],
+    "prompt": "A learner is signed in, but asks to delete a project that belongs to someone else. Which status fits best?",
+    "options": [
+      {
+        "id": "a",
+        "text": "401 Unauthorized"
+      },
+      {
+        "id": "b",
+        "text": "403 Forbidden"
+      },
+      {
+        "id": "c",
+        "text": "400 Bad Request"
+      },
+      {
+        "id": "d",
+        "text": "409 Conflict"
+      }
+    ],
+    "answer": "b",
+    "explanation": "403 means \"we know who you are, and the answer is no\". 401 means the server does not know who you are, so signing in might help; here it would not. (Some APIs answer 404 instead, to avoid confirming the project exists.)"
+  },
+  {
+    "id": "http-and-rest.q03",
+    "topic": "http-and-rest",
+    "type": "multi_select",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["status-codes", "rest"],
+    "prompt": "Which of these are good answers from POST /api/tasks? Pick every one.",
+    "options": [
+      {
+        "id": "a",
+        "text": "201 Created with a Location header, when the task was made"
+      },
+      {
+        "id": "b",
+        "text": "400 Bad Request with { \"error\": \"Enter a title\" }, when the title is empty"
+      },
+      {
+        "id": "c",
+        "text": "200 OK with { \"error\": \"Enter a title\" }, when the title is empty"
+      },
+      {
+        "id": "d",
+        "text": "500 Internal Server Error, when the title is empty"
+      },
+      {
+        "id": "e",
+        "text": "415 Unsupported Media Type, when the body is sent as a form instead of JSON"
+      }
+    ],
+    "answers": ["a", "b", "e"],
+    "explanation": "The status tells clients how it went without reading the body. A 200 carrying an error hides the failure, and a 500 blames the server for the client’s mistake: 5xx is for the server’s own failures."
+  },
+  {
+    "id": "http-and-rest.q04",
+    "topic": "http-and-rest",
+    "type": "predict_output",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["fetch", "status-codes"],
+    "prompt": "The server answers this request with 404 Not Found. What does it log?",
+    "code": "async function load() {\n  try {\n    const response = await fetch('/api/tasks/9');\n    console.log('status', response.status);\n  } catch {\n    console.log('failed');\n  }\n}\n\nload();",
+    "answer": "status 404",
+    "explanation": "fetch only rejects when there is no answer at all, such as a network failure. A 404 or a 500 is still an answer, so the promise resolves; check response.ok (false for any status outside 200–299) before using the body."
+  },
+  {
+    "id": "http-and-rest.q05",
+    "topic": "http-and-rest",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["rest", "design"],
+    "prompt": "Which request is the most RESTful way to mark task 42 as done?",
+    "options": [
+      {
+        "id": "a",
+        "text": "POST /api/completeTask?id=42"
+      },
+      {
+        "id": "b",
+        "text": "PATCH /api/tasks/42 with { \"done\": true }"
+      },
+      {
+        "id": "c",
+        "text": "GET /api/tasks/42/complete"
+      },
+      {
+        "id": "d",
+        "text": "PUT /api/done with { \"taskId\": 42 }"
+      }
+    ],
+    "answer": "b",
+    "explanation": "The URL names the resource (task 42) and the method says what to do with it: PATCH changes part of it. Verbs in URLs repeat what the method should say, and a GET that changes data will be triggered by prefetching browsers and crawlers."
+  },
+  {
+    "id": "express-5.q01",
+    "topic": "express-5",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["middleware", "body"],
+    "prompt": "An Express 5 app registers app.post('/api/tasks', handler) and never adds express.json(). A client posts JSON. What is req.body in the handler?",
+    "options": [
+      {
+        "id": "a",
+        "text": "{}"
+      },
+      {
+        "id": "b",
+        "text": "undefined"
+      },
+      {
+        "id": "c",
+        "text": "The raw JSON text, as a string"
+      },
+      {
+        "id": "d",
+        "text": "Express throws before the handler runs"
+      }
+    ],
+    "answer": "b",
+    "explanation": "Express does not parse bodies by itself: a body parser such as express.json() reads the body and sets req.body. In Express 5, without one, req.body is undefined (Express 4 left an empty object), and the parser must be registered before the routes that read it."
+  },
+  {
+    "id": "express-5.q02",
+    "topic": "express-5",
+    "type": "predict_output",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["middleware", "order"],
+    "prompt": "A client requests GET /hi. What does the server log?",
+    "code": "app.use((req, res, next) => {\n  console.log('A');\n  next();\n});\n\napp.get('/hi', (req, res) => {\n  console.log('B');\n  res.send('hi');\n});\n\napp.use((req, res, next) => {\n  console.log('C');\n  next();\n});",
+    "answer": "A B",
+    "explanation": "Middleware runs in the order it was registered. The route answers and does not call next(), so the chain stops there and the last middleware never runs for /hi. It would run for a path no route answered."
+  },
+  {
+    "id": "express-5.q03",
+    "topic": "express-5",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["errors", "async"],
+    "prompt": "In Express 5, an async route handler awaits a database call that rejects, and the handler has no try/catch. What happens?",
+    "options": [
+      {
+        "id": "a",
+        "text": "The rejection goes to the error-handling middleware, which sends the answer"
+      },
+      {
+        "id": "b",
+        "text": "The request hangs until the client times out"
+      },
+      {
+        "id": "c",
+        "text": "The Node.js process crashes with an unhandled rejection"
+      },
+      {
+        "id": "d",
+        "text": "Express answers 200 with an empty body"
+      }
+    ],
+    "answer": "a",
+    "explanation": "Express 5 catches rejected promises from handlers and passes them to next(error), so your error handler answers. In Express 4 the rejection was lost and the request hung, which is why older code wraps every async handler."
+  },
+  {
+    "id": "express-5.q04",
+    "topic": "express-5",
+    "type": "multi_select",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["errors", "middleware"],
+    "prompt": "Which statements about error-handling middleware are true? Pick every one.",
+    "options": [
+      {
+        "id": "a",
+        "text": "It takes four parameters: (err, req, res, next)"
+      },
+      {
+        "id": "b",
+        "text": "It is registered after the routes"
+      },
+      {
+        "id": "c",
+        "text": "Express runs it for every request, even ones without an error"
+      },
+      {
+        "id": "d",
+        "text": "A function with three parameters, (err, req, res), is treated as ordinary middleware"
+      },
+      {
+        "id": "e",
+        "text": "For a 500 it should send the error’s message and stack, to help the client debug"
+      }
+    ],
+    "answers": ["a", "b", "d"],
+    "explanation": "Express tells error handlers apart by their four parameters, and only calls them when something passed an error along. Put it last so errors from every route reach it. On a 500, log the details and send a generic message: stacks and SQL errors help attackers more than clients."
+  },
+  {
+    "id": "express-5.q05",
+    "topic": "express-5",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["responses"],
+    "prompt": "A handler calls res.json(task) and then, in a branch the author forgot about, res.json({ error: \"…\" }). What happens?",
+    "options": [
+      {
+        "id": "a",
+        "text": "The client gets both objects, one after the other"
+      },
+      {
+        "id": "b",
+        "text": "The second call replaces the first answer"
+      },
+      {
+        "id": "c",
+        "text": "The second call throws \"Cannot set headers after they are sent to the client\""
+      },
+      {
+        "id": "d",
+        "text": "Express merges the two objects into one answer"
+      }
+    ],
+    "answer": "c",
+    "explanation": "Each request gets exactly one response. Once the first answer is sent, the headers are gone, so the second call throws (ERR_HTTP_HEADERS_SENT). Return after answering: return res.json(task)."
+  },
+  {
+    "id": "input-validation-zod.q01",
+    "topic": "input-validation-zod",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["security", "validation"],
+    "prompt": "The sign-up form has required and type=\"email\" on its inputs. Why must the API check the body again?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Anyone can send a request straight to the API, without the form, so the browser’s checks may never run"
+      },
+      {
+        "id": "b",
+        "text": "Browsers’ checks are slower than the server’s"
+      },
+      {
+        "id": "c",
+        "text": "Browser checks only run in Chrome"
+      },
+      {
+        "id": "d",
+        "text": "It doesn’t need to: the browser’s checks are enough"
+      }
+    ],
+    "answer": "a",
+    "explanation": "The form’s checks help people fill it in; they protect nothing, because curl, a script or an edited page can send anything. Validate every input at the API’s edge."
+  },
+  {
+    "id": "input-validation-zod.q02",
+    "topic": "input-validation-zod",
+    "type": "predict_output",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["coercion", "defaults"],
+    "prompt": "What does this log?",
+    "code": "import { z } from 'zod';\n\nconst Page = z.coerce.number().int().min(1).default(1);\n\nconsole.log(Page.parse(undefined), Page.parse('3'));",
+    "answer": "1 3",
+    "explanation": "A missing value takes the default, 1. The query-string value \"3\" is text, and z.coerce.number() turns it into the number 3 before checking it is a whole number of at least 1."
+  },
+  {
+    "id": "input-validation-zod.q03",
+    "topic": "input-validation-zod",
+    "type": "multi_select",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["strict", "trim"],
+    "prompt": "const Body = z.strictObject({ name: z.string().trim().min(1) }). Which bodies pass Body.safeParse? Pick every one.",
+    "options": [
+      {
+        "id": "a",
+        "text": "{ name: ' Asha ' }"
+      },
+      {
+        "id": "b",
+        "text": "{ name: '   ' }"
+      },
+      {
+        "id": "c",
+        "text": "{ name: 'Asha', admin: true }"
+      },
+      {
+        "id": "d",
+        "text": "{}"
+      },
+      {
+        "id": "e",
+        "text": "{ name: 'A' }"
+      }
+    ],
+    "answers": ["a", "e"],
+    "explanation": ".trim() runs before .min(1), so a name of only spaces becomes empty and fails, and \" Asha \" passes as \"Asha\". A strict object refuses keys it does not list, such as admin, and name is required."
+  },
+  {
+    "id": "input-validation-zod.q04",
+    "topic": "input-validation-zod",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["safe-parse"],
+    "prompt": "What is the difference between schema.parse(body) and schema.safeParse(body)?",
+    "options": [
+      {
+        "id": "a",
+        "text": "parse throws a ZodError for bad data; safeParse returns { success, data } or { success, error } and never throws"
+      },
+      {
+        "id": "b",
+        "text": "safeParse also removes HTML from strings"
+      },
+      {
+        "id": "c",
+        "text": "parse checks types only; safeParse also runs the min and max checks"
+      },
+      {
+        "id": "d",
+        "text": "They are the same; safeParse is the old name"
+      }
+    ],
+    "answer": "a",
+    "explanation": "Both run the same checks. At an API’s edge, bad input is normal rather than exceptional, so safeParse suits it: branch on success and answer 400 with the issues."
+  },
+  {
+    "id": "input-validation-zod.q05",
+    "topic": "input-validation-zod",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["mass-assignment", "security"],
+    "prompt": "A profile endpoint runs db.updateUser(req.user.id, req.body). Someone sends { \"name\": \"Sam\", \"role\": \"admin\" }. What is the best fix?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Parse the body with a strict schema that lists only name (and other editable fields), and save the parsed data"
+      },
+      {
+        "id": "b",
+        "text": "Delete req.body.role before saving"
+      },
+      {
+        "id": "c",
+        "text": "Hide the role field in the form"
+      },
+      {
+        "id": "d",
+        "text": "Check that the request came from the app’s own pages"
+      }
+    ],
+    "answer": "a",
+    "explanation": "This is mass assignment: saving whatever keys arrive. Deleting one known key misses the next one; a schema that allows only what a learner may change, used for the data you save, closes the whole class of bug."
+  },
+  {
+    "id": "sql-postgresql-prisma.q01",
+    "topic": "sql-postgresql-prisma",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["sql-injection", "parameters"],
+    "prompt": "Which query is safe from SQL injection when search comes from the query string?",
+    "options": [
+      {
+        "id": "a",
+        "text": "db.query(`SELECT * FROM tasks WHERE title ILIKE '%${search}%'`)"
+      },
+      {
+        "id": "b",
+        "text": "db.query('SELECT * FROM tasks WHERE title ILIKE $1', [`%${search}%`])"
+      },
+      {
+        "id": "c",
+        "text": "db.query(`SELECT * FROM tasks WHERE title ILIKE '%${search.replaceAll(\"'\", \"''\")}%'`)"
+      },
+      {
+        "id": "d",
+        "text": "db.query('SELECT * FROM tasks WHERE title ILIKE \\'%' + search + '%\\'')"
+      }
+    ],
+    "answer": "b",
+    "explanation": "With a parameter, the SQL and the value travel separately, so the value can never change what the query does. Escaping quotes by hand is easy to get wrong for some input or encoding; always use parameters."
+  },
+  {
+    "id": "sql-postgresql-prisma.q02",
+    "topic": "sql-postgresql-prisma",
+    "type": "predict_output",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["pg", "types"],
+    "prompt": "The tasks table has 3 rows, and db is a pg Pool. What does this log?",
+    "code": "const { rows } = await db.query('SELECT count(*) AS n FROM tasks');\nconsole.log(typeof rows[0].n, rows[0].n + 1);",
+    "answer": "string 31",
+    "explanation": "count() returns a bigint, and pg turns bigints into strings because they can exceed what a JavaScript number holds. So n is \"3\", and \"3\" + 1 is \"31\". Cast in SQL (count(*)::int) or convert with Number()."
+  },
+  {
+    "id": "sql-postgresql-prisma.q03",
+    "topic": "sql-postgresql-prisma",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["joins"],
+    "prompt": "SELECT p.name, count(t.id) FROM projects p ??? JOIN tasks t ON t.project_id = p.id GROUP BY p.name. Which join lists projects that have no tasks yet, with a count of 0?",
+    "options": [
+      {
+        "id": "a",
+        "text": "LEFT JOIN"
+      },
+      {
+        "id": "b",
+        "text": "INNER JOIN"
+      },
+      {
+        "id": "c",
+        "text": "Either: they give the same rows here"
+      },
+      {
+        "id": "d",
+        "text": "Neither: you need a subquery"
+      }
+    ],
+    "answer": "a",
+    "explanation": "An inner join keeps only rows with a match on both sides, so a project without tasks disappears. A LEFT JOIN keeps every project and fills the task columns with NULL, and count(t.id) counts no non-NULL ids: 0."
+  },
+  {
+    "id": "sql-postgresql-prisma.q04",
+    "topic": "sql-postgresql-prisma",
+    "type": "multi_select",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["constraints"],
+    "prompt": "Which rules should the database enforce with a constraint, not only your code? Pick every one.",
+    "options": [
+      {
+        "id": "a",
+        "text": "Each email belongs to at most one account (UNIQUE)"
+      },
+      {
+        "id": "b",
+        "text": "A task’s title is not empty (CHECK)"
+      },
+      {
+        "id": "c",
+        "text": "A task belongs to a project that exists (a foreign key)"
+      },
+      {
+        "id": "d",
+        "text": "The request comes from a signed-in learner"
+      },
+      {
+        "id": "e",
+        "text": "The password has at least 8 characters"
+      }
+    ],
+    "answers": ["a", "b", "c"],
+    "explanation": "Constraints hold for every write, from every code path, even under concurrent requests: two sign-ups can both pass an \"is this email free?\" check, but only one gets past UNIQUE. Who is signed in belongs to the request, and the database only ever sees a password’s hash."
+  },
+  {
+    "id": "sql-postgresql-prisma.q05",
+    "topic": "sql-postgresql-prisma",
+    "type": "mcq",
+    "difficulty": 3,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["transactions", "pg"],
+    "prompt": "Code runs pool.query('BEGIN'), two UPDATEs with pool.query, then pool.query('COMMIT'). What is wrong?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Each pool.query may use a different connection, so the statements may not be in one transaction; take one client with pool.connect()"
+      },
+      {
+        "id": "b",
+        "text": "Nothing: pg groups queries into a transaction automatically"
+      },
+      {
+        "id": "c",
+        "text": "BEGIN must be written START TRANSACTION in PostgreSQL"
+      },
+      {
+        "id": "d",
+        "text": "UPDATE statements cannot run inside a transaction"
+      }
+    ],
+    "answer": "a",
+    "explanation": "A transaction belongs to one connection. pool.query borrows any free connection for each call, so BEGIN, the updates and COMMIT can land on different ones. Check out a client, run everything on it, ROLLBACK on error, and release it in finally."
+  },
+  {
+    "id": "auth.q01",
+    "topic": "auth",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["authentication", "status-codes"],
+    "prompt": "A request to GET /api/progress has no session cookie. Which status should the API answer?",
+    "options": [
+      {
+        "id": "a",
+        "text": "401 Unauthorized"
+      },
+      {
+        "id": "b",
+        "text": "403 Forbidden"
+      },
+      {
+        "id": "c",
+        "text": "404 Not Found"
+      },
+      {
+        "id": "d",
+        "text": "200 OK with an empty list"
+      }
+    ],
+    "answer": "a",
+    "explanation": "401 means the server does not know who is asking, so the client should sign in. 403 is for a known user who may not do this. Answering 200 with nothing would let the app show an empty page instead of a sign-in prompt."
+  },
+  {
+    "id": "auth.q02",
+    "topic": "auth",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["passwords", "hashing"],
+    "prompt": "Why is SHA-256 a poor way to store passwords, even with a salt?",
+    "options": [
+      {
+        "id": "a",
+        "text": "It is fast, so a leaked table can be guessed at billions of attempts per second; password hashes like Argon2id or scrypt are slow on purpose"
+      },
+      {
+        "id": "b",
+        "text": "SHA-256 can be reversed to get the password back"
+      },
+      {
+        "id": "c",
+        "text": "SHA-256 hashes are too long to store"
+      },
+      {
+        "id": "d",
+        "text": "Two users with the same password always get the same hash"
+      }
+    ],
+    "answer": "a",
+    "explanation": "SHA-256 cannot be reversed, but it is built to be fast, which helps attackers guessing passwords. Password hashing functions are deliberately slow and memory-hungry; the salt stops identical passwords having identical hashes."
+  },
+  {
+    "id": "auth.q03",
+    "topic": "auth",
+    "type": "multi_select",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["cookies", "sessions"],
+    "prompt": "A session cookie is set with httpOnly, secure and sameSite: \"lax\". Which statements are true? Pick every one.",
+    "options": [
+      {
+        "id": "a",
+        "text": "httpOnly: page scripts cannot read it, so an XSS bug cannot steal it"
+      },
+      {
+        "id": "b",
+        "text": "secure: the browser only sends it over HTTPS"
+      },
+      {
+        "id": "c",
+        "text": "sameSite \"lax\": the browser does not send it with cross-site POST requests, which blocks most CSRF"
+      },
+      {
+        "id": "d",
+        "text": "httpOnly: the cookie’s value is encrypted"
+      },
+      {
+        "id": "e",
+        "text": "sameSite \"lax\": stops cross-site scripting"
+      }
+    ],
+    "answers": ["a", "b", "c"],
+    "explanation": "None of the three encrypts anything; they limit where the cookie goes. XSS is stopped by escaping output and a Content-Security-Policy; httpOnly only limits the damage by keeping the token out of scripts’ reach."
+  },
+  {
+    "id": "auth.q04",
+    "topic": "auth",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["jwt"],
+    "prompt": "What does the signature on a JSON Web Token guarantee?",
+    "options": [
+      {
+        "id": "a",
+        "text": "That the payload has not been changed since the server signed it; anyone holding the token can still read the payload"
+      },
+      {
+        "id": "b",
+        "text": "That nobody but the server can read the payload"
+      },
+      {
+        "id": "c",
+        "text": "That the token can be revoked at any time"
+      },
+      {
+        "id": "d",
+        "text": "That the token only works from the browser it was issued to"
+      }
+    ],
+    "answer": "a",
+    "explanation": "A JWT is signed, not encrypted: its payload is base64url-encoded JSON that anyone can decode. It also stays valid until it expires unless the server keeps state to revoke it, so keep expiries short and keep secrets out of the payload."
+  },
+  {
+    "id": "auth.q05",
+    "topic": "auth",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["enumeration", "sign-in"],
+    "prompt": "Why should sign-in give the same error for an unknown email and for a wrong password?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Different messages tell an attacker which emails have accounts"
+      },
+      {
+        "id": "b",
+        "text": "It saves a database query"
+      },
+      {
+        "id": "c",
+        "text": "Browsers can only show one error message"
+      },
+      {
+        "id": "d",
+        "text": "The password check must run before the email lookup"
+      }
+    ],
+    "answer": "a",
+    "explanation": "Revealing which emails exist (account enumeration) helps targeted phishing and password guessing. Use one message, and make both failures take about as long, for example by checking the password against a dummy hash when the email is unknown."
+  }
+]

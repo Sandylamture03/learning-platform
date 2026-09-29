@@ -54,7 +54,7 @@ describe('the learning path', () => {
       '5 lessons to read',
       '5 lessons to read',
       '5 lessons to read',
-      'Lessons for this track are on the way.',
+      '5 lessons to read',
     ]);
     expect(screen.getByRole('link', { name: 'Create a free account' }).getAttribute('href')).toBe('/sign-up');
     const start = screen.getByRole('region', { name: 'Start here' });

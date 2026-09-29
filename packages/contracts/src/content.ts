@@ -156,7 +156,7 @@ export const TopicOutline = z.strictObject({ ...topicCore, status: z.literal('ou
 export const CodeExample = z.strictObject({
   id: Id,
   title: Text,
-  language: z.enum(['html', 'css', 'js', 'jsx', 'ts', 'tsx', 'json', 'shell']),
+  language: z.enum(['html', 'css', 'js', 'jsx', 'ts', 'tsx', 'json', 'shell', 'sql', 'http']),
   code: Text,
   /** The one thing to notice. */
   takeaway: Text,

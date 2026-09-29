@@ -12,6 +12,7 @@ const PAGES = [
   '/tracks/javascript/event-loop',
   '/tracks/typescript/discriminated-unions-ui-state',
   '/tracks/react/useeffect',
+  '/tracks/nodejs/sql-postgresql-prisma',
   '/resources',
   '/sign-in',
   '/sign-up',

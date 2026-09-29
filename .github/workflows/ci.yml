@@ -16,6 +16,22 @@ jobs:
   verify:
     name: Lint, type-check, test, build
     runs-on: ubuntu-latest
+    # The API's tests and the app's browser checks run against a real PostgreSQL. The API makes the databases
+    # it needs (learning_platform_test, learning_platform_e2e) on this server.
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: learning_platform
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6 # installs the pnpm version in package.json "packageManager"
@@ -41,6 +57,22 @@ jobs:
   e2e:
     name: Browser checks (axe, 320px, keyboard)
     runs-on: ubuntu-latest
+    # The API's tests and the app's browser checks run against a real PostgreSQL. The API makes the databases
+    # it needs (learning_platform_test, learning_platform_e2e) on this server.
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: learning_platform
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
@@ -50,7 +82,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @lp/site exec playwright install --with-deps chromium
-      - run: pnpm test:e2e # the site, then the learning app
+      - run: pnpm test:e2e # the site, then the learning app against the API
       - uses: actions/upload-artifact@v7
         if: failure()
         with:

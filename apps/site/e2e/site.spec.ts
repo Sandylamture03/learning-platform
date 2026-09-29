@@ -27,6 +27,11 @@ const LESSON_PAGES = [
   'usestate-and-events',
   'useeffect',
   'custom-hooks',
+  'http-and-rest',
+  'express-5',
+  'input-validation-zod',
+  'sql-postgresql-prisma',
+  'auth',
 ].map((topic) => `/lessons/${topic}.html`);
 
 const PAGES = [
