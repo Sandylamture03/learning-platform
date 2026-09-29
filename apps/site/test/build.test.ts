@@ -272,7 +272,8 @@ describe('the built site', () => {
       }
     }
     expect(problems).toEqual([]);
-  });
+    // Every page, one after another: under 2 seconds alone, but over 5 in CI while every package tests at once.
+  }, 60_000);
 
   it('stops the build when lesson theory breaks the Markdown rules', () => {
     const dataDir = mkdtempSync(join(tmpdir(), 'lp-content-'));
