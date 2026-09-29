@@ -4,6 +4,9 @@
 import { AxeBuilder } from '@axe-core/playwright';
 import { expect, type Page, test } from '@playwright/test';
 
+/** A path inside the app, which lives at /app/ on the platform's domain (the site has the root). */
+const inApp = (path: string) => `/app${path}`;
+
 const PAGES = [
   '/',
   '/tracks/javascript',
@@ -36,7 +39,7 @@ for (const colorScheme of ['light', 'dark'] as const) {
 
     for (const path of PAGES) {
       test(`${path} has no axe violations`, async ({ page }) => {
-        await page.goto(path);
+        await page.goto(inApp(path));
         await ready(page);
         const { violations } = await new AxeBuilder({ page })
           .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'])
@@ -52,7 +55,7 @@ test.describe('on a 320px-wide phone', () => {
 
   for (const path of PAGES) {
     test(`${path} has no horizontal scroll`, async ({ page }) => {
-      await page.goto(path);
+      await page.goto(inApp(path));
       await ready(page);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
       expect(overflow).toBeLessThanOrEqual(0);
@@ -62,7 +65,7 @@ test.describe('on a 320px-wide phone', () => {
 
 for (const path of PAGES) {
   test(`${path} works from the keyboard with a visible focus ring`, async ({ page }) => {
-    await page.goto(path);
+    await page.goto(inApp(path));
     await ready(page);
 
     // The first Tab reaches the skip link, and Enter jumps past the header.
@@ -107,7 +110,7 @@ test('every page loads straight from its URL, with its own title and no console 
     ['/tracks/javascript/async-code', 'JavaScript: Async code — Learning Platform'],
     ['/resources', 'Resources — Learning Platform'],
   ] as const) {
-    await page.goto(path);
+    await page.goto(inApp(path));
     await ready(page);
     await expect(page).toHaveTitle(title);
   }
@@ -115,7 +118,7 @@ test('every page loads straight from its URL, with its own title and no console 
 });
 
 test('client-side navigation moves focus to the main content and swaps the mounted quiz', async ({ page }) => {
-  await page.goto('/tracks/javascript/async-code');
+  await page.goto(inApp('/tracks/javascript/async-code'));
   await ready(page);
   await expect(page.locator('lp-quiz')).toHaveAttribute('src', '/api/quizzes/async-code');
 
@@ -139,7 +142,7 @@ test('a learner passes a quiz, signs up to save it, and keeps it after a reload 
   const nav = page.getByRole('navigation', { name: 'Main' });
   const javascript = page.getByRole('listitem').filter({ has: page.getByRole('link', { name: 'JavaScript' }) });
 
-  await page.goto('/tracks/javascript/event-loop');
+  await page.goto(inApp('/tracks/javascript/event-loop'));
   await ready(page);
   const quiz = page.locator('lp-quiz');
   const question = (n: number) => quiz.locator('form').nth(n);
@@ -186,5 +189,35 @@ test('a learner passes a quiz, signs up to save it, and keeps it after a reload 
   await page.getByLabel('Password').fill(password);
   await page.getByRole('button', { name: 'Sign in' }).click();
   await expect(javascript.getByText('1 of 5 lessons done')).toBeVisible();
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page).toHaveURL(/\/app\/?$/);
+});
+
+test.describe('one server for the whole platform', () => {
+  test('the site links to the app, and both load from the same origin', async ({ page }) => {
+    const errors: string[] = [];
+    page.on('console', (message) => {
+      if (message.type() === 'error') errors.push(message.text());
+    });
+    await page.goto('/');
+    await page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Learning app' }).click();
+    await expect(page).toHaveURL(/\/app\/$/);
+    await expect(page.getByRole('heading', { level: 1, name: 'Your learning path' })).toBeVisible();
+    // A deep link into the app is answered with the app, which draws the right page.
+    await page.goto(inApp('/tracks/nodejs/auth'));
+    await expect(page.getByRole('heading', { level: 1, name: 'Auth: passwords, sessions and roles' })).toBeVisible();
+    // Nothing broke the content security policy.
+    expect(errors).toEqual([]);
+  });
+
+  test('the site’s sign-up form is stored by the API and ends on the thank-you page', async ({ page }) => {
+    await page.goto('/signup.html');
+    await page.getByLabel('Name').fill('Asha Rao');
+    await page.getByLabel('Email', { exact: true }).fill(`waitlist-${Date.now()}@example.com`);
+    await page.getByLabel('First track').selectOption('nodejs');
+    await page.getByLabel('I have built a few small things').check();
+    await page.getByLabel('Hours a week you can study').fill('6');
+    await page.getByLabel('Email me when my track opens').check();
+    await page.getByRole('button', { name: 'Sign up' }).click();
+    await expect(page).toHaveURL(/\/thanks\.html$/);
+  });
 });

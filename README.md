@@ -14,14 +14,14 @@ pnpm install
 pnpm dev               # builds the site and serves it at http://localhost:4321
 
 pnpm db:up             # starts PostgreSQL in Docker (compose.yaml)
-pnpm dev:app           # the API on :3000 and the learning app at http://localhost:5173
+pnpm dev:app           # the API on :3000 and the learning app at http://localhost:5173/app/
 ```
 
 `pnpm dev:app` migrates the database before the API starts. No Docker? `pnpm dev:app:mock` runs the app against an in-memory mock of the API instead: accounts and progress work until you stop it. Any PostgreSQL 16 or newer works too: point `DATABASE_URL` at it (and `TEST_DATABASE_URL` for the tests).
 
 On Windows, if `corepack enable` says "permission denied", run it once from a terminal opened as administrator, or use `npm install --global pnpm@11` instead.
 
-To look at the site without installing anything, open `apps/site/dist/index.html` in a browser: the build uses relative links, so it works straight from disk. The sign-up form and the widgets need `pnpm dev`; opened from disk, the resources and quiz pages show their no-JavaScript version instead.
+To look at the site without installing anything, open `apps/site/dist/index.html` in a browser: the build uses relative links, so it works straight from disk. The sign-up form and the widgets need `pnpm dev`; opened from disk, the resources and quiz pages show their no-JavaScript version instead, and the "Learning app" link (to `/app/`) only works when the platform serves both.
 
 ## What's where
 
@@ -45,14 +45,15 @@ To look at the site without installing anything, open `apps/site/dist/index.html
 | Command | What it does |
 | --- | --- |
 | `pnpm dev` | Build the site, serve it on port 4321, rebuild when content or CSS changes |
-| `pnpm dev:app` | Run the API (port 3000, restarting when its code changes) and the learning app (port 5173), which sends `/api` to it |
+| `pnpm dev:app` | Run the API (port 3000, restarting when its code changes) and the learning app at http://localhost:5173/app/, which sends `/api` to it |
 | `pnpm dev:app:mock` | Run the learning app against the in-memory mock instead: no database (it answers after 300 ms, so loading states show; `MOCK_API_DELAY=0` turns that off) |
 | `pnpm dev:api` | Run only the API |
 | `pnpm db:up` / `pnpm db:down` | Start / stop PostgreSQL in Docker. The data stays in a Docker volume between runs |
 | `pnpm db:migrate` | Apply new migrations to `DATABASE_URL`, creating the database if it is missing |
+| `pnpm smoke <url>` | Check a running platform end to end: site, app, API, security headers, and a sign-up that saves progress (CI runs it against the Docker image) |
 | `pnpm build` | Build every app (`apps/site/dist`, `apps/shell/dist`) |
 | `pnpm test` | Unit and build tests (Vitest) in every package, the API's against PostgreSQL (start it first with `pnpm db:up`), and every coding challenge's tests against its solution |
-| `pnpm test:e2e` | Browser checks with Playwright, for the site and then the app against the real API and PostgreSQL: axe in light and dark, 320px layouts, keyboard, the form, the widgets with and without JavaScript, deep links, and a learner who signs up, passes a quiz and keeps it after a reload (run `pnpm --filter @lp/site exec playwright install chromium` once first, or set `PW_CHROMIUM_PATH` to an installed Chrome) |
+| `pnpm test:e2e` | Browser checks with Playwright, for the site on its own and then the whole platform as production serves it (the API serving the built site, app and API from one origin, on PostgreSQL): axe in light and dark, 320px layouts, keyboard, the form, the widgets with and without JavaScript, deep links, and a learner who signs up, passes a quiz and keeps it after a reload (run `pnpm --filter @lp/site exec playwright install chromium` once first, or set `PW_CHROMIUM_PATH` to an installed Chrome) |
 | `pnpm typecheck` | TypeScript 7 in strict mode, every package, including the widgets' JavaScript (`checkJs`) |
 | `pnpm lint` / `pnpm fix` | Biome: lint and format check / apply fixes |
 | `pnpm check:content` | Validate every content file and cross-reference |
@@ -145,7 +146,7 @@ Phase 4
 - **Packages are imported by name** (`@lp/contracts`), never by relative path, and every import is declared in `package.json`. `@lp/contracts` and `@lp/platform-kit` stay free of `node:` imports so the browser can use them.
 - **One cascade-layer order** for the site: `reset, tokens, base, layout, components, utilities`. Colours come only from the design tokens.
 - **Pages ship no JavaScript unless they hold a widget**, and then only that widget's module, from this origin (the dev server's policy is `script-src 'self'`, with nothing inline). Forms use native validation with `:user-invalid`; the FAQ uses `details` and `summary`.
-- **The site's sign-up form posts to `/api/waitlist`.** The API checks it with the shared Zod schema, stores it and redirects to the thank-you page. The site's own dev server (`pnpm dev`) checks it the same way but stores nothing, so the site runs without a database; in production, a reverse proxy sends `/api` to the API.
+- **The site's sign-up form posts to `/api/waitlist`.** The API checks it with the shared Zod schema, stores it and redirects to the thank-you page. The site's own dev server (`pnpm dev`) checks it the same way but stores nothing, so the site runs without a database; in production the API serves the site, so the form reaches it directly.
 - **Biome has two overrides, each for a reason.** In `.tsx` files, `noRedundantRoles` is off because lists styled without bullets keep `role="list"`: Safari drops the list role from them otherwise. In challenge starters, `noUnusedFunctionParameters`, `noUnusedVariables` and `noUnusedImports` are off because a starter names the parameters, helpers and imports the learner will use. (Keep `biome.json` free of comments: Biome reads it as JSON, and a comment makes the file invalid, and `pnpm fix` then reformats the whole repo with Biome's defaults.)
 
 ### The API
@@ -164,7 +165,7 @@ Phase 4
 - **Signing in:** `/sign-in` and `/sign-up` show the API's field messages beside each field, and return to the page the learner came from (`?next=`, which only accepts paths inside the app, so it can't send anyone to another site). Progress shows only for a signed-in learner; a quiz passed while signed out is kept and saved as soon as they sign up or in.
 - **Server state goes through TanStack Query.** Every page reads its data with a query from `src/api.ts`, and every query key starts with the resource it holds (`[tracks]`, `[lessons, topicId]`, `[me]`, `[progress]`). Signing in, up or out sets `[me]` from the answer and drops `[progress]`, so no learner ever sees another's. Requests are retried on network and server errors, never on an answer such as 404 that will not change. Marking a lesson done updates the progress at once, rolls back if the API refuses, and refetches either way; the lesson then says the result was not saved, and offers to send it again.
 - **Widgets mount through `ModuleOutlet`,** which hands a `UiModule` an element React never touches, plus one platform context made for the life of the app. The widget gets its data URL from `data-src` (`/api/quizzes/<topic-id>` in the app), and a passed quiz reports `topic.completed.v1` on the event bus, which the shell records as progress.
-- **Routes are React Router's data mode:** `/`, `/tracks/:trackId`, `/tracks/:trackId/:topicId`, `/resources`, `/sign-in` and `/sign-up`, with one router made outside React. A lesson opened under the wrong track moves to its own, and anything unknown gets a page that says so and links back.
+- **Routes are React Router's data mode:** `/`, `/tracks/:trackId`, `/tracks/:trackId/:topicId`, `/resources`, `/sign-in` and `/sign-up`, written from the app's own root and served under `/app` (the router's basename, from Vite's `base`), with one router made outside React. A lesson opened under the wrong track moves to its own, and anything unknown gets a page that says so and links back.
 - **Lesson links stay inside the app.** Theory is parsed by `@lp/markdown` and rendered as React elements, so a `lesson:<topic-id>` link becomes a router link to that lesson, in whichever track it lives.
 
 ### Widgets
@@ -180,6 +181,32 @@ The widgets follow section 2.3 of the architecture doc, so the Phase 3 shell can
 - **Styles live in the shadow root** (`widgets.css`, linked from it). The page's CSS can't reach in, but the design tokens are custom properties and inherit through, so both themes work.
 - **Quiz answers stay in the browser**, under `localStorage` key `lp.quiz.v1.<topic-id>`. A passed quiz emits `topic.completed.v1` on the shell's event bus, and the shell saves it to the learner's account.
 
+## Deploying
+
+In production one server answers the whole domain: the public site at `/`, the learning app at `/app/` and the API at `/api`. One origin means the session cookie and the site's waitlist form need no CORS. The `Dockerfile` builds the site and the app and runs the API, which serves all three (`SERVE_WEB`, on by default in production). On start the container applies any new migrations, then serves. CI builds the same image on every pull request, runs it against PostgreSQL and smoke-tests it (`pnpm smoke`).
+
+The platform is set up for **Render** (`render.yaml`, a Blueprint): one Docker web service and a managed PostgreSQL, wired together, with `main` deployed after its CI checks pass.
+
+1. Sign up at [render.com](https://render.com) with your GitHub account, and allow it to see this repository.
+2. Before the first deploy, check the region in `render.yaml` (both `region:` lines; `singapore` now, the closest to India; or `oregon`, `ohio`, `virginia`, `frankfurt`): a database cannot move regions later.
+3. In Render: **New → Blueprint**, pick this repository, review the two resources, and **Apply**. Render creates the database, builds the image and starts the service; the first build takes a few minutes.
+4. Open the service's `onrender.com` address: the site is at `/`, the app at `/app/`. Check it end to end with `pnpm smoke https://<your-service>.onrender.com`.
+5. Point the domain at it (below), then check `pnpm smoke https://learn.ai-developer.in`.
+6. From then on, every merge to `main` deploys by itself once CI is green.
+
+### The domain: learn.ai-developer.in
+
+`render.yaml` attaches `learn.ai-developer.in` to the service. A subdomain needs a single DNS record, and whatever `ai-developer.in` itself serves stays as it is. Render only serves the address once the record points there:
+
+1. In Render, open the service → **Settings → Custom Domains**: `learn.ai-developer.in` is listed with the record Render expects.
+2. At the DNS provider for ai-developer.in (Hostinger: hPanel → **Domains** → ai-developer.in → **DNS / Nameservers** → **DNS records**), add type **CNAME**, name `learn`, target `<your-service>.onrender.com` (the host name only, no `https://`). If a record named `learn` already exists (A, AAAA or CNAME), delete it first.
+3. If the zone has **CAA** records, add two more so Render can issue the certificate: flag `0`, tag `issue`, values `letsencrypt.org` and `pki.goog`.
+4. Back in Render, press **Verify**. DNS changes usually show within minutes (sometimes up to a few hours); Render then issues the HTTPS certificate and redirects `http://` to `https://` by itself.
+
+Plans: `render.yaml` starts on the free plans, to try it. The free web service sleeps after 15 idle minutes (the next visit waits about a minute), and **the free database is deleted after 30 days**. For real learners, change the database to `basic-256mb` (or larger) and the service to `starter` in `render.yaml` or the dashboard. A custom domain is added in the service's settings; Render provides the certificate.
+
+Settings: Render sets `DATABASE_URL` from the database and `PORT` itself; `render.yaml` sets `NODE_ENV=production` (Secure cookies, strict settings) and `TRUST_PROXY=1` (Render's load balancer is one proxy, so rate limits see each learner's address). The other variables in "The API" above keep their defaults.
+
 ## Next
 
-Deployment (the API, the app and PostgreSQL behind one domain, with CI deploying `main`), then more lessons, track by track, starting with the rest of the Node.js P0 topics.
+More lessons, track by track, starting with the rest of the Node.js P0 topics; then password reset and email verification, which need an email provider.

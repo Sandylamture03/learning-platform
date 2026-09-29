@@ -17,6 +17,7 @@
     "db:up": "docker compose up --detach --wait postgres",
     "db:down": "docker compose down",
     "db:migrate": "pnpm --filter @lp/api migrate",
+    "smoke": "pnpm --filter @lp/api smoke",
     "test": "turbo run test",
     "test:e2e": "pnpm --filter @lp/site test:e2e && pnpm --filter @lp/shell test:e2e",
     "typecheck": "turbo run typecheck && tsc -p .",

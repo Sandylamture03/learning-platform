@@ -46,7 +46,10 @@ describe('loadConfig', () => {
       trustProxy: 0,
       sessionDays: 30,
       authAttempts: 20,
+      serveWeb: false,
     });
+    expect(loadConfig({ NODE_ENV: 'production', DATABASE_URL: 'postgres://db/lp' }).serveWeb).toBe(true);
+    expect(loadConfig({ SERVE_WEB: '1' }).serveWeb).toBe(true);
   });
 
   it('refuses to start production without a database, or with a typo', () => {

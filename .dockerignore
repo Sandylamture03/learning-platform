@@ -1,0 +1,9 @@
+# Built inside the image, or not needed there.
+**/node_modules
+**/dist
+**/.turbo
+**/test-results
+**/playwright-report
+.git
+.github
+*.log
