@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    // Node.js 24 runs .ts files by stripping types, so only erasable syntax is allowed:
+    // no enum, namespace or constructor parameter properties.
+    "module": "nodenext",
+    "erasableSyntaxOnly": true,
+    "types": ["node"]
+  }
+}

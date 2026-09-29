@@ -1,0 +1,18 @@
+# dependencies
+node_modules/
+
+# build output and caches (dist is rebuilt with `pnpm build`)
+dist/
+.turbo/
+coverage/
+
+# Playwright
+test-results/
+playwright-report/
+
+# local settings and logs
+.env
+.env.*
+*.log
+.DS_Store
+Thumbs.db

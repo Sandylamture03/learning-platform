@@ -1,0 +1,419 @@
+[
+  {
+    "id": "scope-and-closures.q01",
+    "topic": "scope-and-closures",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["closures"],
+    "prompt": "What is a closure?",
+    "options": [
+      {
+        "id": "a",
+        "text": "A function together with the variables from the scope it was created in, which it can still use after that scope has finished running"
+      },
+      { "id": "b", "text": "A function that has finished running and whose variables have been cleared from memory" },
+      { "id": "c", "text": "Any block of code between curly braces" },
+      { "id": "d", "text": "An object that keeps a copy of every global variable" }
+    ],
+    "answer": "a",
+    "explanation": "A function remembers the variables that were in scope where it was written, not where it is called. So an inner function returned from an outer one can still read and update the outer function's variables after the outer function has returned."
+  },
+  {
+    "id": "scope-and-closures.q02",
+    "topic": "scope-and-closures",
+    "type": "predict_output",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["closures"],
+    "prompt": "What does this log? Separate the values with a space or a comma.",
+    "code": "function makeCounter() {\n  let count = 0;\n  return () => {\n    count += 1;\n    return count;\n  };\n}\nconst a = makeCounter();\nconst b = makeCounter();\na();\na();\nconsole.log(a(), b());",
+    "answer": "3 1",
+    "explanation": "Each call to makeCounter creates a new count variable, and the arrow function it returns closes over that one. By the time it is logged, a has been called three times; b has its own count and has been called once."
+  },
+  {
+    "id": "scope-and-closures.q03",
+    "topic": "scope-and-closures",
+    "type": "predict_output",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["block-scope"],
+    "prompt": "What does this log?",
+    "code": "const label = 'outer';\nif (true) {\n  const label = 'inner';\n}\nconsole.log(label);",
+    "answer": "outer",
+    "explanation": "let and const are block-scoped. The label declared inside the if block is a separate variable that only exists between those braces, so the log outside sees the outer one."
+  },
+  {
+    "id": "scope-and-closures.q04",
+    "topic": "scope-and-closures",
+    "type": "multi_select",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["scope"],
+    "prompt": "Which of these create a new scope for variables declared with let or const? Pick every one that does.",
+    "options": [
+      { "id": "a", "text": "A function body" },
+      { "id": "b", "text": "The braces of an if statement" },
+      { "id": "c", "text": "An object literal such as { total: 0 }" },
+      { "id": "d", "text": "A module (a file loaded with import)" },
+      { "id": "e", "text": "Parentheses around an expression, such as (price * 2)" }
+    ],
+    "answers": ["a", "b", "d"],
+    "explanation": "Functions, blocks (braces around statements: if, for, while or a bare block) and modules each get their own scope. The braces of an object literal are not a block: they build an object, and declarations cannot go inside them."
+  },
+  {
+    "id": "scope-and-closures.q05",
+    "topic": "scope-and-closures",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["closures", "debounce"],
+    "prompt": "A debounce(fn, ms) helper returns a new function that restarts a timer every time it is called. Why does it rely on a closure?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Every call of the returned function has to clear and replace the same timer id, and that id lives in debounce's scope"
+      },
+      { "id": "b", "text": "Closures make setTimeout fire sooner" },
+      { "id": "c", "text": "Without a closure, the returned function could not take arguments" },
+      { "id": "d", "text": "Closures stop the browser from running two timers at once" }
+    ],
+    "answer": "a",
+    "explanation": "debounce runs once and returns a function. The timer id is a variable inside debounce, and every call of the returned function can still see it, so each call clears the previous timer and starts a new one. Without the closure, the pending timer would have nowhere to live between calls."
+  },
+  {
+    "id": "arrays-and-objects.q01",
+    "topic": "arrays-and-objects",
+    "type": "predict_output",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["filter", "map"],
+    "prompt": "What does this log? Write it as an array, like [1, 2].",
+    "code": "const prices = [5, 12, 8, 20];\nconst doubled = prices\n  .filter((price) => price > 6)\n  .map((price) => price * 2);\nconsole.log(doubled);",
+    "answer": "[24, 16, 40]",
+    "explanation": "filter keeps the prices above 6 (12, 8 and 20) in their original order, and map doubles each one. Neither changes prices itself: both return a new array."
+  },
+  {
+    "id": "arrays-and-objects.q02",
+    "topic": "arrays-and-objects",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["reduce"],
+    "prompt": "orders is [{ amount: 10 }, { amount: 25 }, { amount: 5 }]. Which expression evaluates to 40?",
+    "options": [
+      { "id": "a", "text": "orders.reduce((sum, order) => sum + order.amount, 0)" },
+      { "id": "b", "text": "orders.reduce((sum, order) => sum + order.amount)" },
+      { "id": "c", "text": "orders.map((order) => order.amount)" },
+      { "id": "d", "text": "orders.filter((order) => order.amount).length" }
+    ],
+    "answer": "a",
+    "explanation": "reduce needs the starting value 0. Without it, the first order object becomes the starting sum, and adding a number to an object turns the result into the string “[object Object]255”. The map version returns [10, 25, 5], and the filter version counts the orders (3)."
+  },
+  {
+    "id": "arrays-and-objects.q03",
+    "topic": "arrays-and-objects",
+    "type": "predict_output",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["spread", "immutability"],
+    "prompt": "What does this log? Separate the values with a space or a comma.",
+    "code": "const user = { name: 'Asha', role: 'dev' };\nconst promoted = { ...user, role: 'lead' };\nconsole.log(user.role, promoted.role);",
+    "answer": "dev lead",
+    "explanation": "Spread copies user's properties into a new object, and the later role: 'lead' overrides the copied one. user itself is unchanged. React state updates rely on this pattern: make a new object instead of changing the old one."
+  },
+  {
+    "id": "arrays-and-objects.q04",
+    "topic": "arrays-and-objects",
+    "type": "multi_select",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["mutation"],
+    "prompt": "Which of these change the array they are called on? Pick every one that does.",
+    "options": [
+      { "id": "a", "text": "items.push('x')" },
+      { "id": "b", "text": "items.map((item) => item.trim())" },
+      { "id": "c", "text": "items.sort()" },
+      { "id": "d", "text": "items.toSorted()" },
+      { "id": "e", "text": "items.splice(0, 1)" }
+    ],
+    "answers": ["a", "c", "e"],
+    "explanation": "push, sort and splice change the original array. map, filter and the newer toSorted, toReversed and toSpliced return a new array and leave the original alone, which is what React state needs."
+  },
+  {
+    "id": "arrays-and-objects.q05",
+    "topic": "arrays-and-objects",
+    "type": "predict_output",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["destructuring"],
+    "prompt": "What does this log? Separate the values with a space or a comma.",
+    "code": "const post = {\n  title: 'Closures',\n  author: { name: 'Sam' },\n};\nconst { title, tags = [], author: { name } } = post;\nconsole.log(title, tags.length, name);",
+    "answer": "Closures 0 Sam",
+    "explanation": "Destructuring picks title, falls back to the default [] because post has no tags, and reaches into author to pick name. A default applies only when the property is missing (undefined)."
+  },
+  {
+    "id": "dom-and-events.q01",
+    "topic": "dom-and-events",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["xss", "text-content"],
+    "prompt": "A page shows a name the user typed. Why is el.textContent = name safer than el.innerHTML = name?",
+    "options": [
+      { "id": "a", "text": "textContent shows the value as plain text, so tags in it are never parsed or run" },
+      { "id": "b", "text": "textContent is faster because it skips the DOM" },
+      { "id": "c", "text": "innerHTML cannot show accented characters" },
+      { "id": "d", "text": "textContent removes script tags but keeps the rest of the HTML" }
+    ],
+    "answer": "a",
+    "explanation": "innerHTML parses its value as HTML, so a “name” such as <img src=x onerror=alert(1)> runs code: a cross-site scripting (XSS) hole. textContent creates a text node, and the browser shows the characters exactly as typed."
+  },
+  {
+    "id": "dom-and-events.q02",
+    "topic": "dom-and-events",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["delegation"],
+    "prompt": "A list has hundreds of <li> items, and more are added while the page runs. What is the event-delegation way to handle a click on any item?",
+    "options": [
+      { "id": "a", "text": "One click listener on the list that finds the item with event.target.closest('li')" },
+      { "id": "b", "text": "A click listener on every <li>, added again whenever the list changes" },
+      { "id": "c", "text": "An onclick attribute on every <li>" },
+      { "id": "d", "text": "A timer that checks every 100 ms which item was clicked" }
+    ],
+    "answer": "a",
+    "explanation": "A click bubbles from the item up through its ancestors, so one listener on the list sees clicks on every item, including items added later. closest('li') finds the item even when the click lands on a child such as an icon."
+  },
+  {
+    "id": "dom-and-events.q03",
+    "topic": "dom-and-events",
+    "type": "predict_output",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["bubbling"],
+    "prompt": "The user clicks the button. What is logged, in order? Separate the words with a space or a comma.",
+    "code": "// <div id=\"outer\"><button id=\"inner\">Go</button></div>\nconst outer = document.querySelector('#outer');\nconst inner = document.querySelector('#inner');\ndocument.addEventListener('click', () => console.log('document'));\nouter.addEventListener('click', () => console.log('outer'));\ninner.addEventListener('click', () => console.log('inner'));",
+    "answer": "inner, outer, document",
+    "explanation": "Listeners added without { capture: true } run in the bubbling phase: first on the element that was clicked, then on each ancestor up to the document. The order the listeners were added in does not matter."
+  },
+  {
+    "id": "dom-and-events.q04",
+    "topic": "dom-and-events",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["forms", "default-actions"],
+    "prompt": "A form's submit listener should stop the browser from loading a new page. Which call does that?",
+    "options": [
+      { "id": "a", "text": "event.preventDefault()" },
+      { "id": "b", "text": "event.stopPropagation()" },
+      { "id": "c", "text": "return false at the end of the listener" },
+      { "id": "d", "text": "form.reset()" }
+    ],
+    "answer": "a",
+    "explanation": "preventDefault cancels the browser's default action, which for a submit event is sending the form and loading the response. stopPropagation only stops the event reaching listeners on other elements, and the return value of a listener added with addEventListener is ignored."
+  },
+  {
+    "id": "dom-and-events.q05",
+    "topic": "dom-and-events",
+    "type": "multi_select",
+    "difficulty": 3,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["listeners", "abort-controller"],
+    "prompt": "A widget adds a listener with el.addEventListener('click', onClick, { signal: controller.signal }). Which of these remove it? Pick every one that does.",
+    "options": [
+      { "id": "a", "text": "controller.abort()" },
+      { "id": "b", "text": "el.removeEventListener('click', onClick)" },
+      { "id": "c", "text": "el.removeEventListener('click', (event) => onClick(event))" },
+      { "id": "d", "text": "el.onclick = null" }
+    ],
+    "answers": ["a", "b"],
+    "explanation": "Aborting the signal removes every listener added with it, which is how a component cleans up many listeners at once. removeEventListener works too, but only with the same function: a new arrow function is a different function, so it removes nothing. onclick = null only clears a handler set through the onclick property."
+  },
+  {
+    "id": "async-code.q01",
+    "topic": "async-code",
+    "type": "predict_output",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["async-await", "promises"],
+    "prompt": "What does this log?",
+    "code": "async function load() {\n  return 42;\n}\nconsole.log(load() instanceof Promise);",
+    "answer": "true",
+    "explanation": "An async function always returns a promise. return 42 resolves that promise with 42, so to get the number you await it or call .then on it."
+  },
+  {
+    "id": "async-code.q02",
+    "topic": "async-code",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["fetch", "errors"],
+    "prompt": "The server answers fetch('/api/items') with 404 Not Found. What happens?",
+    "options": [
+      {
+        "id": "a",
+        "text": "The promise resolves with a response whose ok property is false, so the code has to check it"
+      },
+      { "id": "b", "text": "The promise rejects with a 404 error" },
+      { "id": "c", "text": "fetch retries the request once" },
+      { "id": "d", "text": "The promise never settles" }
+    ],
+    "answer": "a",
+    "explanation": "fetch rejects only when no response arrives at all, for example after a network failure or an aborted request. Any HTTP status, including 404 and 500, resolves. Check response.ok (true for 200–299) and throw your own error when it is false."
+  },
+  {
+    "id": "async-code.q03",
+    "topic": "async-code",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["promise-all", "performance"],
+    "prompt": "getA, getB and getC each make an independent request that takes about 1 second. Which code gets all three results in about 1 second?",
+    "options": [
+      { "id": "a", "text": "const [a, b, c] = await Promise.all([getA(), getB(), getC()]);" },
+      { "id": "b", "text": "const a = await getA(); const b = await getB(); const c = await getC();" },
+      { "id": "c", "text": "for (const get of [getA, getB, getC]) await get();" },
+      { "id": "d", "text": "await getA().then(getB).then(getC);" }
+    ],
+    "answer": "a",
+    "explanation": "Calling all three functions first starts all three requests at once, and Promise.all waits for them together: about 1 second. The other versions start each request only after the previous one finishes, so they take about 3 seconds."
+  },
+  {
+    "id": "async-code.q04",
+    "topic": "async-code",
+    "type": "multi_select",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["errors", "async-await"],
+    "prompt": "getUser() returns a promise that rejects. Inside an async function, which of these handle the rejection? Pick every one that does.",
+    "options": [
+      { "id": "a", "text": "try { await getUser(); } catch (error) { showError(error); }" },
+      { "id": "b", "text": "getUser().catch((error) => showError(error));" },
+      { "id": "c", "text": "getUser().then(render, (error) => showError(error));" },
+      { "id": "d", "text": "try { getUser(); } catch (error) { showError(error); }" }
+    ],
+    "answers": ["a", "b", "c"],
+    "explanation": "await turns a rejection into a thrown error that try/catch can catch, and .catch or the second argument of .then handle it on the promise itself. Without await, the try block finishes before the promise rejects, so the catch never runs and the rejection goes unhandled."
+  },
+  {
+    "id": "async-code.q05",
+    "topic": "async-code",
+    "type": "predict_output",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["async-await", "event-loop"],
+    "prompt": "What is logged, in order? Separate the letters with a space or a comma.",
+    "code": "async function run() {\n  console.log('A');\n  await null;\n  console.log('C');\n}\nrun();\nconsole.log('B');",
+    "answer": "A B C",
+    "explanation": "An async function runs synchronously until its first await. There it pauses, and the rest of the function waits as a microtask, so the code after run() logs B before the function resumes and logs C."
+  },
+  {
+    "id": "event-loop.q01",
+    "topic": "event-loop",
+    "type": "predict_output",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["microtasks", "tasks"],
+    "prompt": "What is logged, in order? Separate the numbers with a space or a comma.",
+    "code": "console.log(1);\nsetTimeout(() => console.log(2), 0);\nPromise.resolve().then(() => console.log(3));\nconsole.log(4);",
+    "answer": "1 4 3 2",
+    "explanation": "Synchronous code runs first: 1 and 4. Then the microtask queue empties, so the promise callback logs 3. Only after that does the event loop take the next task, the timer's callback, which logs 2 even with a 0 ms delay."
+  },
+  {
+    "id": "event-loop.q02",
+    "topic": "event-loop",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["microtasks"],
+    "prompt": "Where do promise callbacks (.then handlers and the code after an await) wait before they run?",
+    "options": [
+      {
+        "id": "a",
+        "text": "In the microtask queue, which is emptied completely after the current task and before the next one"
+      },
+      { "id": "b", "text": "In the task queue, behind any setTimeout callbacks" },
+      { "id": "c", "text": "On the call stack, so they run immediately" },
+      { "id": "d", "text": "On a separate thread that runs alongside the main one" }
+    ],
+    "answer": "a",
+    "explanation": "Promise reactions are microtasks. After each task (a script, a timer callback, an event listener), the engine runs every queued microtask, including ones queued along the way, before the browser renders or starts the next task."
+  },
+  {
+    "id": "event-loop.q03",
+    "topic": "event-loop",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["main-thread", "rendering"],
+    "prompt": "A click listener runs a loop that takes 3 seconds. Why does the page freeze while it runs?",
+    "options": [
+      {
+        "id": "a",
+        "text": "JavaScript runs on one main thread, and the browser can only render and handle input between tasks"
+      },
+      { "id": "b", "text": "The browser pauses the loop every 16 ms to render, which slows everything down" },
+      { "id": "c", "text": "Loops run on a background thread that locks the DOM" },
+      { "id": "d", "text": "The browser stops the script after 1 second and reloads the page" }
+    ],
+    "answer": "a",
+    "explanation": "The listener is one task, and nothing else runs on the main thread until it returns: no rendering, no other clicks, no timers. Split long work into smaller tasks, or move it to a Web Worker."
+  },
+  {
+    "id": "event-loop.q04",
+    "topic": "event-loop",
+    "type": "predict_output",
+    "difficulty": 3,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["microtasks", "tasks"],
+    "prompt": "What is logged, in order? Separate the words with a space or a comma.",
+    "code": "setTimeout(() => console.log('timeout'), 0);\nqueueMicrotask(() => console.log('microtask'));\nPromise.resolve().then(() => console.log('then'));\nconsole.log('sync');",
+    "answer": "sync, microtask, then, timeout",
+    "explanation": "The synchronous log runs first. queueMicrotask and the promise callback both queue microtasks, which run in the order they were queued. The timer's callback is a task, so it waits until the microtask queue is empty."
+  },
+  {
+    "id": "event-loop.q05",
+    "topic": "event-loop",
+    "type": "multi_select",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["tasks", "microtasks"],
+    "prompt": "Which of these run as a task (sometimes called a macrotask) rather than a microtask? Pick every one that does.",
+    "options": [
+      { "id": "a", "text": "A setTimeout(callback, 0) callback" },
+      { "id": "b", "text": "A click listener running after the user clicks" },
+      { "id": "c", "text": "A queueMicrotask(callback) callback" },
+      { "id": "d", "text": "A .then callback on a resolved promise" }
+    ],
+    "answers": ["a", "b"],
+    "explanation": "Timers and events from the user or the network are queued as tasks, one per turn of the event loop. queueMicrotask and promise callbacks are microtasks, which run as soon as the current task finishes."
+  }
+]

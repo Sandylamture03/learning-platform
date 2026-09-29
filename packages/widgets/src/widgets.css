@@ -1,0 +1,313 @@
+/*
+ * Styles for the widgets' shadow roots. The page's CSS can't reach in here, but the design tokens are custom
+ * properties, which inherit through the shadow boundary: colours, type and spacing still come only from the tokens,
+ * and the dark theme follows the page.
+ */
+
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+p,
+ul,
+ol,
+fieldset,
+legend,
+pre {
+  margin: 0;
+}
+
+:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+a:hover {
+  color: var(--color-accent-hover);
+  text-decoration-thickness: 2px;
+}
+
+code,
+pre {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+/* Form controls, matching the site's own fields */
+.field {
+  display: grid;
+  gap: var(--space-2);
+  align-content: start;
+  min-inline-size: 0;
+}
+
+label {
+  font-weight: 650;
+}
+
+.hint {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+input:not([type="radio"], [type="checkbox"]),
+select {
+  inline-size: 100%;
+  min-block-size: 2.75rem;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+}
+
+select:disabled {
+  opacity: 0.7;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 2.75rem;
+  padding: var(--space-2) var(--space-5);
+  border: 2px solid var(--color-accent);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.button:hover {
+  border-color: var(--color-accent-hover);
+  background: var(--color-accent-hover);
+}
+
+.button--secondary {
+  background: transparent;
+  color: var(--color-accent);
+}
+
+.button--secondary:hover {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-hover);
+}
+
+.status {
+  margin-block: var(--space-5) var(--space-4);
+  color: var(--color-text-muted);
+  font-weight: 650;
+}
+
+/* Resource finder */
+.finder {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  gap: var(--space-4) var(--space-5);
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.field--wide {
+  grid-column: 1 / -1;
+}
+
+.results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  gap: var(--space-3) var(--space-5);
+  padding: 0;
+  list-style: none;
+}
+
+.result {
+  overflow-wrap: break-word;
+}
+
+.result__meta {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.empty {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-3);
+}
+
+/* Quiz */
+.intro {
+  max-inline-size: var(--width-prose);
+}
+
+.questions {
+  display: grid;
+  gap: var(--space-5);
+  padding: 0;
+  list-style: none;
+}
+
+.question {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+fieldset {
+  display: grid;
+  gap: var(--space-4);
+  inline-size: 100%;
+  min-inline-size: 0;
+  padding: 0;
+  border: 0;
+}
+
+legend {
+  padding: 0;
+  font-weight: 650;
+  overflow-wrap: break-word;
+}
+
+.question__number {
+  display: block;
+  margin-block-end: var(--space-1);
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Long lines wrap instead of scrolling, so a 320px screen never scrolls sideways. */
+.code {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-sunken);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.choices {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.choice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.choice input {
+  flex: none;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  margin: 0.2rem 0 0;
+  accent-color: var(--color-accent);
+}
+
+.choice label {
+  font-weight: 400;
+  overflow-wrap: anywhere;
+}
+
+fieldset:disabled .choice label {
+  cursor: default;
+}
+
+/* On the plain surface, where the success and danger colours are contrast-tested. */
+.mark {
+  display: inline-block;
+  padding: 0 var(--space-2);
+  border: 1px solid currentColor;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.mark--right {
+  color: var(--color-success);
+}
+
+.mark--wrong {
+  color: var(--color-danger);
+}
+
+.feedback {
+  display: grid;
+  gap: var(--space-2);
+  inline-size: 100%;
+  padding-block-start: var(--space-4);
+  border-block-start: 1px solid var(--color-border);
+  overflow-wrap: break-word;
+}
+
+.verdict {
+  font-weight: 700;
+}
+
+.verdict--right {
+  color: var(--color-success);
+}
+
+.verdict--wrong {
+  color: var(--color-danger);
+}
+
+.summary {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-3);
+  margin-block-start: var(--space-6);
+  padding: var(--space-5);
+  border: 2px solid var(--color-accent);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.summary__score {
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a,
+  .button {
+    transition:
+      color var(--duration-fast),
+      background-color var(--duration-fast),
+      border-color var(--duration-fast);
+  }
+}
+
+/* Last on purpose: it has the same specificity as the class rules above, so coming after them lets it win. */
+[hidden] {
+  display: none;
+}

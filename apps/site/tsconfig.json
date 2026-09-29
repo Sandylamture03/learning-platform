@@ -1,0 +1,8 @@
+{
+  "extends": "@lp/config/tsconfig.node.json",
+  "compilerOptions": {
+    // The e2e tests run code inside the browser (page.evaluate), so they need DOM types too.
+    "lib": ["es2024", "dom"]
+  },
+  "include": ["src", "test", "e2e", "playwright.config.ts", "vitest.config.ts"]
+}

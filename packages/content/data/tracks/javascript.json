@@ -1,0 +1,235 @@
+{
+  "id": "javascript",
+  "order": 2,
+  "title": "JavaScript",
+  "technologies": ["javascript"],
+  "status": "outline",
+  "summary": "The 20% of JavaScript that real jobs use 80% of the time: arrays and objects, async code, the DOM, professional tools, and closures and the event loop.",
+  "pace": {
+    "weeks": 5,
+    "effort": "10–12 hours a week"
+  },
+  "sources": ["JavaScript-80-20-Roadmap.docx"],
+  "skip": [
+    {
+      "item": "var and hoisting puzzles"
+    },
+    {
+      "item": "== type-conversion tables (always use ===)"
+    },
+    {
+      "item": "The internals of prototypes and call/apply/bind"
+    },
+    {
+      "item": "jQuery and XMLHttpRequest"
+    },
+    {
+      "item": "Generators, Symbols, Proxy and WeakMap"
+    },
+    {
+      "item": "Writing Webpack config by hand"
+    },
+    {
+      "item": "React class components, and starting with Redux"
+    }
+  ],
+  "modules": [
+    {
+      "id": "week-1",
+      "title": "Everyday fundamentals",
+      "weeks": [1, 1],
+      "learn": [
+        "const and let, basic types, template literals",
+        "===, truthy and falsy values, if and the ternary operator",
+        "for...of loops",
+        "Arrow functions vs regular functions, default parameters",
+        "Block scope and closures: a function that remembers variables from where it was created"
+      ],
+      "build": {
+        "title": "Solve 15–20 Exercism exercises; write makeCounter()",
+        "checklist": [
+          "Solve 15–20 exercises on the Exercism JavaScript track",
+          "Write a makeCounter() closure yourself"
+        ]
+      },
+      "resources": ["javascript-fundamentals", "closures", "exercism-javascript-track", "freecodecamp-channel"],
+      "notNow": ["var, hoisting puzzles, == conversion tables"],
+      "source": "JavaScript-80-20-Roadmap · Week 1"
+    },
+    {
+      "id": "week-2",
+      "title": "Arrays and objects",
+      "weeks": [2, 2],
+      "learn": [
+        "map, filter, reduce, find, some/every, includes",
+        "sort changes the original array; prefer toSorted()",
+        "Destructuring, spread/rest, ?. and ??, Object.entries",
+        "JSON.parse and JSON.stringify",
+        "Updating data without changing the original: {...obj, x: 1} and [...arr, item]. This is exactly how React state works."
+      ],
+      "build": {
+        "title": "Data functions on the jsonplaceholder /todos data",
+        "checklist": [
+          "Save the jsonplaceholder /todos data, then write functions for completion rate per user, grouping by user, title search and top N"
+        ]
+      },
+      "resources": [
+        "array-methods",
+        "destructuring",
+        "mdn-array-reference",
+        "web-dev-simplified",
+        "practice-data-todos"
+      ],
+      "notNow": ["Generators, Symbols, Proxy, WeakMap; prototype and call/apply/bind deep dives"],
+      "source": "JavaScript-80-20-Roadmap · Week 2"
+    },
+    {
+      "id": "week-3",
+      "title": "The DOM and events",
+      "weeks": [3, 3],
+      "learn": [
+        "querySelector, createElement, classList, dataset",
+        "textContent vs innerHTML: putting user input into innerHTML opens you to XSS attacks",
+        "addEventListener and preventDefault",
+        "Bubbling and event delegation",
+        "FormData and localStorage"
+      ],
+      "build": {
+        "title": "First 10 JavaScript30 projects; to-do app",
+        "checklist": [
+          "Finish the first 10 JavaScript30 projects",
+          "To-do app: add, edit, delete, toggle and filter, saved in localStorage. Keep one array as the source of truth and redraw the list from it (the same idea React uses)."
+        ]
+      },
+      "resources": ["document-and-the-dom", "events", "event-delegation", "javascript30"],
+      "notNow": ["document.write, inline onclick=\"\" handlers, jQuery"],
+      "source": "JavaScript-80-20-Roadmap · Week 3"
+    },
+    {
+      "id": "week-4",
+      "title": "Async JavaScript and APIs",
+      "weeks": [4, 4],
+      "learn": [
+        "The event loop as a concept",
+        "Promises, async/await and fetch",
+        "fetch does not throw an error on a 404, so always check response.ok",
+        "try/catch/finally and Promise.all",
+        "Loading, error and empty states in the UI",
+        "Debouncing: wait until the user stops typing before acting"
+      ],
+      "build": {
+        "title": "GitHub profile finder",
+        "checklist": [
+          "GitHub profile finder: search that waits until you stop typing, loading and 404 states, repositories sorted by stars, the user and their repositories fetched in parallel"
+        ]
+      },
+      "resources": [
+        "what-the-heck-is-the-event-loop-anyway-philip",
+        "promises-async-await",
+        "mdn-using-fetch",
+        "github-users-api"
+      ],
+      "notNow": ["XMLHttpRequest, callback-pyramid tutorials, writing your own Promise class"],
+      "source": "JavaScript-80-20-Roadmap · Week 4"
+    },
+    {
+      "id": "week-5",
+      "title": "Professional tools",
+      "weeks": [5, 5],
+      "learn": [
+        "ES modules, npm scripts and Vite",
+        "Git: branches, pull requests and resolving conflicts",
+        "The DevTools debugger: breakpoints and the Network tab",
+        "ESLint and Prettier",
+        "Classes, plus enough about this to know that arrow functions don’t get their own this"
+      ],
+      "build": {
+        "title": "Vite + modules; push to GitHub and deploy",
+        "checklist": [
+          "Move the Week 4 app into a Vite project split into modules",
+          "Push it to GitHub with clean commits and deploy it on Netlify or Vercel"
+        ]
+      },
+      "resources": ["vite-guide", "learn-git-branching-interactive", "chrome-devtools-debug-javascript", "modules"],
+      "notNow": ["Writing Webpack config by hand"],
+      "source": "JavaScript-80-20-Roadmap · Week 5"
+    }
+  ],
+  "topics": [
+    {
+      "id": "scope-and-closures",
+      "title": "Scope and closures",
+      "priority": "P0",
+      "module": "week-1",
+      "why": "Interviewers ask about closures more than almost anything else; learn them at the level of “I can explain it.”",
+      "status": "outline"
+    },
+    {
+      "id": "arrays-and-objects",
+      "title": "Working with arrays and objects",
+      "priority": "P0",
+      "module": "week-2",
+      "why": "Most day-to-day JavaScript work is reshaping data from an API into what the screen needs: map/filter/reduce, destructuring and spread.",
+      "status": "outline"
+    },
+    {
+      "id": "dom-and-events",
+      "title": "The DOM and events",
+      "priority": "P0",
+      "module": "week-3",
+      "why": "React later takes over most of this, so learn the model, not every API.",
+      "status": "outline"
+    },
+    {
+      "id": "async-code",
+      "title": "Async code",
+      "priority": "P0",
+      "module": "week-4",
+      "why": "Promises, async/await, fetch and error handling sit behind every API call.",
+      "status": "outline"
+    },
+    {
+      "id": "event-loop",
+      "title": "The event loop",
+      "priority": "P0",
+      "module": "week-4",
+      "why": "One of the topics interviewers ask about most; explain the call stack, microtasks and tasks.",
+      "status": "outline"
+    },
+    {
+      "id": "professional-tools",
+      "title": "Professional tools",
+      "priority": "P0",
+      "module": "week-5",
+      "why": "Modules, npm, Git, DevTools and Vite are how every JavaScript project is built and shipped.",
+      "status": "outline"
+    },
+    {
+      "id": "this-keyword",
+      "title": "this and classes",
+      "priority": "P1",
+      "module": "week-5",
+      "why": "How a function is called decides what this is, a favourite interview question.",
+      "status": "outline"
+    }
+  ],
+  "interviewChecklist": [
+    "Closures",
+    "The event loop: call stack, microtasks and tasks",
+    "this: how the way a function is called decides it",
+    "Promises and async/await, including error handling",
+    "map, filter and reduce, written from memory"
+  ],
+  "notes": [
+    {
+      "title": "Where to go next",
+      "items": [
+        "After Week 5, JavaScript continues in the React, TypeScript and Node.js tracks: React, then TypeScript and testing, then Node.js and a REST API."
+      ]
+    }
+  ],
+  "capstone": {
+    "title": "ApplyTrack",
+    "summary": "A full-stack job application tracker built with React, TypeScript, Node/Express and a real database."
+  }
+}

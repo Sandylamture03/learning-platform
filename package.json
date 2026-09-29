@@ -1,0 +1,30 @@
+{
+  "name": "learning-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Learn the 20% of HTML5, CSS3, JavaScript, TypeScript, React and Node.js that real jobs use.",
+  "type": "module",
+  "packageManager": "pnpm@11.28.2",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "pnpm --filter @lp/site dev",
+    "test": "turbo run test",
+    "test:e2e": "pnpm --filter @lp/site test:e2e",
+    "typecheck": "turbo run typecheck && tsc -p .",
+    "lint": "biome check .",
+    "fix": "biome check --write .",
+    "check:content": "pnpm --filter @lp/content check",
+    "check:boundaries": "node tools/check-boundaries.ts",
+    "validate:html": "pnpm --filter @lp/site validate",
+    "verify": "pnpm lint && pnpm check:boundaries && tsc -p . && turbo run typecheck test check build && pnpm validate:html"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "@types/node": "catalog:",
+    "turbo": "catalog:",
+    "typescript": "catalog:"
+  }
+}

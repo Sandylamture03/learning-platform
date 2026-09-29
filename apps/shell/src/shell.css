@@ -1,0 +1,29 @@
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  line-height: var(--leading-normal);
+}
+
+.shell {
+  width: min(100% - 2 * var(--gutter), var(--width-prose));
+  margin: var(--space-7) auto;
+}
+
+.shell button {
+  min-block-size: 2.75rem;
+  padding: var(--space-2) var(--space-5);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.shell :focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}

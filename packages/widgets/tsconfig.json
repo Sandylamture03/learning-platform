@@ -1,0 +1,9 @@
+{
+  "extends": "@lp/config/tsconfig.browser.json",
+  "compilerOptions": {
+    // The widgets are plain JavaScript with JSDoc types and no build step; tsc checks them anyway.
+    "allowJs": true,
+    "checkJs": true
+  },
+  "include": ["src", "test", "vitest.config.ts"]
+}

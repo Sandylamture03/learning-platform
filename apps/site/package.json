@@ -1,0 +1,31 @@
+{
+  "name": "@lp/site",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The public site: semantic HTML5 and CSS3, generated from the content, plus the Phase 2 widgets on the pages that use them.",
+  "type": "module",
+  "scripts": {
+    "build": "node src/build.ts",
+    "dev": "node --watch src/dev.ts",
+    "serve": "node src/serve.ts",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "typecheck": "tsc -p .",
+    "validate": "html-validate dist"
+  },
+  "dependencies": {
+    "@lp/content": "workspace:*",
+    "@lp/contracts": "workspace:*",
+    "@lp/design-tokens": "workspace:*",
+    "@lp/widgets": "workspace:*"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "catalog:",
+    "@lp/config": "workspace:*",
+    "@playwright/test": "catalog:",
+    "@types/node": "catalog:",
+    "html-validate": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

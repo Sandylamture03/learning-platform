@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Lint, type-check, test, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6 # installs the pnpm version in package.json "packageManager"
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm check:boundaries
+      - run: pnpm exec tsc -p .
+      - run: pnpm exec turbo run typecheck test check build
+      - run: pnpm validate:html
+      - name: W3C (Nu) HTML checker
+        run: |
+          npm install --no-save --prefix "$RUNNER_TEMP/vnu" vnu-jar@26.9.27
+          java -jar "$RUNNER_TEMP/vnu/node_modules/vnu-jar/build/dist/vnu.jar" --errors-only --skip-non-html apps/site/dist
+      - uses: actions/upload-artifact@v7
+        with:
+          name: site
+          path: apps/site/dist
+
+  e2e:
+    name: Browser checks (axe, 320px, keyboard)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @lp/site exec playwright install --with-deps chromium
+      - run: pnpm test:e2e
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: playwright-report
+          path: apps/site/playwright-report

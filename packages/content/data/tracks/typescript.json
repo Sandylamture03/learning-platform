@@ -1,0 +1,176 @@
+{
+  "id": "typescript",
+  "order": 3,
+  "title": "TypeScript",
+  "technologies": ["typescript"],
+  "status": "outline",
+  "summary": "Only the TypeScript that React and Node.js work needs: everyday types, typed components and API data, and TypeScript on Node.js.",
+  "pace": {
+    "weeks": 3,
+    "effort": "alongside the React and Node.js tracks"
+  },
+  "sources": [
+    "JavaScript-80-20-Roadmap.docx",
+    "React 80 20 Roadmap.docx",
+    "Node.js 80 20 Roadmap.docx",
+    "Full-Stack Developer 80 20 Roadmap.docx"
+  ],
+  "skip": [
+    {
+      "item": "Conditional and mapped types",
+      "why": "advanced type tricks; learn them when a codebase needs them"
+    },
+    {
+      "item": "enum and namespace",
+      "why": "Node.js runs TypeScript by stripping types, which only works with erasable syntax"
+    }
+  ],
+  "modules": [
+    {
+      "id": "everyday-types",
+      "title": "Everyday types",
+      "goal": "Read and write the types you meet every day, and convert a small JavaScript app to TypeScript.",
+      "learn": [
+        "Types, interfaces, union and literal types",
+        "Adding types to props, state and API responses",
+        "Narrowing, and how to read generics"
+      ],
+      "build": {
+        "title": "Convert an app to TypeScript",
+        "checklist": [
+          "Convert a small JavaScript app to TypeScript and ship it through a GitHub pull request",
+          "Convert a React app you have built to TypeScript"
+        ]
+      },
+      "resources": ["ts-handbook-everyday-types", "total-typescript-beginner-s-typescript", "typescript-handbook"],
+      "notNow": ["Advanced type tricks such as conditional and mapped types"],
+      "source": "JavaScript-80-20-Roadmap · Week 7 + Full-Stack Developer 80 20 Roadmap · Week 2"
+    },
+    {
+      "id": "typescript-for-react",
+      "title": "TypeScript for React",
+      "goal": "Type props, state, events, refs, context and API responses in a React app.",
+      "learn": [
+        "Only the TypeScript React needs: type vs interface, unions ('idle' | 'loading' | 'error'), optional fields, arrays, and enough generics to read useState<User | null>(null).",
+        "Type props (with children: React.ReactNode), events (React.ChangeEvent<HTMLInputElement>), refs (useRef<HTMLInputElement>(null)), context and API responses.",
+        "Extend native elements: type ButtonProps = React.ComponentProps<'button'> & { variant: 'primary' | 'ghost' }.",
+        "Model UI states with discriminated unions so \"loading and error at once\" can't happen."
+      ],
+      "build": {
+        "title": "Typed expense tracker",
+        "brief": "Migrate the React track’s Week 2 expense tracker to TypeScript with strict mode on."
+      },
+      "doneWhen": ["tsc passes in strict mode with zero any"],
+      "resources": [
+        "react-typescript-cheatsheet",
+        "using-typescript",
+        "beginner-s-typescript-and-react-with-typescript",
+        "react-typescript-tutorial-for-beginners"
+      ],
+      "source": "React 80 20 Roadmap · Week 4 (days 1–3)"
+    },
+    {
+      "id": "typescript-on-node",
+      "title": "TypeScript on Node.js",
+      "goal": "Run a typed Express API with Node’s built-in type stripping and keep tsc as the type checker.",
+      "learn": [
+        "TypeScript: types, interfaces, unions, basic generics, strict mode, typing Express handlers, z.infer to reuse Zod schemas as types"
+      ],
+      "build": {
+        "title": "Typed API",
+        "checklist": [
+          "Convert the project to TypeScript with strict: true; run it with Node's built-in type stripping, and add tsc --noEmit to npm test (set erasableSyntaxOnly in tsconfig, so skip enum and namespace)"
+        ]
+      },
+      "resources": [
+        "total-typescript-beginner-s-typescript",
+        "typescript-handbook",
+        "running-typescript-natively-in-node-js"
+      ],
+      "notNow": ["enum and namespace (erasableSyntaxOnly rejects them)"],
+      "source": "Node.js 80 20 Roadmap · Week 6"
+    }
+  ],
+  "topics": [
+    {
+      "id": "types-and-interfaces",
+      "title": "Types and interfaces",
+      "priority": "P0",
+      "module": "everyday-types",
+      "why": "The everyday vocabulary of every TypeScript codebase.",
+      "status": "outline"
+    },
+    {
+      "id": "unions-and-literal-types",
+      "title": "Unions and literal types",
+      "priority": "P0",
+      "module": "everyday-types",
+      "why": "Model values that can be one of a few shapes, such as ‘idle’ | ‘loading’ | ‘error’.",
+      "status": "outline"
+    },
+    {
+      "id": "narrowing",
+      "title": "Narrowing",
+      "priority": "P0",
+      "module": "everyday-types",
+      "why": "How TypeScript follows your checks so unions become safe to use.",
+      "status": "outline"
+    },
+    {
+      "id": "reading-generics",
+      "title": "Reading generics",
+      "priority": "P0",
+      "module": "everyday-types",
+      "why": "Enough generics to read library types such as useState<User | null>(null).",
+      "status": "outline"
+    },
+    {
+      "id": "typing-props-state-events",
+      "title": "Typing props, state and events",
+      "priority": "P0",
+      "module": "typescript-for-react",
+      "why": "Standard on most professional React codebases.",
+      "status": "outline"
+    },
+    {
+      "id": "typing-api-responses",
+      "title": "Typing API responses",
+      "priority": "P0",
+      "module": "typescript-for-react",
+      "why": "Types at the edge of the app, where data arrives from the network.",
+      "status": "outline"
+    },
+    {
+      "id": "discriminated-unions-ui-state",
+      "title": "Discriminated unions for UI state",
+      "priority": "P0",
+      "module": "typescript-for-react",
+      "why": "Make impossible states, like loading and error at once, unrepresentable.",
+      "status": "outline"
+    },
+    {
+      "id": "strict-mode",
+      "title": "Strict mode and tsconfig",
+      "priority": "P0",
+      "module": "typescript-on-node",
+      "why": "tsc in strict mode with zero any is the bar both the React and Node.js guides set.",
+      "status": "outline"
+    },
+    {
+      "id": "zod-and-z-infer",
+      "title": "Zod and z.infer",
+      "priority": "P0",
+      "module": "typescript-on-node",
+      "why": "One schema gives you both runtime validation and the TypeScript type.",
+      "status": "outline"
+    },
+    {
+      "id": "typescript-on-node",
+      "title": "Running TypeScript on Node.js",
+      "priority": "P0",
+      "module": "typescript-on-node",
+      "why": "Node.js runs .ts files directly by stripping types; tsc --noEmit stays the type checker.",
+      "status": "outline"
+    }
+  ]
+}

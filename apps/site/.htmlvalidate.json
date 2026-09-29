@@ -1,0 +1,8 @@
+{
+  "$schema": "https://html-validate.org/schemas/config.json",
+  "extends": ["html-validate:recommended"],
+  "rules": {
+    "no-redundant-role": "off",
+    "prefer-native-element": ["error", { "exclude": ["list"] }]
+  }
+}

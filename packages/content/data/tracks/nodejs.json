@@ -1,0 +1,477 @@
+{
+  "id": "nodejs",
+  "order": 5,
+  "title": "Node.js",
+  "technologies": ["nodejs"],
+  "status": "outline",
+  "summary": "A typical Node.js backend job: receive an HTTP request, validate it, check who the user is, read or write a database, return JSON, and keep it running safely in production.",
+  "pace": {
+    "weeks": 8,
+    "effort": "10–12 hours a week"
+  },
+  "sources": ["Node.js 80 20 Roadmap.docx", "Express-80-20-Roadmap.docx"],
+  "skip": [
+    {
+      "item": "Callback-style code (fs.readFile(path, cb)), \"callback hell\"",
+      "instead": "fs/promises + async/await; read callbacks only in legacy code"
+    },
+    {
+      "item": "require() / CommonJS as your default",
+      "instead": "ES modules (\"type\": \"module\" in package.json); know require() well enough to read old code"
+    },
+    {
+      "item": "var, manual prototypes, .bind() tricks",
+      "instead": "const/let, classes, arrow functions"
+    },
+    {
+      "item": "The body-parser package",
+      "instead": "express.json(), built into Express"
+    },
+    {
+      "item": "nodemon",
+      "instead": "node --watch, built into Node.js"
+    },
+    {
+      "item": "dotenv",
+      "instead": "node --env-file=.env, built into Node.js"
+    },
+    {
+      "item": "ts-node or a build step just to run TypeScript",
+      "instead": "Node.js runs .ts files directly (type stripping, stable since v24.12); keep tsc --noEmit for type checks"
+    },
+    {
+      "item": "request (deprecated) and axios for simple calls",
+      "instead": "Built-in fetch; axios is still common in existing code, so learn to read it"
+    },
+    {
+      "item": "try/catch in every route, express-async-errors",
+      "instead": "Express 5 sends rejected promises from async routes to your error handler (Express 5 migration guide)"
+    },
+    {
+      "item": "libuv internals, cluster, worker threads, C++ addons",
+      "instead": "Learn when a job needs them; rare in API work"
+    },
+    {
+      "item": "Framework hopping (NestJS, Fastify, Hono, Koa) in these 8 weeks",
+      "instead": "Master Express first; the ideas transfer. NestJS is a good next step if your target companies use it"
+    },
+    {
+      "item": "GraphQL, microservices, Kubernetes",
+      "instead": "After the capstone"
+    }
+  ],
+  "modules": [
+    {
+      "id": "week-1",
+      "title": "Async JavaScript and how Node.js runs it",
+      "weeks": [1, 1],
+      "goal": "Write async code without guessing, and know what Node.js does for you before any framework hides it.",
+      "learn": [
+        "Promises, async/await, try/catch, Promise.all / Promise.allSettled",
+        "The event loop: call stack, microtasks vs. timers, and why one slow synchronous loop freezes every user's request",
+        "ES modules, npm init, npm run scripts, dependencies vs. devDependencies, semver ranges, package-lock.json, npx"
+      ],
+      "build": {
+        "title": "Practice tasks",
+        "checklist": [
+          "Install Node.js 24 LTS with a version manager (nvm, or fnm on Windows)",
+          "Fetch data from a public API with built-in fetch; run 3 requests in parallel with Promise.all; handle one failing request cleanly",
+          "Predict the print order of setTimeout, setImmediate, Promise.then and process.nextTick — then run it and explain any surprise"
+        ]
+      },
+      "resources": [
+        "introduction-to-node-js",
+        "the-node-js-event-loop",
+        "promises-async-await",
+        "fireship-node-js-ultimate-beginner-s-guide-in-7",
+        "what-the-heck-is-the-event-loop-anyway-philip",
+        "lydia-hallie-javascript-visualized-event-loop"
+      ],
+      "source": "Node.js 80 20 Roadmap · Week 1"
+    },
+    {
+      "id": "week-2",
+      "title": "Core modules",
+      "weeks": [2, 2],
+      "goal": "Write async code without guessing, and know what Node.js does for you before any framework hides it.",
+      "learn": [
+        "node:fs/promises, node:path, process (argv, env, exit codes), node:events (EventEmitter)",
+        "Streams and pipeline(): process a 1 GB file without loading it into memory",
+        "The raw node:http module — once, so you know what Express abstracts"
+      ],
+      "build": {
+        "title": "Gate project: CLI file tool",
+        "checklist": ["Build a raw node:http server with two JSON routes and a 404"]
+      },
+      "doneWhen": [
+        "A csv-to-json command that streams a large CSV, transforms each row, writes JSON, takes flags via util.parseArgs, and exits with code 1 on bad input. Push it to GitHub with a README."
+      ],
+      "resources": [
+        "node-learn-command-line",
+        "node-learn-reading-files",
+        "node-api-fs",
+        "node-api-stream",
+        "node-api-events",
+        "dave-gray-node-js-full-course-for-beginners",
+        "the-odin-project-nodejs"
+      ],
+      "source": "Node.js 80 20 Roadmap · Week 2"
+    },
+    {
+      "id": "week-3",
+      "title": "REST APIs with Express 5",
+      "weeks": [3, 3],
+      "goal": "Build the thing most Node.js developers build every day — a validated REST API on a real database.",
+      "learn": [
+        "HTTP: methods, status codes (200, 201, 204, 400, 401, 403, 404, 409, 500), headers, path vs. query params",
+        "REST design: plural nouns (/notes/:id), pagination, filtering, consistent error shape",
+        "Express 5: Router, middleware order, express.json(), async handlers, error middleware (err, req, res, next), a 404 handler",
+        "Validation with Zod: parse req.body and req.query, return 400 with field-level errors",
+        "Structure: routes → controllers → services, so database code never lives in a route"
+      ],
+      "build": {
+        "title": "Practice tasks",
+        "checklist": [
+          "Build an in-memory \"notes\" API: list (paginated), get, create, update (PATCH), delete",
+          "Add Zod validation and one central error handler returning { error: { code, message } }",
+          "Call every endpoint from an HTTP client (Postman, Bruno or VS Code REST Client) and save the collection in the repo"
+        ]
+      },
+      "resources": [
+        "express-routing",
+        "express-using-middleware",
+        "express-error-handling",
+        "migrating-to-express-5",
+        "zod-docs",
+        "mdn-http",
+        "microsoft-web-api-design-best-practices",
+        "freecodecamp-node-js-and-express-js-full-course",
+        "mdn-an-overview-of-http",
+        "web-dev-simplified-learn-express-js-in-35",
+        "traversy-media-express-crash-course",
+        "express-writing-middleware",
+        "anson-the-developer-express-js-full-course"
+      ],
+      "source": "Node.js 80 20 Roadmap · Week 3 + Express-80-20-Roadmap · Week 1, 2"
+    },
+    {
+      "id": "week-4",
+      "title": "PostgreSQL + an ORM",
+      "weeks": [4, 4],
+      "goal": "Build the thing most Node.js developers build every day — a validated REST API on a real database.",
+      "learn": [
+        "SQL: SELECT, WHERE, ORDER BY, LIMIT, JOINs, GROUP BY, INSERT/UPDATE/DELETE, primary and foreign keys, indexes, transactions",
+        "Parameterised queries with the pg driver — and why building SQL from strings means SQL injection",
+        "Prisma ORM: schema, migrations, relations, CRUD, select/include, transactions; spot and fix N+1 queries"
+      ],
+      "build": {
+        "title": "Gate project: CRUD API",
+        "checklist": ["Finish all SQLBolt lessons", "Write three raw queries with pg using $1 placeholders"]
+      },
+      "doneWhen": [
+        "Move the notes API onto PostgreSQL with Prisma — users and notes (one-to-many), tags (many-to-many), committed migrations, pagination, validation, correct 404 and 409 responses"
+      ],
+      "resources": [
+        "sqlbolt",
+        "freecodecamp-learn-postgresql-full-course-for",
+        "node-postgres",
+        "prisma-postgresql-quickstart",
+        "drizzle-orm",
+        "the-odin-project-nodejs",
+        "zod-docs",
+        "pedrotech-backend-complete-course",
+        "mongoose-docs",
+        "net-ninja-node-js-crash-course"
+      ],
+      "source": "Node.js 80 20 Roadmap · Week 4 + Express-80-20-Roadmap · Week 3"
+    },
+    {
+      "id": "week-5",
+      "title": "Authentication and security",
+      "weeks": [5, 5],
+      "goal": "Turn a working API into one a team would merge — users, permissions, tests and logs.",
+      "learn": [
+        "Password hashing with Argon2id (OWASP's first choice) or bcrypt; never store plain or reversible passwords",
+        "JWT: a short-lived access token plus a refresh token in an httpOnly cookie, checked by middleware on every request",
+        "Sessions vs. JWT: server sessions are simpler for a single app; JWTs suit separate front-ends and services",
+        "Authorisation: roles (user, admin) and ownership checks — broken access control is #1 in the OWASP Top 10",
+        "Hardening: Helmet headers, a CORS allow-list, rate limiting on login, secrets only in env vars, npm audit"
+      ],
+      "build": {
+        "title": "Practice tasks",
+        "checklist": [
+          "Add register, login, refresh and logout to the notes API",
+          "Write requireAuth and requireRole('admin') middleware; a user can edit only their own notes",
+          "Add Helmet, CORS and a login rate limit",
+          "Use the OWASP Node.js cheat sheet as a checklist against your code"
+        ]
+      },
+      "resources": [
+        "jwt-io-introduction-to-json-web-tokens",
+        "owasp-password-storage-cheat-sheet",
+        "owasp-node-js-security-cheat-sheet",
+        "owasp-top-10-2025",
+        "helmet",
+        "express-rate-limit",
+        "dave-gray-node-js-full-course-for-beginners",
+        "express-security-best-practices"
+      ],
+      "source": "Node.js 80 20 Roadmap · Week 5 + Express-80-20-Roadmap · Week 4"
+    },
+    {
+      "id": "week-6",
+      "title": "Testing, logging and TypeScript",
+      "weeks": [6, 6],
+      "goal": "Turn a working API into one a team would merge — users, permissions, tests and logs.",
+      "learn": [
+        "API tests that hit real endpoints against a test database give the most value; unit-test services with real logic; mock only outside services",
+        "Vitest (or the built-in node:test) with Supertest",
+        "Structured logging with pino: log levels, a request ID per request, never log passwords or tokens",
+        "Process safety: unhandledRejection handling and graceful shutdown on SIGTERM",
+        "TypeScript: types, interfaces, unions, basic generics, strict mode, typing Express handlers, z.infer to reuse Zod schemas as types"
+      ],
+      "build": {
+        "title": "Gate project: secured API",
+        "checklist": [
+          "Write API tests for every notes endpoint, including the 401, 403 and 404 paths",
+          "Add pino request logging",
+          "Convert the project to TypeScript with strict: true; run it with Node's built-in type stripping, and add tsc --noEmit to npm test (set erasableSyntaxOnly in tsconfig, so skip enum and namespace)"
+        ]
+      },
+      "doneWhen": ["Auth, roles and a test suite that passes with one command"],
+      "resources": [
+        "vitest-guide",
+        "node-js-test-runner",
+        "supertest",
+        "pino",
+        "javascript-node-js-testing-best-practices",
+        "node-js-best-practices",
+        "total-typescript-beginner-s-typescript",
+        "typescript-handbook",
+        "running-typescript-natively-in-node-js",
+        "docker-node-js-language-guide"
+      ],
+      "source": "Node.js 80 20 Roadmap · Week 6 + Express-80-20-Roadmap · Week 5"
+    },
+    {
+      "id": "week-7",
+      "title": "Caching and background jobs",
+      "weeks": [7, 7],
+      "goal": "Make it fast, move slow work off the request path, and put it on the internet.",
+      "learn": [
+        "Cache-aside with Redis: check the cache, fall back to the database, store with a TTL, invalidate on writes",
+        "What not to cache: per-user secrets, and queries that are already fast",
+        "Queues with BullMQ: producers, workers, retries with backoff, delayed jobs, failed-job handling",
+        "Keep the event loop free: emails, PDFs and image work belong in a worker, not in the request",
+        "Read a query plan with EXPLAIN ANALYZE and fix it with an index"
+      ],
+      "build": {
+        "title": "Practice tasks",
+        "checklist": [
+          "Cache the capstone's public listing endpoint; measure before and after with autocannon",
+          "Send confirmation emails from a BullMQ worker (use a test inbox such as Ethereal, not real addresses)",
+          "Find your slowest query, add an index, and record the difference"
+        ]
+      },
+      "resources": ["node-redis-guide", "bullmq", "autocannon", "hussein-nasser"],
+      "source": "Node.js 80 20 Roadmap · Week 7"
+    },
+    {
+      "id": "week-8",
+      "title": "Docker, CI/CD and deployment",
+      "weeks": [8, 8],
+      "goal": "Make it fast, move slow work off the request path, and put it on the internet.",
+      "learn": [
+        "A production Dockerfile: multi-stage build, npm ci --omit=dev, non-root user, .dockerignore",
+        "Docker Compose: API + PostgreSQL + Redis from one command",
+        "Config the twelve-factor way: everything from env vars, a /health endpoint, graceful shutdown",
+        "CI with GitHub Actions: install → lint → type-check → test on every pull request",
+        "Deploy: a container host (Render, Railway or Fly.io) or a small VPS, with managed PostgreSQL (Neon or Supabase); free tiers change often, so check each before you pick"
+      ],
+      "build": {
+        "title": "Gate project: capstone is live",
+        "checklist": [
+          "Dockerise the capstone; docker compose up starts the whole stack",
+          "Add a GitHub Actions workflow that runs the tests against a PostgreSQL service container"
+        ]
+      },
+      "doneWhen": ["Deploy it and put the public URL at the top of the README"],
+      "resources": [
+        "docker-node-js-language-guide",
+        "github-actions-building-and-testing-node-js",
+        "the-twelve-factor-app",
+        "fireship-learn-docker-in-7-easy-steps",
+        "node-js-best-practices",
+        "render-deploy-a-node-express-app",
+        "express-health-checks-and-graceful-shutdown",
+        "express-performance-best-practices",
+        "prisma-transactions",
+        "multer-readme",
+        "swagger-ui-express"
+      ],
+      "source": "Node.js 80 20 Roadmap · Week 8 + Express-80-20-Roadmap · Week 6, 7, 8"
+    }
+  ],
+  "topics": [
+    {
+      "id": "promises-async-await",
+      "title": "Promises, async/await, try/catch",
+      "priority": "P0",
+      "module": "week-1",
+      "why": "Every database, HTTP and file call is async",
+      "status": "outline"
+    },
+    {
+      "id": "event-loop-non-blocking-io",
+      "title": "Event loop and non-blocking I/O",
+      "priority": "P0",
+      "module": "week-1",
+      "why": "Explains slow-server bugs; a top interview question",
+      "status": "outline"
+    },
+    {
+      "id": "es-modules-and-npm",
+      "title": "ES modules (import/export) and npm (package.json, scripts, semver, lockfile)",
+      "priority": "P0",
+      "module": "week-1",
+      "why": "Every project starts here",
+      "status": "outline"
+    },
+    {
+      "id": "core-modules",
+      "title": "Core modules: fs/promises, path, process.env, events, streams",
+      "priority": "P0",
+      "module": "week-2",
+      "why": "Config, files, uploads, logs",
+      "status": "outline"
+    },
+    {
+      "id": "http-and-rest",
+      "title": "HTTP basics: methods, status codes, headers, JSON, REST design",
+      "priority": "P0",
+      "module": "week-3",
+      "why": "The contract behind every API",
+      "status": "outline"
+    },
+    {
+      "id": "express-5",
+      "title": "Express 5: routing, middleware, error-handling middleware",
+      "priority": "P0",
+      "module": "week-3",
+      "why": "The most widely used Node.js web framework",
+      "status": "outline"
+    },
+    {
+      "id": "input-validation-zod",
+      "title": "Input validation with a schema (Zod)",
+      "priority": "P0",
+      "module": "week-3",
+      "why": "Stops bad data and a whole class of security bugs",
+      "status": "outline"
+    },
+    {
+      "id": "sql-postgresql-prisma",
+      "title": "SQL, PostgreSQL, an ORM (Prisma), migrations",
+      "priority": "P0",
+      "module": "week-4",
+      "why": "Almost every backend stores relational data",
+      "status": "outline"
+    },
+    {
+      "id": "auth",
+      "title": "Auth: password hashing, JWT, cookies, role-based access",
+      "priority": "P0",
+      "module": "week-5",
+      "why": "Every product has users",
+      "status": "outline"
+    },
+    {
+      "id": "security-basics",
+      "title": "Security basics: OWASP Top 10, helmet, CORS, rate limiting, secrets",
+      "priority": "P0",
+      "module": "week-5",
+      "why": "Asked in interviews; prevents incidents",
+      "status": "outline"
+    },
+    {
+      "id": "testing",
+      "title": "Testing: unit tests + API tests (Vitest or node:test + Supertest)",
+      "priority": "P0",
+      "module": "week-6",
+      "why": "Pull requests without tests don't get merged",
+      "status": "outline"
+    },
+    {
+      "id": "error-handling-and-logging",
+      "title": "Central error handling and structured logging (pino)",
+      "priority": "P0",
+      "module": "week-6",
+      "why": "How you debug production at 2 a.m.",
+      "status": "outline"
+    },
+    {
+      "id": "typescript",
+      "title": "TypeScript",
+      "priority": "P0",
+      "module": "week-6",
+      "why": "Most new Node.js codebases use it",
+      "status": "outline"
+    },
+    {
+      "id": "caching-with-redis",
+      "title": "Caching with Redis",
+      "priority": "P0",
+      "module": "week-7",
+      "why": "The standard fix for slow, repeated reads",
+      "status": "outline"
+    },
+    {
+      "id": "background-jobs",
+      "title": "Background jobs and queues (BullMQ)",
+      "priority": "P0",
+      "module": "week-7",
+      "why": "Emails, reports, anything too slow for a request",
+      "status": "outline"
+    },
+    {
+      "id": "docker-ci-deploy",
+      "title": "Docker, environment config, CI/CD, deployment",
+      "priority": "P0",
+      "module": "week-8",
+      "why": "You own your code in production",
+      "status": "outline"
+    }
+  ],
+  "resources": [
+    "introduction-to-node-js",
+    "node-js-api-reference",
+    "express-routing",
+    "javascript-info",
+    "the-odin-project-nodejs",
+    "node-js-best-practices",
+    "owasp-cheat-sheet-series",
+    "roadmap-sh-node-js",
+    "fireship",
+    "dave-gray",
+    "freecodecamp-channel",
+    "hussein-nasser",
+    "chai-aur-code",
+    "piyush-garg"
+  ],
+  "notes": [
+    {
+      "title": "Express 5 vs older tutorials",
+      "items": [
+        "express-async-handler or try/catch in every route → Plain async handlers. Thrown errors reach your error middleware",
+        "app.get('/*', …) → app.get('/*splat', …)",
+        "res.json(obj, 404) → res.status(404).json(obj)",
+        "require('body-parser') → express.json()",
+        "req.param('id') → req.params.id, req.query or req.body"
+      ]
+    }
+  ],
+  "capstone": {
+    "title": "TicketHub",
+    "summary": "An event-booking API that never sells the same seat twice: holds, a payment webhook, a worker, caching and a 50-request concurrency test."
+  }
+}

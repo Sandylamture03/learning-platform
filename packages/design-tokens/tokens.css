@@ -1,0 +1,94 @@
+/*
+ * Design tokens: the one place colours, type, spacing and shapes are defined.
+ * The public site and the React shell both import this file; components use the variables only.
+ * Contrast pairs are checked in test/contrast.test.ts (WCAG AA: 4.5:1 text, 3:1 UI).
+ */
+@layer tokens {
+  :root {
+    color-scheme: light dark;
+
+    /* Colour: light theme */
+    --color-bg: #fbfaf8;
+    --color-surface: #ffffff;
+    --color-surface-sunken: #f3f2ef;
+    --color-text: #1c1d21;
+    --color-text-muted: #545a66;
+    --color-border: #dedcd7;
+    --color-border-strong: #767b86;
+    --color-accent: #4338ca;
+    --color-accent-hover: #3730a3;
+    --color-on-accent: #ffffff;
+    --color-accent-soft: #eef0ff;
+    --color-danger: #b42318;
+    --color-success: #067647;
+    --color-p0-bg: #fdecdc;
+    --color-p0-text: #8a2c0d;
+    --color-p1-bg: #e3edff;
+    --color-p1-text: #1d3f8f;
+    --color-badge-bg: #eeede9;
+    --color-badge-text: #3a3f4a;
+    --color-focus: var(--color-accent);
+
+    /* Type: system fonts, so nothing to download */
+    --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, "Cascadia Code", "SFMono-Regular", Menlo, Consolas, monospace;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-h3: clamp(1.15rem, 1.05rem + 0.5vw, 1.35rem);
+    --text-h2: clamp(1.45rem, 1.15rem + 1.3vw, 2rem);
+    --text-h1: clamp(2rem, 1.3rem + 3.2vw, 3.25rem);
+    --leading-tight: 1.2;
+    --leading-normal: 1.6;
+
+    /* Space: a 4px-based scale */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --space-6: 2rem;
+    --space-7: 3rem;
+    --space-8: 4rem;
+
+    /* Shape and depth */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.75rem;
+    --radius-pill: 999px;
+    --shadow-card: 0 1px 2px rgb(20 20 30 / 0.06), 0 4px 16px rgb(20 20 30 / 0.06);
+
+    /* Layout */
+    --width-page: 72rem;
+    --width-prose: 42rem;
+    --gutter: 1rem;
+
+    /* Interaction */
+    --focus-ring: 3px solid var(--color-focus);
+    --duration-fast: 150ms;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-bg: #111318;
+      --color-surface: #191c23;
+      --color-surface-sunken: #0c0e12;
+      --color-text: #e9ebf0;
+      --color-text-muted: #a7adba;
+      --color-border: #2c313b;
+      --color-border-strong: #7d8594;
+      --color-accent: #a5b4fc;
+      --color-accent-hover: #c7d2fe;
+      --color-on-accent: #111318;
+      --color-accent-soft: #1e2140;
+      --color-danger: #ff8a80;
+      --color-success: #6ee7b7;
+      --color-p0-bg: #3d2413;
+      --color-p0-text: #fdba8c;
+      --color-p1-bg: #172448;
+      --color-p1-text: #a9c5ff;
+      --color-badge-bg: #252a33;
+      --color-badge-text: #cfd4de;
+      --shadow-card: none;
+    }
+  }
+}

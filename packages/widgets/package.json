@@ -1,0 +1,24 @@
+{
+  "name": "@lp/widgets",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Plain JavaScript custom elements (a resource finder and a quiz) for the static site and, later, the React shell.",
+  "type": "module",
+  "exports": {
+    "./resource-finder": "./src/resource-finder.js",
+    "./quiz": "./src/quiz.js",
+    "./widgets.css": "./src/widgets.css"
+  },
+  "scripts": {
+    "typecheck": "tsc -p .",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@lp/config": "workspace:*",
+    "@lp/contracts": "workspace:*",
+    "@lp/platform-kit": "workspace:*",
+    "happy-dom": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

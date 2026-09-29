@@ -1,0 +1,22 @@
+packages:
+  - apps/*
+  - packages/*
+
+# One version of each shared dependency for the whole repo. Packages ask for it with "catalog:".
+catalog:
+  "@axe-core/playwright": ^4.13.0
+  "@biomejs/biome": 2.5.14 # exact: formatter output can change between Biome releases
+  "@playwright/test": ^1.63.0
+  "@types/node": ^24.19.0
+  "@types/react": ^19.3.0
+  "@types/react-dom": ^19.3.0
+  "@vitejs/plugin-react": ^6.1.1
+  happy-dom: ^20.14.5
+  html-validate: ^11.16.1
+  react: ^19.3.0
+  react-dom: ^19.3.0
+  turbo: ^2.11.5
+  typescript: ~7.0.2 # minors can change type checking, so upgrade on purpose
+  vite: ^8.3.1
+  vitest: ^5.0.2
+  zod: ^4.6.5

@@ -1,0 +1,1076 @@
+[
+  {
+    "id": "a-complete-guide-to-css-grid",
+    "title": "A Complete Guide to CSS Grid",
+    "url": "https://css-tricks.com/complete-guide-css-grid-layout/",
+    "type": "cheatsheet"
+  },
+  {
+    "id": "a-complete-guide-to-flexbox",
+    "title": "A Complete Guide to Flexbox",
+    "url": "https://css-tricks.com/snippets/css/a-guide-to-flexbox/",
+    "type": "cheatsheet"
+  },
+  {
+    "id": "a-modern-css-reset",
+    "title": "A Modern CSS Reset",
+    "url": "https://www.joshwcomeau.com/css/custom-css-reset/",
+    "type": "article"
+  },
+  {
+    "id": "adding-interactivity",
+    "title": "Adding Interactivity",
+    "url": "https://react.dev/learn/adding-interactivity",
+    "type": "docs"
+  },
+  {
+    "id": "an-interactive-guide-to-css-grid",
+    "title": "An Interactive Guide to CSS Grid",
+    "url": "https://www.joshwcomeau.com/css/interactive-guide-to-grid/",
+    "type": "article"
+  },
+  {
+    "id": "an-interactive-guide-to-flexbox",
+    "title": "An Interactive Guide to Flexbox",
+    "url": "https://www.joshwcomeau.com/css/interactive-guide-to-flexbox/",
+    "type": "article"
+  },
+  {
+    "id": "anson-the-developer-express-js-full-course",
+    "title": "Anson the Developer: Express JS Full Course",
+    "url": "https://www.youtube.com/watch?v=nH9E25nkk3I",
+    "type": "video"
+  },
+  {
+    "id": "array-methods",
+    "title": "Array methods",
+    "url": "https://javascript.info/array-methods",
+    "type": "docs"
+  },
+  {
+    "id": "autocannon",
+    "title": "autocannon",
+    "url": "https://github.com/mcollina/autocannon",
+    "type": "tool"
+  },
+  {
+    "id": "beginner-s-typescript-and-react-with-typescript",
+    "title": "Beginner's TypeScript and React with TypeScript tutorials",
+    "url": "https://www.totaltypescript.com/tutorials",
+    "type": "course"
+  },
+  {
+    "id": "bullmq",
+    "title": "BullMQ",
+    "url": "https://docs.bullmq.io/",
+    "type": "docs"
+  },
+  {
+    "id": "chai-aur-code",
+    "title": "Chai aur Code",
+    "url": "https://www.youtube.com/@chaiaurcode",
+    "type": "video"
+  },
+  {
+    "id": "chrome-devtools-debug-javascript",
+    "title": "Chrome DevTools: Debug JavaScript",
+    "url": "https://developer.chrome.com/docs/devtools/javascript",
+    "type": "docs"
+  },
+  {
+    "id": "closures",
+    "title": "Closures",
+    "url": "https://javascript.info/closure",
+    "type": "docs"
+  },
+  {
+    "id": "codevolution-playlists",
+    "title": "Codevolution playlists",
+    "url": "https://www.youtube.com/@Codevolution/playlists",
+    "type": "video"
+  },
+  {
+    "id": "common-mistakes-with-react-testing-library",
+    "title": "Common mistakes with React Testing Library",
+    "url": "https://kentcdodds.com/blog/common-mistakes-with-react-testing-library",
+    "type": "article"
+  },
+  {
+    "id": "conquering-responsive-layouts",
+    "title": "Conquering Responsive Layouts",
+    "url": "https://courses.kevinpowell.co/conquering-responsive-layouts",
+    "type": "course"
+  },
+  {
+    "id": "cosden-solutions",
+    "title": "Cosden Solutions",
+    "url": "https://www.youtube.com/@cosdensolutions",
+    "type": "video"
+  },
+  {
+    "id": "css-diner",
+    "title": "CSS Diner",
+    "url": "https://flukeout.github.io/",
+    "type": "interactive"
+  },
+  {
+    "id": "css-styling-basics",
+    "title": "CSS styling basics",
+    "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics",
+    "type": "docs"
+  },
+  {
+    "id": "data-binding-in-react",
+    "title": "Data Binding in React",
+    "url": "https://www.joshwcomeau.com/react/data-binding/",
+    "type": "article"
+  },
+  {
+    "id": "dave-gray",
+    "title": "Dave Gray",
+    "url": "https://www.youtube.com/@DaveGrayTeachesCode",
+    "type": "video"
+  },
+  {
+    "id": "dave-gray-node-js-full-course-for-beginners",
+    "title": "Dave Gray — Node.js Full Course for Beginners",
+    "url": "https://www.youtube.com/watch?v=f2EqECiTBL8",
+    "type": "video"
+  },
+  {
+    "id": "describing-the-ui",
+    "title": "Describing the UI",
+    "url": "https://react.dev/learn/describing-the-ui",
+    "type": "docs"
+  },
+  {
+    "id": "destructuring",
+    "title": "Destructuring",
+    "url": "https://javascript.info/destructuring-assignment",
+    "type": "docs"
+  },
+  {
+    "id": "devtools-view-and-change-css",
+    "title": "Chrome DevTools: View and change CSS",
+    "url": "https://developer.chrome.com/docs/devtools/css",
+    "type": "docs"
+  },
+  {
+    "id": "docker-node-js-language-guide",
+    "title": "Docker — Node.js language guide",
+    "url": "https://docs.docker.com/guides/nodejs/",
+    "type": "docs"
+  },
+  {
+    "id": "document-and-the-dom",
+    "title": "Document and the DOM",
+    "url": "https://javascript.info/document",
+    "type": "docs"
+  },
+  {
+    "id": "drizzle-orm",
+    "title": "Drizzle ORM",
+    "url": "https://orm.drizzle.team/",
+    "type": "docs"
+  },
+  {
+    "id": "escape-hatches",
+    "title": "Escape Hatches",
+    "url": "https://react.dev/learn/escape-hatches",
+    "type": "docs"
+  },
+  {
+    "id": "event-delegation",
+    "title": "Event delegation",
+    "url": "https://javascript.info/event-delegation",
+    "type": "docs"
+  },
+  {
+    "id": "events",
+    "title": "Events",
+    "url": "https://javascript.info/events",
+    "type": "docs"
+  },
+  {
+    "id": "exercism-javascript-track",
+    "title": "Exercism JavaScript track",
+    "url": "https://exercism.org/tracks/javascript",
+    "type": "interactive"
+  },
+  {
+    "id": "express-error-handling",
+    "title": "Express: Error handling",
+    "url": "https://expressjs.com/en/guide/error-handling/",
+    "type": "docs"
+  },
+  {
+    "id": "express-health-checks-and-graceful-shutdown",
+    "title": "Express: Health checks and graceful shutdown",
+    "url": "https://expressjs.com/en/advanced/healthcheck-graceful-shutdown",
+    "type": "docs"
+  },
+  {
+    "id": "express-performance-best-practices",
+    "title": "Express: Performance best practices",
+    "url": "https://expressjs.com/en/advanced/best-practice-performance",
+    "type": "docs"
+  },
+  {
+    "id": "express-rate-limit",
+    "title": "express-rate-limit",
+    "url": "https://github.com/express-rate-limit/express-rate-limit",
+    "type": "reference"
+  },
+  {
+    "id": "express-routing",
+    "title": "Express: Routing",
+    "url": "https://expressjs.com/en/guide/routing/",
+    "type": "docs"
+  },
+  {
+    "id": "express-security-best-practices",
+    "title": "Express: Security best practices",
+    "url": "https://expressjs.com/en/advanced/best-practice-security",
+    "type": "docs"
+  },
+  {
+    "id": "express-using-middleware",
+    "title": "Express: Using middleware",
+    "url": "https://expressjs.com/en/guide/using-middleware/",
+    "type": "docs"
+  },
+  {
+    "id": "express-writing-middleware",
+    "title": "Express: Writing middleware",
+    "url": "https://expressjs.com/en/5x/guide/writing-middleware",
+    "type": "docs"
+  },
+  {
+    "id": "fireship",
+    "title": "Fireship",
+    "url": "https://www.youtube.com/@Fireship",
+    "type": "video"
+  },
+  {
+    "id": "fireship-learn-docker-in-7-easy-steps",
+    "title": "Fireship — Learn Docker in 7 Easy Steps",
+    "url": "https://www.youtube.com/watch?v=gAkwW2tuIqE",
+    "type": "video"
+  },
+  {
+    "id": "fireship-node-js-ultimate-beginner-s-guide-in-7",
+    "title": "Fireship — Node.js Ultimate Beginner's Guide in 7 Easy Steps",
+    "url": "https://www.youtube.com/watch?v=ENrzD9HAZK4",
+    "type": "video"
+  },
+  {
+    "id": "flexbox",
+    "title": "Flexbox",
+    "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Flexbox",
+    "type": "docs"
+  },
+  {
+    "id": "flexbox-froggy",
+    "title": "Flexbox Froggy",
+    "url": "https://flexboxfroggy.com/",
+    "type": "interactive"
+  },
+  {
+    "id": "forms-and-buttons-in-html",
+    "title": "Forms and buttons in HTML",
+    "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content/HTML_forms",
+    "type": "docs"
+  },
+  {
+    "id": "freecodecamp-channel",
+    "title": "freeCodeCamp channel",
+    "url": "https://www.youtube.com/@freecodecamp",
+    "type": "video"
+  },
+  {
+    "id": "freecodecamp-learn-postgresql-full-course-for",
+    "title": "freeCodeCamp — Learn PostgreSQL, Full Course for Beginners",
+    "url": "https://www.youtube.com/watch?v=qw--VYLpxG4",
+    "type": "video"
+  },
+  {
+    "id": "freecodecamp-node-js-and-express-js-full-course",
+    "title": "freeCodeCamp — Node.js and Express.js Full Course (John Smilga)",
+    "url": "https://www.youtube.com/watch?v=Oe421EPjeBE",
+    "type": "video"
+  },
+  {
+    "id": "freecodecamp-responsive-web-design",
+    "title": "freeCodeCamp Responsive Web Design",
+    "url": "https://www.freecodecamp.org/learn/responsive-web-design-v9/",
+    "type": "course"
+  },
+  {
+    "id": "frontend-mentor",
+    "title": "Frontend Mentor challenges",
+    "url": "https://www.frontendmentor.io/challenges",
+    "type": "interactive"
+  },
+  {
+    "id": "full-stack-open",
+    "title": "Full Stack Open",
+    "url": "https://fullstackopen.com/en/",
+    "type": "course"
+  },
+  {
+    "id": "github-actions-building-and-testing-node-js",
+    "title": "GitHub Actions: Building and testing Node.js",
+    "url": "https://docs.github.com/en/actions/tutorials/build-and-test-code/nodejs",
+    "type": "docs"
+  },
+  {
+    "id": "github-pages-quickstart",
+    "title": "GitHub Pages quickstart",
+    "url": "https://docs.github.com/en/pages/quickstart",
+    "type": "docs"
+  },
+  {
+    "id": "github-users-api",
+    "title": "GitHub users API",
+    "url": "https://api.github.com/users/octocat",
+    "type": "tool"
+  },
+  {
+    "id": "grid-garden",
+    "title": "Grid Garden",
+    "url": "https://cssgridgarden.com/",
+    "type": "interactive"
+  },
+  {
+    "id": "grids",
+    "title": "Grids",
+    "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Grids",
+    "type": "docs"
+  },
+  {
+    "id": "helmet",
+    "title": "Helmet",
+    "url": "https://helmet.js.org/",
+    "type": "docs"
+  },
+  {
+    "id": "html-css-full-course-beginner-to-pro",
+    "title": "HTML & CSS Full Course — Beginner to Pro",
+    "url": "https://www.youtube.com/watch?v=G3e-cpL7ofc",
+    "type": "video"
+  },
+  {
+    "id": "hussein-nasser",
+    "title": "Hussein Nasser",
+    "url": "https://www.youtube.com/@hnasr",
+    "type": "video"
+  },
+  {
+    "id": "introduction-to-node-js",
+    "title": "Introduction to Node.js",
+    "url": "https://nodejs.org/learn/getting-started/introduction-to-nodejs",
+    "type": "docs"
+  },
+  {
+    "id": "javascript-fundamentals",
+    "title": "JavaScript Fundamentals",
+    "url": "https://javascript.info/first-steps",
+    "type": "docs"
+  },
+  {
+    "id": "javascript-info",
+    "title": "javascript.info",
+    "url": "https://javascript.info/",
+    "type": "docs"
+  },
+  {
+    "id": "javascript-mastery",
+    "title": "JavaScript Mastery",
+    "url": "https://www.youtube.com/@javascriptmastery",
+    "type": "video"
+  },
+  {
+    "id": "javascript-node-js-testing-best-practices",
+    "title": "JavaScript & Node.js Testing Best Practices",
+    "url": "https://github.com/goldbergyoni/javascript-testing-best-practices",
+    "type": "reference"
+  },
+  {
+    "id": "javascript30",
+    "title": "JavaScript30",
+    "url": "https://javascript30.com",
+    "type": "interactive"
+  },
+  {
+    "id": "josh-w-comeau-s-react-articles",
+    "title": "Josh W. Comeau's React articles",
+    "url": "https://www.joshwcomeau.com/react/",
+    "type": "article"
+  },
+  {
+    "id": "json-server",
+    "title": "json-server",
+    "url": "https://github.com/typicode/json-server",
+    "type": "tool"
+  },
+  {
+    "id": "jwt-io-introduction-to-json-web-tokens",
+    "title": "jwt.io — Introduction to JSON Web Tokens",
+    "url": "https://jwt.io/introduction",
+    "type": "article"
+  },
+  {
+    "id": "kevin-powell-on-youtube",
+    "title": "Kevin Powell on YouTube",
+    "url": "https://www.youtube.com/@KevinPowell",
+    "type": "video"
+  },
+  {
+    "id": "learn-css-grid-the-easy-way",
+    "title": "Learn CSS Grid the easy way",
+    "url": "https://www.youtube.com/watch?v=rg7Fvvl3taU",
+    "type": "video"
+  },
+  {
+    "id": "learn-flexbox-the-easy-way",
+    "title": "Learn flexbox the easy way",
+    "url": "https://www.youtube.com/watch?v=u044iM9xsWU",
+    "type": "video"
+  },
+  {
+    "id": "learn-git-branching-interactive",
+    "title": "Learn Git Branching (interactive)",
+    "url": "https://learngitbranching.js.org",
+    "type": "interactive"
+  },
+  {
+    "id": "learn-useeffect-in-13-minutes",
+    "title": "Learn useEffect in 13 Minutes",
+    "url": "https://www.youtube.com/watch?v=0ZJgIjIuY7U",
+    "type": "video"
+  },
+  {
+    "id": "learn-usereducer-in-20-minutes",
+    "title": "Learn useReducer in 20 Minutes",
+    "url": "https://www.youtube.com/watch?v=kK_Wqx3RnHk",
+    "type": "video"
+  },
+  {
+    "id": "lighthouse",
+    "title": "Lighthouse",
+    "url": "https://developer.chrome.com/docs/lighthouse/overview",
+    "type": "docs"
+  },
+  {
+    "id": "lydia-hallie-javascript-visualized-event-loop",
+    "title": "Lydia Hallie — JavaScript Visualized: Event Loop",
+    "url": "https://www.youtube.com/watch?v=eiC58R16hb8",
+    "type": "video"
+  },
+  {
+    "id": "managing-state",
+    "title": "Managing State",
+    "url": "https://react.dev/learn/managing-state",
+    "type": "docs"
+  },
+  {
+    "id": "mdn-an-overview-of-http",
+    "title": "MDN: An overview of HTTP",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview",
+    "type": "docs"
+  },
+  {
+    "id": "mdn-array-reference",
+    "title": "MDN Array reference",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+    "type": "docs"
+  },
+  {
+    "id": "mdn-http",
+    "title": "MDN — HTTP",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+    "type": "docs"
+  },
+  {
+    "id": "mdn-learn-web-development",
+    "title": "MDN Learn web development",
+    "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development",
+    "type": "docs"
+  },
+  {
+    "id": "mdn-using-fetch",
+    "title": "MDN: Using Fetch",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch",
+    "type": "docs"
+  },
+  {
+    "id": "media-queries",
+    "title": "Media queries",
+    "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Media_queries",
+    "type": "docs"
+  },
+  {
+    "id": "microsoft-web-api-design-best-practices",
+    "title": "Microsoft — Web API design best practices",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design",
+    "type": "article"
+  },
+  {
+    "id": "migrating-to-express-5",
+    "title": "Migrating to Express 5",
+    "url": "https://expressjs.com/en/guide/migrating-5/",
+    "type": "docs"
+  },
+  {
+    "id": "modules",
+    "title": "Modules",
+    "url": "https://javascript.info/modules-intro",
+    "type": "docs"
+  },
+  {
+    "id": "mongoose-docs",
+    "title": "Mongoose docs",
+    "url": "https://mongoosejs.com/docs/",
+    "type": "docs"
+  },
+  {
+    "id": "msw-quick-start",
+    "title": "MSW quick start",
+    "url": "https://mswjs.io/docs/quick-start/",
+    "type": "docs"
+  },
+  {
+    "id": "multer-readme",
+    "title": "multer README",
+    "url": "https://github.com/expressjs/multer",
+    "type": "reference"
+  },
+  {
+    "id": "net-ninja-node-js-crash-course",
+    "title": "Net Ninja: Node.js Crash Course",
+    "url": "https://www.youtube.com/playlist?list=PL4cUxeGkcC9jsz4LDYc6kv3ymONOKxwBU",
+    "type": "video"
+  },
+  {
+    "id": "next-js-crash-course-build-and-deploy-a",
+    "title": "Next.js Crash Course: Build and Deploy a Production-Ready Full Stack App",
+    "url": "https://www.youtube.com/watch?v=Zq5fmkH0T78",
+    "type": "video"
+  },
+  {
+    "id": "next-js-documentation",
+    "title": "Next.js documentation",
+    "url": "https://nextjs.org/docs",
+    "type": "docs"
+  },
+  {
+    "id": "next-js-learn-app-router",
+    "title": "Next.js Learn: App Router",
+    "url": "https://nextjs.org/learn/dashboard-app",
+    "type": "course"
+  },
+  {
+    "id": "node-api-events",
+    "title": "Node.js API: events",
+    "url": "https://nodejs.org/api/events.html",
+    "type": "docs"
+  },
+  {
+    "id": "node-api-fs",
+    "title": "Node.js API: fs",
+    "url": "https://nodejs.org/api/fs.html",
+    "type": "docs"
+  },
+  {
+    "id": "node-api-stream",
+    "title": "Node.js API: stream",
+    "url": "https://nodejs.org/api/stream.html",
+    "type": "docs"
+  },
+  {
+    "id": "node-js-api-reference",
+    "title": "Node.js API reference",
+    "url": "https://nodejs.org/api/",
+    "type": "docs"
+  },
+  {
+    "id": "node-js-best-practices",
+    "title": "Node.js Best Practices",
+    "url": "https://github.com/goldbergyoni/nodebestpractices",
+    "type": "reference"
+  },
+  {
+    "id": "node-js-test-runner",
+    "title": "Node.js test runner",
+    "url": "https://nodejs.org/learn/test-runner/introduction",
+    "type": "docs"
+  },
+  {
+    "id": "node-learn-command-line",
+    "title": "Node.js Learn: Run Node.js scripts from the command line",
+    "url": "https://nodejs.org/learn/command-line/run-nodejs-scripts-from-the-command-line",
+    "type": "docs"
+  },
+  {
+    "id": "node-learn-reading-files",
+    "title": "Node.js Learn: Reading files",
+    "url": "https://nodejs.org/learn/manipulating-files/reading-files-with-nodejs",
+    "type": "docs"
+  },
+  {
+    "id": "node-postgres",
+    "title": "node-postgres",
+    "url": "https://node-postgres.com/",
+    "type": "docs"
+  },
+  {
+    "id": "node-redis-guide",
+    "title": "node-redis guide",
+    "url": "https://redis.io/docs/latest/develop/clients/nodejs/",
+    "type": "docs"
+  },
+  {
+    "id": "odin-project-foundations",
+    "title": "The Odin Project Foundations",
+    "url": "https://www.theodinproject.com/paths/foundations/courses/foundations",
+    "type": "course"
+  },
+  {
+    "id": "open-meteo",
+    "title": "Open-Meteo",
+    "url": "https://open-meteo.com/",
+    "type": "tool"
+  },
+  {
+    "id": "owasp-cheat-sheet-series",
+    "title": "OWASP Cheat Sheet Series",
+    "url": "https://cheatsheetseries.owasp.org/",
+    "type": "cheatsheet"
+  },
+  {
+    "id": "owasp-node-js-security-cheat-sheet",
+    "title": "OWASP Node.js Security Cheat Sheet",
+    "url": "https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html",
+    "type": "cheatsheet"
+  },
+  {
+    "id": "owasp-password-storage-cheat-sheet",
+    "title": "OWASP Password Storage Cheat Sheet",
+    "url": "https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html",
+    "type": "cheatsheet"
+  },
+  {
+    "id": "owasp-top-10-2025",
+    "title": "OWASP Top 10:2025",
+    "url": "https://top10.owasp.org/2025/",
+    "type": "reference"
+  },
+  {
+    "id": "passing-data-deeply-with-context",
+    "title": "Passing Data Deeply with Context",
+    "url": "https://react.dev/learn/passing-data-deeply-with-context",
+    "type": "docs"
+  },
+  {
+    "id": "pedrotech-backend-complete-course",
+    "title": "PedroTech: Backend Complete Course",
+    "url": "https://www.youtube.com/watch?v=g09PoiCob4Y",
+    "type": "video"
+  },
+  {
+    "id": "pino",
+    "title": "pino",
+    "url": "https://getpino.io/",
+    "type": "docs"
+  },
+  {
+    "id": "piyush-garg",
+    "title": "Piyush Garg",
+    "url": "https://www.youtube.com/@piyushgargdev",
+    "type": "video"
+  },
+  {
+    "id": "positioning",
+    "title": "Positioning",
+    "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Positioning",
+    "type": "docs"
+  },
+  {
+    "id": "practical-react-query",
+    "title": "Practical React Query",
+    "url": "https://tkdodo.eu/blog/practical-react-query",
+    "type": "article"
+  },
+  {
+    "id": "practice-data-todos",
+    "title": "Practice data: /todos",
+    "url": "https://jsonplaceholder.typicode.com/todos",
+    "type": "tool"
+  },
+  {
+    "id": "prisma-postgresql-quickstart",
+    "title": "Prisma: PostgreSQL quickstart",
+    "url": "https://www.prisma.io/docs/prisma-orm/quickstart/postgresql",
+    "type": "docs"
+  },
+  {
+    "id": "prisma-transactions",
+    "title": "Prisma: Transactions",
+    "url": "https://www.prisma.io/docs/orm/fundamentals/transactions",
+    "type": "docs"
+  },
+  {
+    "id": "promises-async-await",
+    "title": "Promises, async/await",
+    "url": "https://javascript.info/async",
+    "type": "docs"
+  },
+  {
+    "id": "react-19-release-post",
+    "title": "React 19 release post",
+    "url": "https://react.dev/blog/2024/12/05/react-19",
+    "type": "docs"
+  },
+  {
+    "id": "react-compiler",
+    "title": "React Compiler",
+    "url": "https://react.dev/learn/react-compiler",
+    "type": "docs"
+  },
+  {
+    "id": "react-compiler-installation",
+    "title": "React Compiler: Installation",
+    "url": "https://react.dev/learn/react-compiler/installation",
+    "type": "docs"
+  },
+  {
+    "id": "react-error-boundary",
+    "title": "react-error-boundary",
+    "url": "https://github.com/bvaughn/react-error-boundary",
+    "type": "reference"
+  },
+  {
+    "id": "react-hook-form-get-started",
+    "title": "React Hook Form: Get Started",
+    "url": "https://react-hook-form.com/get-started",
+    "type": "docs"
+  },
+  {
+    "id": "react-quick-start",
+    "title": "React: Quick Start",
+    "url": "https://react.dev/learn",
+    "type": "docs"
+  },
+  {
+    "id": "react-router-picking-a-mode",
+    "title": "React Router: Picking a mode",
+    "url": "https://reactrouter.com/start/modes",
+    "type": "docs"
+  },
+  {
+    "id": "react-testing-library-intro",
+    "title": "React Testing Library intro",
+    "url": "https://testing-library.com/docs/react-testing-library/intro/",
+    "type": "docs"
+  },
+  {
+    "id": "react-testing-tutorial",
+    "title": "React Testing Tutorial",
+    "url": "https://www.youtube.com/playlist?list=PLC3y8-rFHvwirqe1KHFCHJ0RqNuN61SJd",
+    "type": "video"
+  },
+  {
+    "id": "react-tutorial-full-course-beginner-to-pro",
+    "title": "React Tutorial Full Course – Beginner to Pro (React 19)",
+    "url": "https://www.youtube.com/watch?v=TtPXvEcE11E",
+    "type": "video"
+  },
+  {
+    "id": "react-typescript-cheatsheet",
+    "title": "React TypeScript Cheatsheet",
+    "url": "https://react-typescript-cheatsheet.netlify.app/",
+    "type": "cheatsheet"
+  },
+  {
+    "id": "react-typescript-tutorial-for-beginners",
+    "title": "React TypeScript Tutorial for Beginners",
+    "url": "https://www.youtube.com/playlist?list=PLC3y8-rFHvwi1AXijGTKM0BKtHzVC-LSK",
+    "type": "video"
+  },
+  {
+    "id": "render-deploy-a-node-express-app",
+    "title": "Render: Deploy a Node Express app",
+    "url": "https://render.com/docs/deploy-node-express-app",
+    "type": "docs"
+  },
+  {
+    "id": "responsive-design",
+    "title": "Responsive design",
+    "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Responsive_Design",
+    "type": "docs"
+  },
+  {
+    "id": "reusing-logic-with-custom-hooks",
+    "title": "Reusing Logic with Custom Hooks",
+    "url": "https://react.dev/learn/reusing-logic-with-custom-hooks",
+    "type": "docs"
+  },
+  {
+    "id": "roadmap-sh-node-js",
+    "title": "roadmap.sh — Node.js",
+    "url": "https://roadmap.sh/nodejs",
+    "type": "reference"
+  },
+  {
+    "id": "running-typescript-natively-in-node-js",
+    "title": "Running TypeScript natively in Node.js",
+    "url": "https://nodejs.org/learn/typescript/run-natively",
+    "type": "docs"
+  },
+  {
+    "id": "scrimba-learn-react",
+    "title": "Scrimba Learn React",
+    "url": "https://scrimba.com/learn-react-c0e:about",
+    "type": "course"
+  },
+  {
+    "id": "server-functions",
+    "title": "Server Functions",
+    "url": "https://react.dev/reference/rsc/server-functions",
+    "type": "docs"
+  },
+  {
+    "id": "shadcn-react-hook-form",
+    "title": "shadcn/ui: React Hook Form",
+    "url": "https://ui.shadcn.com/docs/forms/react-hook-form",
+    "type": "docs"
+  },
+  {
+    "id": "shadcn-ui-for-vite",
+    "title": "shadcn/ui for Vite",
+    "url": "https://ui.shadcn.com/docs/installation/vite",
+    "type": "docs"
+  },
+  {
+    "id": "specificity",
+    "title": "Specificity",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascade/Specificity",
+    "type": "docs"
+  },
+  {
+    "id": "sqlbolt",
+    "title": "SQLBolt",
+    "url": "https://sqlbolt.com/",
+    "type": "interactive"
+  },
+  {
+    "id": "structuring-content-with-html",
+    "title": "Structuring content with HTML",
+    "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content",
+    "type": "docs"
+  },
+  {
+    "id": "supertest",
+    "title": "Supertest",
+    "url": "https://github.com/forwardemail/supertest",
+    "type": "reference"
+  },
+  {
+    "id": "swagger-ui-express",
+    "title": "swagger-ui-express",
+    "url": "https://www.npmjs.com/package/swagger-ui-express",
+    "type": "reference"
+  },
+  {
+    "id": "tailwind-css-docs",
+    "title": "Tailwind CSS docs",
+    "url": "https://tailwindcss.com/docs",
+    "type": "docs"
+  },
+  {
+    "id": "tanstack-query-overview",
+    "title": "TanStack Query: Overview",
+    "url": "https://tanstack.com/query/latest/docs/framework/react/overview",
+    "type": "docs"
+  },
+  {
+    "id": "the-node-js-event-loop",
+    "title": "The Node.js Event Loop",
+    "url": "https://nodejs.org/learn/asynchronous-work/event-loop-timers-and-nexttick",
+    "type": "docs"
+  },
+  {
+    "id": "the-odin-project-nodejs",
+    "title": "The Odin Project — NodeJS",
+    "url": "https://www.theodinproject.com/paths/full-stack-javascript/courses/nodejs",
+    "type": "course"
+  },
+  {
+    "id": "the-twelve-factor-app",
+    "title": "The Twelve-Factor App",
+    "url": "https://12factor.net/",
+    "type": "reference"
+  },
+  {
+    "id": "thinking-in-react",
+    "title": "Thinking in React",
+    "url": "https://react.dev/learn/thinking-in-react",
+    "type": "docs"
+  },
+  {
+    "id": "thinking-in-react-query",
+    "title": "Thinking in React Query",
+    "url": "https://tkdodo.eu/blog/thinking-in-react-query",
+    "type": "article"
+  },
+  {
+    "id": "total-typescript-beginner-s-typescript",
+    "title": "Total TypeScript — Beginner's TypeScript",
+    "url": "https://www.totaltypescript.com/tutorials/beginners-typescript",
+    "type": "course"
+  },
+  {
+    "id": "traversy-media-express-crash-course",
+    "title": "Traversy Media: Express Crash Course",
+    "url": "https://www.youtube.com/watch?v=CnH3kAXSrmU",
+    "type": "video"
+  },
+  {
+    "id": "ts-handbook-everyday-types",
+    "title": "TS Handbook: Everyday Types",
+    "url": "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html",
+    "type": "docs"
+  },
+  {
+    "id": "typescript-handbook",
+    "title": "TypeScript Handbook",
+    "url": "https://www.typescriptlang.org/docs/handbook/intro.html",
+    "type": "docs"
+  },
+  {
+    "id": "understanding-usememo-and-usecallback",
+    "title": "Understanding useMemo and useCallback",
+    "url": "https://www.joshwcomeau.com/react/usememo-and-usecallback/",
+    "type": "article"
+  },
+  {
+    "id": "useactionstate",
+    "title": "useActionState",
+    "url": "https://react.dev/reference/react/useActionState",
+    "type": "docs"
+  },
+  {
+    "id": "useoptimistic",
+    "title": "useOptimistic",
+    "url": "https://react.dev/reference/react/useOptimistic",
+    "type": "docs"
+  },
+  {
+    "id": "using-css-custom-properties",
+    "title": "Using CSS custom properties",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascading_variables/Using_custom_properties",
+    "type": "docs"
+  },
+  {
+    "id": "using-typescript",
+    "title": "Using TypeScript",
+    "url": "https://react.dev/learn/typescript",
+    "type": "docs"
+  },
+  {
+    "id": "utopia-fluid-type-calculator",
+    "title": "Utopia fluid type calculator",
+    "url": "https://utopia.fyi/type/calculator/",
+    "type": "tool"
+  },
+  {
+    "id": "vite-guide",
+    "title": "Vite getting started",
+    "url": "https://vite.dev/guide/",
+    "type": "docs"
+  },
+  {
+    "id": "vitest-guide",
+    "title": "Vitest guide",
+    "url": "https://vitest.dev/guide/",
+    "type": "docs"
+  },
+  {
+    "id": "web-dev-learn-accessibility",
+    "title": "web.dev Learn Accessibility",
+    "url": "https://web.dev/learn/accessibility",
+    "type": "docs"
+  },
+  {
+    "id": "web-dev-learn-css",
+    "title": "web.dev Learn CSS",
+    "url": "https://web.dev/learn/css",
+    "type": "docs"
+  },
+  {
+    "id": "web-dev-learn-forms",
+    "title": "web.dev Learn Forms",
+    "url": "https://web.dev/learn/forms",
+    "type": "docs"
+  },
+  {
+    "id": "web-dev-learn-html",
+    "title": "web.dev Learn HTML",
+    "url": "https://web.dev/learn/html",
+    "type": "docs"
+  },
+  {
+    "id": "web-dev-simplified",
+    "title": "Web Dev Simplified",
+    "url": "https://www.youtube.com/@WebDevSimplified",
+    "type": "video"
+  },
+  {
+    "id": "web-dev-simplified-learn-express-js-in-35",
+    "title": "Web Dev Simplified: Learn Express JS in 35 Minutes",
+    "url": "https://www.youtube.com/watch?v=SccSCuHhOw0",
+    "type": "video"
+  },
+  {
+    "id": "webaim-contrast-checker",
+    "title": "WebAIM Contrast Checker",
+    "url": "https://webaim.org/resources/contrastchecker/",
+    "type": "tool"
+  },
+  {
+    "id": "what-the-heck-is-the-event-loop-anyway-philip",
+    "title": "What the heck is the event loop anyway? (Philip Roberts)",
+    "url": "https://www.youtube.com/watch?v=8aGhZQkoFbQ",
+    "type": "video"
+  },
+  {
+    "id": "why-react-re-renders",
+    "title": "Why React Re-Renders",
+    "url": "https://www.joshwcomeau.com/react/why-react-re-renders/",
+    "type": "article"
+  },
+  {
+    "id": "you-might-not-need-an-effect",
+    "title": "You Might Not Need an Effect",
+    "url": "https://react.dev/learn/you-might-not-need-an-effect",
+    "type": "docs"
+  },
+  {
+    "id": "zod-docs",
+    "title": "Zod documentation",
+    "url": "https://zod.dev/",
+    "type": "docs"
+  },
+  {
+    "id": "zustand-github",
+    "title": "Zustand on GitHub",
+    "url": "https://github.com/pmndrs/zustand",
+    "type": "reference"
+  },
+  {
+    "id": "zustand-introduction",
+    "title": "Zustand introduction",
+    "url": "https://zustand.docs.pmnd.rs/learn/getting-started/introduction",
+    "type": "docs"
+  }
+]

@@ -1,0 +1,23 @@
+{
+  "name": "@lp/contracts",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Zod schemas shared by the content, the site, the shell and (later) the API.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p .",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@lp/config": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

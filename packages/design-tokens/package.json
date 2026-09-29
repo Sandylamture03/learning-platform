@@ -1,0 +1,20 @@
+{
+  "name": "@lp/design-tokens",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Colours, type, spacing and shapes as CSS custom properties, with light and dark themes.",
+  "type": "module",
+  "exports": {
+    "./tokens.css": "./tokens.css"
+  },
+  "scripts": {
+    "typecheck": "tsc -p .",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@lp/config": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

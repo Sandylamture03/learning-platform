@@ -1,0 +1,366 @@
+{
+  "id": "html-css",
+  "order": 1,
+  "title": "HTML5 & CSS3",
+  "technologies": ["html5", "css3"],
+  "status": "outline",
+  "summary": "Nine skills cover almost every HTML/CSS ticket a junior front-end developer gets. Learn these deeply; look everything else up on demand.",
+  "pace": {
+    "weeks": 6,
+    "effort": "1–1.5 hours a day"
+  },
+  "sources": ["HTML5 & CSS3 80 20 Job-Ready Roadmap.docx"],
+  "skip": [
+    {
+      "item": "Floats and clearfix for layout",
+      "why": "replaced by Flexbox and Grid (floats survive only for wrapping text around an image)"
+    },
+    {
+      "item": "Tables for page layout",
+      "why": "use tables only for tabular data"
+    },
+    {
+      "item": "Deprecated tags (<center>, <font>, <marquee>, <frameset>) and XHTML/HTML history"
+    },
+    {
+      "item": "Hand-written vendor prefixes (-webkit-)",
+      "why": "build tools add them automatically"
+    },
+    {
+      "item": "Old-browser (Internet Explorer) hacks"
+    },
+    {
+      "item": "Bootstrap, Tailwind and Sass",
+      "why": "defer until after Week 6; native CSS now has variables and nesting, and frameworks are easy once fundamentals click"
+    },
+    {
+      "item": "Canvas, SVG animation, Web Components",
+      "why": "niche for junior roles"
+    },
+    {
+      "item": "Memorising properties",
+      "why": "memorise patterns (centering, sticky footer, card grid); look properties up"
+    }
+  ],
+  "modules": [
+    {
+      "id": "week-1",
+      "title": "Semantic HTML that ships",
+      "weeks": [1, 1],
+      "goal": "Write a valid, accessible page skeleton from memory in under 2 minutes.",
+      "learn": [
+        "The boilerplate: <!DOCTYPE html>, <html lang=\"en\">, <meta charset>, <meta name=\"viewport\">, <title>, linking a stylesheet",
+        "Landmarks: header, nav, main, section, article, aside, footer — and when a plain div is fine (styling hooks only)",
+        "One h1 per page; headings in order (h1 → h2 → h3). Never pick a heading for its size — CSS handles size",
+        "Text and lists: p, ul/ol/li, strong, em",
+        "Links: relative vs absolute paths, jumping to a section with href=\"#id\"",
+        "Images: meaningful alt text (alt=\"\" for decorative ones), width/height to prevent layout shift, loading=\"lazy\"",
+        "button vs a: buttons do things, links go places — a favourite interview question",
+        "Tables only for tabular data: thead, tbody, th scope=\"col\""
+      ],
+      "build": {
+        "title": "Your résumé in pure HTML (no CSS yet)",
+        "checklist": [
+          "Header with your name and a nav of in-page links (About, Skills, Experience, Contact)",
+          "Skills as a list; each job or project as an article inside a section",
+          "Education as a small data table; contact links (mailto:, LinkedIn, GitHub)",
+          "Push to a GitHub repo"
+        ]
+      },
+      "doneWhen": ["The W3C validator shows 0 errors, and the page makes sense with CSS switched off."],
+      "resources": [
+        "structuring-content-with-html",
+        "web-dev-learn-html",
+        "html-css-full-course-beginner-to-pro",
+        "odin-project-foundations"
+      ],
+      "source": "HTML5 & CSS3 80 20 Job-Ready Roadmap · Week 1"
+    },
+    {
+      "id": "week-2",
+      "title": "CSS core: the cascade and the box",
+      "weeks": [2, 2],
+      "goal": "Predict which rule wins and why an element is the size it is — before you open DevTools.",
+      "learn": [
+        "Selectors: type, class, descendant, child (>), grouping; pseudo-classes :hover, :focus-visible, :nth-child(); pseudo-elements ::before/::after. Style with classes, never IDs",
+        "The cascade: specificity is scored ID – CLASS – TYPE and compared left to right; on a tie the last rule wins. Avoid !important",
+        "Inheritance: text properties (color, font) inherit; box properties (margin, border) don't",
+        "Box model: content → padding → border → margin; set box-sizing: border-box on everything; know that vertical margins collapse",
+        "Units: rem for font sizes and spacing, % for widths, px for borders, ch for readable text width (max-width: 65ch)",
+        "Typography: font stacks, Google Fonts, line-height: 1.5, font-weight",
+        "Colour and decoration: hex, rgb(), hsl(), background, border-radius, box-shadow",
+        "display: block, inline, inline-block, none",
+        "A modern CSS reset as your starting file",
+        "DevTools: inspect, toggle declarations, the box-model diagram, and :hov to force hover and focus states"
+      ],
+      "build": {
+        "title": "Style your Week 1 résumé",
+        "checklist": [
+          "Add the reset, then a type scale in rem (body, h1, h2, h3)",
+          "Pick 1 font pair and a 3–4 colour palette",
+          "Turn each section into a card (padding, border-radius, shadow)",
+          "Visible hover and :focus-visible states on every link"
+        ]
+      },
+      "doneWhen": [
+        "No inline styles, no ID selectors in your CSS, and you can explain in DevTools why each overridden rule lost."
+      ],
+      "resources": [
+        "css-styling-basics",
+        "web-dev-learn-css",
+        "specificity",
+        "a-modern-css-reset",
+        "css-diner",
+        "devtools-view-and-change-css",
+        "odin-project-foundations"
+      ],
+      "source": "HTML5 & CSS3 80 20 Job-Ready Roadmap · Week 2"
+    },
+    {
+      "id": "week-3",
+      "title": "Flexbox and positioning",
+      "weeks": [3, 3],
+      "goal": "Build any navbar, card row or centred hero without Googling.",
+      "learn": [
+        "display: flex, main axis vs cross axis, flex-direction",
+        "The four properties you'll use daily: justify-content, align-items, gap, flex-wrap",
+        "Item sizing: flex: 1 to fill space, flex-shrink: 0 to stop squashing, and the min-width: 0 fix for overflowing text",
+        "Five patterns to memorise: Centre anything (display: flex; justify-content: center; align-items: center); Navbar: logo left, links right; Equal-height card row that wraps; Sticky footer: body as a flex column, main { flex: 1 }; Media object: image beside text",
+        "Positioning: relative + absolute for badges and overlays, sticky for headers, fixed for a back-to-top button",
+        "z-index only works on positioned elements and on flex or grid items"
+      ],
+      "build": {
+        "title": "A product landing page",
+        "checklist": [
+          "Sticky header: logo left, nav links right",
+          "Hero: headline and button beside an image, vertically centred",
+          "A row of 4 feature cards that wraps on narrow screens",
+          "A call-to-action banner and a footer that sticks to the bottom on short pages",
+          "A \"New\" badge absolutely positioned on one card"
+        ]
+      },
+      "doneWhen": [
+        "Zero floats, no fixed pixel widths on containers, and nothing breaks as you drag the window from 1440px to 800px."
+      ],
+      "resources": [
+        "learn-flexbox-the-easy-way",
+        "an-interactive-guide-to-flexbox",
+        "a-complete-guide-to-flexbox",
+        "flexbox-froggy",
+        "flexbox",
+        "positioning",
+        "odin-project-foundations"
+      ],
+      "source": "HTML5 & CSS3 80 20 Job-Ready Roadmap · Week 3"
+    },
+    {
+      "id": "week-4",
+      "title": "Grid and responsive design",
+      "weeks": [4, 4],
+      "goal": "One codebase that looks right from a 320px phone to a 1440px monitor, with 2–3 breakpoints at most.",
+      "learn": [
+        "display: grid, grid-template-columns, the fr unit, repeat(), gap",
+        "The one-liner used everywhere: grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) — responsive cards with no media queries",
+        "grid-template-areas for page shells (header, sidebar, main, footer); spanning with grid-column: span 2",
+        "Flexbox vs Grid rule of thumb: Flexbox when content decides the size (one direction); Grid when the layout decides (two directions)",
+        "Mobile-first: write base styles for phones, then add columns with @media (min-width: 48em)",
+        "Fluid type without breakpoints: font-size: clamp(1.75rem, 1rem + 3vw, 3rem)",
+        "Responsive images: max-width: 100%; height: auto, object-fit: cover for cropped thumbnails; know srcset and <picture> exist",
+        "Testing: DevTools device toolbar at 320, 768, 1024 and 1440px"
+      ],
+      "build": {
+        "title": "Make it responsive",
+        "checklist": [
+          "Rebuild your Week 3 landing page mobile-first so it works from 320px to 1440px",
+          "New page: a blog or portfolio home with grid-template-areas (header, sidebar, main, footer) that collapses to one column on phones",
+          "An auto-fit card gallery with cropped, same-size thumbnails"
+        ]
+      },
+      "doneWhen": [
+        "No horizontal scrollbar at 320px, at most 3 media queries per page, and headings scale smoothly as you resize."
+      ],
+      "resources": [
+        "learn-css-grid-the-easy-way",
+        "an-interactive-guide-to-css-grid",
+        "a-complete-guide-to-css-grid",
+        "grid-garden",
+        "grids",
+        "responsive-design",
+        "media-queries",
+        "conquering-responsive-layouts",
+        "utopia-fluid-type-calculator"
+      ],
+      "source": "HTML5 & CSS3 80 20 Job-Ready Roadmap · Week 4"
+    },
+    {
+      "id": "week-5",
+      "title": "Forms, accessibility, modern CSS, deployment",
+      "weeks": [5, 5],
+      "goal": "Ship pages that work for keyboard and screen-reader users, adapt to dark mode, and live on a public URL.",
+      "learn": [
+        "Forms: every input gets a <label for>; the right type (email, tel, number, date, password); textarea, select, fieldset + legend for radio groups; <button type=\"submit\">",
+        "Native validation with zero JavaScript: required, minlength, pattern; style errors with :user-invalid; add autocomplete values",
+        "Accessibility essentials: Tab through every page — everything clickable must be reachable and show a visible focus ring; Never remove outlines without replacing them (:focus-visible); Text contrast at least 4.5:1 (3:1 for large text); Native elements first; ARIA only when no HTML element does the job",
+        "Custom properties: put design tokens (colours, spacing, radius) in :root; get dark mode by redefining them inside @media (prefers-color-scheme: dark)",
+        "Motion: transition on transform and opacity for hover effects, a simple @keyframes, and turn it off under prefers-reduced-motion",
+        "Organising CSS: reset → tokens → base → layout → components; BEM-style names (.card, .card__title, .card--featured)",
+        "Deploy: git add / commit / push, then GitHub Pages"
+      ],
+      "build": {
+        "title": "Contact form + dark mode + go live",
+        "checklist": [
+          "A contact page with name, email, phone, a topic select, a radio group and a message; all native validation",
+          "Move your résumé's colours into custom properties and add dark mode",
+          "Add hover/focus transitions that switch off with reduced motion",
+          "Deploy all builds from Weeks 1–5 to GitHub Pages"
+        ]
+      },
+      "doneWhen": [
+        "The form works with the keyboard alone, Lighthouse Accessibility scores 95+, and dark mode follows your OS setting."
+      ],
+      "resources": [
+        "forms-and-buttons-in-html",
+        "web-dev-learn-forms",
+        "web-dev-learn-accessibility",
+        "webaim-contrast-checker",
+        "using-css-custom-properties",
+        "lighthouse",
+        "github-pages-quickstart"
+      ],
+      "source": "HTML5 & CSS3 80 20 Job-Ready Roadmap · Week 5"
+    },
+    {
+      "id": "week-6",
+      "title": "Capstone: a multi-page business website",
+      "weeks": [6, 6],
+      "goal": "Build and deploy a 3-page, fully responsive website for a fictional coworking space (invent the name, e.g. \"Northdesk\").",
+      "build": {
+        "title": "Multi-page business website",
+        "brief": "Build and deploy a 3-page, fully responsive website for a fictional coworking space (invent the name, e.g. \"Northdesk\"). It's the exact kind of site agencies and freelance clients pay for, and it exercises every skill above — with zero JavaScript.",
+        "checklist": [
+          "Home: Sticky header; nav that sits in a row on desktop and wraps or stacks on phones; Hero with a clamp() fluid headline and a call-to-action button; Amenities: an auto-fit Grid of 6 icon cards (no media queries); Location section: address, opening hours, map image with proper alt",
+          "Plans & Pricing: 3 pricing cards in Flexbox; the featured plan uses a modifier class (.plan--featured); An accessible comparison <table> with th scope; FAQ built with native <details>/<summary> — an accordion with no JavaScript",
+          "Book a Tour: Form: name, email, phone, date, plan (select), team size (number), message; Native validation and :user-invalid error styling; every field labelled",
+          "Site-wide: design tokens in :root and a dark theme via prefers-color-scheme; hover and focus transitions that respect prefers-reduced-motion; images sized with width/height, loading=\"lazy\" below the fold; semantic landmarks and one h1 on every page"
+        ]
+      },
+      "doneWhen": [
+        "W3C validator: 0 errors on all 3 pages",
+        "Lighthouse (mobile): Accessibility 95+, Best Practices 95+, SEO 90+, Performance 90+",
+        "No horizontal scroll at 320px; checked at 320, 768, 1024 and 1440px",
+        "Every page fully usable with the keyboard, with a visible focus ring",
+        "Text contrast 4.5:1+ in both light and dark themes",
+        "No !important, no ID selectors, no inline styles",
+        "Live on GitHub Pages; README with the live link, mobile + desktop screenshots, and 3 things you learned"
+      ],
+      "source": "HTML5 & CSS3 80 20 Job-Ready Roadmap · Week 6"
+    }
+  ],
+  "topics": [
+    {
+      "id": "semantic-html",
+      "title": "Semantic HTML",
+      "priority": "P0",
+      "module": "week-1",
+      "why": "Every page, every framework — React JSX is still HTML. Drives SEO and accessibility.",
+      "status": "outline"
+    },
+    {
+      "id": "box-model",
+      "title": "Box model + box-sizing",
+      "priority": "P0",
+      "module": "week-2",
+      "why": "The root cause of most spacing and \"why is this overflowing\" bugs.",
+      "status": "outline"
+    },
+    {
+      "id": "cascade-and-specificity",
+      "title": "Cascade, specificity, inheritance",
+      "priority": "P0",
+      "module": "week-2",
+      "why": "The root cause of most \"why won't my style apply\" bugs.",
+      "status": "outline"
+    },
+    {
+      "id": "flexbox",
+      "title": "Flexbox",
+      "priority": "P0",
+      "module": "week-3",
+      "why": "One-direction layout: navbars, button rows, card rows, centering.",
+      "status": "outline"
+    },
+    {
+      "id": "css-grid",
+      "title": "CSS Grid",
+      "priority": "P0",
+      "module": "week-4",
+      "why": "Two-direction layout: page shells, galleries, dashboards.",
+      "status": "outline"
+    },
+    {
+      "id": "responsive-design",
+      "title": "Responsive design",
+      "priority": "P0",
+      "module": "week-4",
+      "why": "Mobile-first media queries, relative units, clamp(). Over half of web traffic is mobile.",
+      "status": "outline"
+    },
+    {
+      "id": "forms",
+      "title": "Forms",
+      "priority": "P0",
+      "module": "week-5",
+      "why": "Every product has sign-up, login, search or checkout.",
+      "status": "outline"
+    },
+    {
+      "id": "custom-properties",
+      "title": "Custom properties (CSS variables)",
+      "priority": "P0",
+      "module": "week-5",
+      "why": "Theming, dark mode, design tokens — how design systems and Tailwind work under the hood.",
+      "status": "outline"
+    },
+    {
+      "id": "devtools-debugging",
+      "title": "DevTools debugging",
+      "priority": "P0",
+      "module": "week-2",
+      "why": "The skill interviewers watch for in live-coding rounds.",
+      "status": "outline"
+    }
+  ],
+  "resources": [
+    "mdn-learn-web-development",
+    "web-dev-learn-html",
+    "web-dev-learn-css",
+    "kevin-powell-on-youtube",
+    "html-css-full-course-beginner-to-pro",
+    "an-interactive-guide-to-flexbox",
+    "a-complete-guide-to-flexbox",
+    "a-complete-guide-to-css-grid",
+    "odin-project-foundations",
+    "freecodecamp-responsive-web-design",
+    "css-diner",
+    "flexbox-froggy",
+    "grid-garden",
+    "frontend-mentor"
+  ],
+  "interviewChecklist": [
+    "The box model, and what box-sizing: border-box changes",
+    "How specificity is calculated, and why !important is a smell",
+    "Flexbox vs Grid — when you reach for each",
+    "Three ways to centre a div",
+    "rem vs em vs px vs %",
+    "Mobile-first media queries, and why the viewport meta tag matters",
+    "position: static, relative, absolute, fixed, sticky",
+    "Semantic HTML and why it matters for accessibility and SEO",
+    "Pseudo-class vs pseudo-element",
+    "display: none vs visibility: hidden vs opacity: 0",
+    "How you'd debug a broken layout in DevTools"
+  ],
+  "capstone": {
+    "title": "Multi-page business website",
+    "summary": "A 3-page, fully responsive site for a fictional coworking space, built with zero JavaScript."
+  }
+}

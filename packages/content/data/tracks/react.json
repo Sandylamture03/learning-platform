@@ -1,0 +1,502 @@
+{
+  "id": "react",
+  "order": 4,
+  "title": "React",
+  "technologies": ["react"],
+  "status": "outline",
+  "summary": "Seventeen skills cover nearly all day-to-day React work; everything else you learn on the job when a ticket needs it.",
+  "pace": {
+    "weeks": 8,
+    "effort": "10–12 hours a week"
+  },
+  "sources": ["React 80 20 Roadmap.docx"],
+  "skip": [
+    {
+      "item": "Class components, componentDidMount and other lifecycle methods",
+      "why": "New code is all function components; you can learn to read a class in one afternoon if a job needs it",
+      "instead": "Hooks"
+    },
+    {
+      "item": "Create React App",
+      "why": "Officially deprecated in Feb 2025 (react.dev)",
+      "instead": "Vite, or Next.js"
+    },
+    {
+      "item": "Hand-written Webpack/Babel config",
+      "why": "Vite and frameworks configure this for you",
+      "instead": "Vite defaults"
+    },
+    {
+      "item": "Classic Redux (connect, mapStateToProps, switch reducers)",
+      "why": "Boilerplate from 2016–2019",
+      "instead": "TanStack Query for server data, Zustand for client state; Redux Toolkit only if a job lists it"
+    },
+    {
+      "item": "fetch inside useEffect in real apps",
+      "why": "Race conditions, no caching, no retries",
+      "instead": "TanStack Query or framework data loading (you'll try the raw way once in Week 3)"
+    },
+    {
+      "item": "useMemo/useCallback/memo on everything",
+      "why": "React Compiler 1.0 memoizes automatically",
+      "instead": "Profile first; know the hooks for interviews"
+    },
+    {
+      "item": "forwardRef",
+      "why": "Since React 19, ref is a normal prop on function components",
+      "instead": "The ref prop"
+    },
+    {
+      "item": "PropTypes, defaultProps on function components",
+      "why": "Removed in React 19 (upgrade guide)",
+      "instead": "TypeScript and default parameter values"
+    },
+    {
+      "item": "Higher-order components, render props",
+      "why": "Custom hooks replaced most uses",
+      "instead": "Custom hooks"
+    },
+    {
+      "item": "Runtime CSS-in-JS for new projects (styled-components)",
+      "why": "styled-components entered maintenance mode in 2025 (announcement)",
+      "instead": "Tailwind CSS or CSS Modules"
+    },
+    {
+      "item": "Enzyme",
+      "why": "Unmaintained; doesn't support modern React",
+      "instead": "React Testing Library"
+    },
+    {
+      "item": "Deep dives on Fiber and the diffing algorithm",
+      "why": "Interview trivia at best",
+      "instead": "One paragraph: render, then commit; keys help React match list items"
+    }
+  ],
+  "modules": [
+    {
+      "id": "week-1",
+      "title": "Components, JSX, props, lists",
+      "weeks": [1, 1],
+      "goal": "By Friday you can turn any static screenshot into a tree of React components fed by data.",
+      "learn": [
+        "Scaffold with Vite: npm create vite@latest week1 -- --template react, then npm run dev. Know what index.html, main.jsx and App.jsx each do.",
+        "JSX rules: one root element or <> fragment, className, {} for any JavaScript expression, self-closing tags.",
+        "Components are functions that return JSX. PascalCase names, one per file.",
+        "Props: destructure them, pass children for layout wrappers, never mutate them.",
+        "Lists: .map() with a stable key (an id, not the array index).",
+        "Conditional rendering: &&, the ternary, and early return.",
+        "Keep components pure: same props in, same JSX out, no side effects while rendering.",
+        "Install React DevTools in your browser and inspect every component you write."
+      ],
+      "build": {
+        "title": "Product catalogue page",
+        "brief": "Hard-code a JSON array of 12 products. Render a responsive grid of ProductCard components with a \"Sale\" badge when discounted, an \"Out of stock\" state, and a Layout component that wraps the page with children. Push it to GitHub and deploy it free on Vercel or Netlify."
+      },
+      "doneWhen": [
+        "You can sketch a component tree from any web page in under 10 minutes",
+        "You can explain why index keys break when a list is reordered",
+        "The console shows zero key warnings",
+        "The catalogue is live at a public URL"
+      ],
+      "resources": [
+        "react-quick-start",
+        "describing-the-ui",
+        "thinking-in-react",
+        "react-tutorial-full-course-beginner-to-pro",
+        "scrimba-learn-react",
+        "vite-guide"
+      ],
+      "source": "React 80 20 Roadmap · Week 1"
+    },
+    {
+      "id": "week-2",
+      "title": "State, events, forms",
+      "weeks": [2, 2],
+      "goal": "By Friday you can build any interactive widget and decide, without guessing, which component should own each piece of state.",
+      "learn": [
+        "useState: state is a snapshot per render; use the updater form setCount(c => c + 1) when the next value depends on the last.",
+        "Events: onClick, onChange, onSubmit with e.preventDefault().",
+        "Immutable updates, the patterns you'll type daily: Object: setUser({ ...user, name }); Add: setItems([...items, item]); Remove: setItems(items.filter(i => i.id !== id)); Update: setItems(items.map(i => i.id === id ? { ...i, done: true } : i))",
+        "Controlled inputs: text, checkbox, select and textarea bound to state.",
+        "Lifting state up: move state to the closest common parent and pass callbacks down.",
+        "Derive, don't store: compute filtered lists and totals during render instead of keeping them in extra state.",
+        "useReducer when several state values change together (cart, multi-step form)."
+      ],
+      "build": {
+        "title": "Expense tracker",
+        "brief": "Add, edit and delete expenses; filter by category and month; show a running total and per-category totals (derived, not stored). Use useReducer for the expense list. This is the Foundations gate: rebuild it from a blank project without notes."
+      },
+      "doneWhen": [
+        "You can explain why setCount(count + 1) called three times only adds one",
+        "Every array and object update in your code is immutable",
+        "You rebuilt the tracker from scratch in under 3 hours"
+      ],
+      "resources": [
+        "adding-interactivity",
+        "managing-state",
+        "data-binding-in-react",
+        "why-react-re-renders",
+        "learn-usereducer-in-20-minutes"
+      ],
+      "source": "React 80 20 Roadmap · Week 2"
+    },
+    {
+      "id": "week-3",
+      "title": "Effects, refs, custom hooks, Context",
+      "weeks": [3, 3],
+      "goal": "By Friday you can talk to an API, share logic through your own hooks, and, just as important, recognise when an effect is the wrong tool.",
+      "learn": [
+        "Effects sync React with things outside it: timers, subscriptions, browser APIs, network. Master the dependency array and the cleanup function.",
+        "When not to use an effect: derived data (compute it during render) and logic caused by a click (put it in the handler). This is the most common code-review comment on junior React code.",
+        "Strict Mode runs effects twice in development on purpose; it exposes missing cleanup.",
+        "Fetch the raw way once: loading/error/data states, plus AbortController to cancel stale requests. Feel the pain; Week 5 removes it.",
+        "useRef: focus an input, hold a timer id, keep a value that shouldn't trigger a render.",
+        "Custom hooks: useDebounce, useLocalStorage. Follow the rules of hooks (top level only, names start with use).",
+        "Context for app-wide, rarely changing values (theme, signed-in user). Since React 19 you render <ThemeContext value={...}> directly instead of .Provider.",
+        "Keep eslint-plugin-react-hooks on (the Vite template ships it); it catches dependency bugs."
+      ],
+      "build": {
+        "title": "Weather search",
+        "brief": "Search any city with a debounced input (your useDebounce), show a 7-day forecast with loading, error and empty states, cancel stale requests with AbortController, save favourite cities with your useLocalStorage, add a dark-mode toggle through Context, and autofocus the search box with useRef."
+      },
+      "doneWhen": [
+        "You can name three situations where an effect is the wrong tool",
+        "Typing fast never shows results for an old query",
+        "Each custom hook is used by at least two components"
+      ],
+      "resources": [
+        "escape-hatches",
+        "you-might-not-need-an-effect",
+        "reusing-logic-with-custom-hooks",
+        "passing-data-deeply-with-context",
+        "learn-useeffect-in-13-minutes",
+        "cosden-solutions",
+        "open-meteo"
+      ],
+      "source": "React 80 20 Roadmap · Week 3"
+    },
+    {
+      "id": "week-4",
+      "title": "TypeScript for React + React Router",
+      "weeks": [4, 4],
+      "goal": "By Friday your apps are typed end to end and have real URLs, the two things that separate tutorial code from team code. From here on, every project starts with --template react-ts.",
+      "learn": [
+        "Only the TypeScript React needs: type vs interface, unions ('idle' | 'loading' | 'error'), optional fields, arrays, and enough generics to read useState<User | null>(null).",
+        "Type props (with children: React.ReactNode), events (React.ChangeEvent<HTMLInputElement>), refs (useRef<HTMLInputElement>(null)), context and API responses.",
+        "Extend native elements: type ButtonProps = React.ComponentProps<'button'> & { variant: 'primary' | 'ghost' }.",
+        "Model UI states with discriminated unions so \"loading and error at once\" can't happen.",
+        "Start in Declarative mode: <BrowserRouter>, <Routes>, <Route>, <Link>/<NavLink>.",
+        "useParams for /expenses/:id, useNavigate after a form submit, useSearchParams to keep filters in the URL.",
+        "Nested routes with an <Outlet> layout, a 404 route, and a protected-route wrapper that redirects with <Navigate>.",
+        "Know that Data mode (loaders and actions) and Framework mode exist; read the comparison once and move on."
+      ],
+      "build": {
+        "title": "Typed, multi-page expense tracker",
+        "brief": "Migrate your Week 2 tracker to TypeScript with strict on (migrating JS to TS is a real on-the-job task). Add routes /expenses, /expenses/:id, /reports, /settings and /login; keep filters in the URL; gate everything except /login behind a fake auth user held in Context."
+      },
+      "doneWhen": [
+        "tsc passes in strict mode with zero any",
+        "Refreshing any URL, including a filtered list, restores the same screen",
+        "A logged-out user hitting /reports is sent to /login, then back to /reports"
+      ],
+      "resources": [
+        "react-typescript-cheatsheet",
+        "using-typescript",
+        "beginner-s-typescript-and-react-with-typescript",
+        "react-typescript-tutorial-for-beginners",
+        "react-router-picking-a-mode"
+      ],
+      "source": "React 80 20 Roadmap · Week 4"
+    },
+    {
+      "id": "week-5",
+      "title": "Server state, forms, styling, global state",
+      "weeks": [5, 5],
+      "goal": "This is the week that makes you employable: by Friday you can build the CRUD dashboard that most frontend tickets live inside.",
+      "learn": [
+        "The core idea: server state (data that lives on a server and goes stale) is different from client state (UI-only). Different tools for each.",
+        "TanStack Query v5: QueryClientProvider, useQuery with a queryKey, staleTime, isPending/isError; useMutation then invalidateQueries; pagination with placeholderData: keepPreviousData; one optimistic update; the Devtools panel.",
+        "React Hook Form + Zod: useForm, register, handleSubmit, formState.errors, zodResolver. Use z.infer<typeof schema> so one schema gives you both validation and the TypeScript type.",
+        "Tailwind CSS: flex and grid utilities, spacing scale, responsive prefixes (md:), dark mode.",
+        "shadcn/ui: copy-in components (Button, Dialog, Table, Form, toasts) built on accessible primitives. You own the code, so read it.",
+        "Zustand: one small store for client state (sidebar open, table density), read through selectors. Learn Redux Toolkit only if a job you want lists it."
+      ],
+      "build": {
+        "title": "Inventory admin dashboard (the Real-app gate)",
+        "brief": "A products table with search, sort and pagination from json-server; create and edit in a shadcn Dialog with React Hook Form + Zod; delete with a confirm step and an optimistic update; toast on every mutation; sidebar state in Zustand; responsive with dark mode."
+      },
+      "doneWhen": [
+        "No useEffect fetches remain anywhere in the app",
+        "Saving an edit updates the table without a manual refetch",
+        "One Zod schema drives both validation and the TypeScript type",
+        "The layout works at 375 px and 1440 px wide"
+      ],
+      "resources": [
+        "tanstack-query-overview",
+        "practical-react-query",
+        "thinking-in-react-query",
+        "react-hook-form-get-started",
+        "zod-docs",
+        "tailwind-css-docs",
+        "shadcn-ui-for-vite",
+        "shadcn-react-hook-form",
+        "zustand-introduction",
+        "zustand-github",
+        "json-server"
+      ],
+      "source": "React 80 20 Roadmap · Week 5"
+    },
+    {
+      "id": "week-6",
+      "title": "Testing, performance, errors, accessibility, CI",
+      "weeks": [6, 6],
+      "goal": "By Friday your dashboard is something a team would merge: tested, fast, accessible, and checked by CI on every push.",
+      "learn": [
+        "Testing: Vitest + React Testing Library + user-event. Query the way users see the page (getByRole('button', { name: /save/i }), getByLabelText), use findBy for async UI, and test behaviour, not implementation.",
+        "Mock the network with MSW so tests hit fake endpoints instead of stubbing fetch.",
+        "What to test first: a form's validation errors, a list rendering API data, one mutation's happy path. Ten meaningful tests beat chasing 100% coverage.",
+        "Performance: find slow renders with the React DevTools Profiler; turn on React Compiler instead of hand-adding useMemo/useCallback/memo; split routes with lazy + <Suspense>. Still know the manual hooks: interviewers ask.",
+        "Errors: an error boundary around each route (the react-error-boundary package) so one crash doesn't blank the app.",
+        "Accessibility: semantic HTML, a label on every input, full keyboard use, visible focus. Run Lighthouse and fix what it flags.",
+        "CI: a GitHub Actions workflow running lint, tsc and tests on every push; environment variables through import.meta.env.VITE_*."
+      ],
+      "build": {
+        "title": "Harden the Week 5 dashboard",
+        "brief": "Add 10+ tests using MSW, React Compiler, lazy-loaded routes, an error boundary per route, and a GitHub Actions workflow with a passing badge in the README. Fix every Lighthouse accessibility issue."
+      },
+      "doneWhen": [
+        "A pull request with a failing test is blocked by CI",
+        "Lighthouse accessibility scores 90 or higher",
+        "You can show a before/after Profiler recording and explain the difference"
+      ],
+      "resources": [
+        "vitest-guide",
+        "react-testing-library-intro",
+        "msw-quick-start",
+        "common-mistakes-with-react-testing-library",
+        "react-testing-tutorial",
+        "react-compiler",
+        "react-compiler-installation",
+        "understanding-usememo-and-usecallback",
+        "react-error-boundary"
+      ],
+      "source": "React 80 20 Roadmap · Week 6"
+    },
+    {
+      "id": "week-7",
+      "title": "Next.js App Router + React 19",
+      "weeks": [7, 7],
+      "goal": "By Friday you can build full-stack React with Next.js 16, the framework most React job posts name alongside React itself. Everything from Weeks 1–6 still applies; the new idea is where code runs.",
+      "learn": [
+        "File-based routing: app/page.tsx, layout.tsx, dynamic [id] folders, and the special files loading.tsx, error.tsx, not-found.tsx.",
+        "Server Components are the default: they can be async and read data directly. Add 'use client' only where you need state, effects, event handlers or browser APIs, and push it down to the smallest component.",
+        "Mutations with Server Functions ('use server', which Next.js calls Server Actions), then revalidatePath to refresh the page's data.",
+        "React 19 form hooks: useActionState for result + pending state, useFormStatus for submit buttons, useOptimistic for instant UI.",
+        "Validate with Zod again on the server; never trust the client.",
+        "Route handlers (app/api/.../route.ts) when something outside your UI needs a REST endpoint.",
+        "SEO and polish: the Metadata API, next/image, next/font.",
+        "Caching defaults changed in Next.js 16; trust the current docs over older videos on this topic."
+      ],
+      "build": {
+        "title": "Port the dashboard to Next.js",
+        "brief": "Days 1–3: finish the official Next.js Learn course, typing every line. Days 4–5: port your inventory dashboard's list, detail and create/edit pages to Next.js with Server Actions and useActionState, and deploy to Vercel with a free Postgres database. This closes the Production gate."
+      },
+      "doneWhen": [
+        "You can say in one sentence when a component needs 'use client'",
+        "A form submits through a Server Action and shows pending state and field errors",
+        "The app runs on Vercel against a real database"
+      ],
+      "resources": [
+        "next-js-learn-app-router",
+        "next-js-documentation",
+        "useactionstate",
+        "useoptimistic",
+        "server-functions",
+        "react-19-release-post",
+        "next-js-crash-course-build-and-deploy-a"
+      ],
+      "source": "React 80 20 Roadmap · Week 7"
+    },
+    {
+      "id": "week-8",
+      "title": "Capstone – Job Application Tracker",
+      "weeks": [8, 8],
+      "goal": "Build a full-stack SaaS-style job application tracker: sign in, log every application, drag it across a Kanban board, and see your hiring funnel. Every hiring manager understands it in five seconds, and it uses every skill from Weeks 1–7. Give it your own name.",
+      "build": {
+        "title": "Job application tracker (MVP)",
+        "brief": "Build a full-stack SaaS-style job application tracker: sign in, log every application, drag it across a Kanban board, and see your hiring funnel. Every hiring manager understands it in five seconds, and it uses every skill from Weeks 1–7. Give it your own name.",
+        "checklist": [
+          "Sign up and log in with email or GitHub via Supabase Auth; each user sees only their own rows.",
+          "Create, edit and delete applications: company, role, job link, location, salary range, status, applied date, notes.",
+          "Kanban board with Wishlist, Applied, Interview, Offer and Rejected columns; dragging a card updates status optimistically.",
+          "Table view with search, status filter and date sort, all kept in the URL.",
+          "Responsive layout, dark mode, and a loading, empty and error state on every screen."
+        ]
+      },
+      "doneWhen": [
+        "The live URL is on your resume, LinkedIn and GitHub profile README",
+        "You can walk through the architecture and defend three decisions in 5 minutes",
+        "A stranger can sign up and use it without asking you anything"
+      ],
+      "source": "React 80 20 Roadmap · Week 8"
+    }
+  ],
+  "topics": [
+    {
+      "id": "jsx-components-props",
+      "title": "JSX, components, props",
+      "priority": "P0",
+      "module": "week-1",
+      "why": "Break every screen into reusable pieces that pass data down",
+      "status": "outline"
+    },
+    {
+      "id": "lists-and-conditional-rendering",
+      "title": "Lists with keys, conditional rendering",
+      "priority": "P0",
+      "module": "week-1",
+      "why": "Render API results, plus empty, loading and error states",
+      "status": "outline"
+    },
+    {
+      "id": "usestate-and-events",
+      "title": "useState and event handlers",
+      "priority": "P0",
+      "module": "week-2",
+      "why": "Every button, toggle, modal, tab and input",
+      "status": "outline"
+    },
+    {
+      "id": "immutable-updates",
+      "title": "Immutable updates to objects and arrays",
+      "priority": "P0",
+      "module": "week-2",
+      "why": "Fix the #1 \"why didn't it re-render?\" bug",
+      "status": "outline"
+    },
+    {
+      "id": "controlled-forms-lifting-state",
+      "title": "Controlled forms, lifting state up",
+      "priority": "P0",
+      "module": "week-2",
+      "why": "Search boxes, filters, login and settings forms",
+      "status": "outline"
+    },
+    {
+      "id": "useeffect",
+      "title": "useEffect, and when not to use it",
+      "priority": "P0",
+      "module": "week-3",
+      "why": "Sync with timers, subscriptions, browser APIs; avoid effect spaghetti",
+      "status": "outline"
+    },
+    {
+      "id": "useref",
+      "title": "useRef",
+      "priority": "P0",
+      "module": "week-3",
+      "why": "Focus inputs, hold timers, measure DOM",
+      "status": "outline"
+    },
+    {
+      "id": "custom-hooks",
+      "title": "Custom hooks",
+      "priority": "P0",
+      "module": "week-3",
+      "why": "Share logic across the team (useDebounce, useAuth)",
+      "status": "outline"
+    },
+    {
+      "id": "context",
+      "title": "Context",
+      "priority": "P0",
+      "module": "week-3",
+      "why": "Theme, signed-in user, locale",
+      "status": "outline"
+    },
+    {
+      "id": "typescript-for-react",
+      "title": "TypeScript for props, state, events",
+      "priority": "P0",
+      "module": "week-4",
+      "why": "Standard on most professional React codebases",
+      "status": "outline"
+    },
+    {
+      "id": "routing",
+      "title": "Routing: params, nested layouts, protected routes",
+      "priority": "P0",
+      "module": "week-4",
+      "why": "Multi-page apps, auth-gated dashboards",
+      "status": "outline"
+    },
+    {
+      "id": "server-state-tanstack-query",
+      "title": "Server state with TanStack Query",
+      "priority": "P0",
+      "module": "week-5",
+      "why": "Fetch, cache, refetch, mutate; most app \"state\" is really server data",
+      "status": "outline"
+    },
+    {
+      "id": "forms-react-hook-form-zod",
+      "title": "Forms at scale: React Hook Form + Zod",
+      "priority": "P0",
+      "module": "week-5",
+      "why": "Validated, typed forms without re-render storms",
+      "status": "outline"
+    },
+    {
+      "id": "tailwind-and-shadcn",
+      "title": "Tailwind CSS + shadcn/ui",
+      "priority": "P0",
+      "module": "week-5",
+      "why": "Ship consistent UI fast from a design",
+      "status": "outline"
+    },
+    {
+      "id": "client-state-zustand",
+      "title": "Client global state: Zustand",
+      "priority": "P0",
+      "module": "week-5",
+      "why": "Cart, UI prefs, multi-step wizards",
+      "status": "outline"
+    },
+    {
+      "id": "testing-performance-errors",
+      "title": "Testing, performance, error boundaries",
+      "priority": "P0",
+      "module": "week-6",
+      "why": "Vitest + React Testing Library, Profiler, lazy loading",
+      "status": "outline"
+    },
+    {
+      "id": "nextjs-app-router-react-19",
+      "title": "Next.js App Router + React 19",
+      "priority": "P0",
+      "module": "week-7",
+      "why": "Server vs Client Components, Server Actions, useActionState",
+      "status": "outline"
+    }
+  ],
+  "resources": [
+    "react-quick-start",
+    "react-tutorial-full-course-beginner-to-pro",
+    "scrimba-learn-react",
+    "josh-w-comeau-s-react-articles",
+    "web-dev-simplified",
+    "cosden-solutions",
+    "codevolution-playlists",
+    "react-typescript-cheatsheet",
+    "beginner-s-typescript-and-react-with-typescript",
+    "practical-react-query",
+    "next-js-learn-app-router",
+    "javascript-mastery",
+    "full-stack-open",
+    "javascript-info"
+  ],
+  "capstone": {
+    "title": "Job application tracker",
+    "summary": "A full-stack tracker with sign-in, a drag-and-drop Kanban board and a hiring-funnel dashboard."
+  }
+}
