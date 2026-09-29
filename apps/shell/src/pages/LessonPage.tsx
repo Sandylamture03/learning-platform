@@ -10,11 +10,11 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { Fragment } from 'react';
 import { Link, Navigate, useParams } from 'react-router';
-import { isNotFound, queries } from '../api.ts';
+import { isNotFound, queries, useCompleteTopic, useFailedCompletion } from '../api.ts';
 import { ModuleOutlet } from '../ModuleOutlet.tsx';
 import { InlineMarkdown, InlineNodes, Markdown, useHeadings } from '../markdown.tsx';
 import { paths } from '../paths.ts';
-import { Breadcrumb, LoadError, Loading, NotFound, PriorityBadge, Title } from '../ui.tsx';
+import { Breadcrumb, LoadError, Loading, NotFound, PriorityBadge, SaveError, Title } from '../ui.tsx';
 
 // Stable loaders, defined once: ModuleOutlet remounts its module whenever `load` changes.
 const loadQuiz = () => import('@lp/widgets/quiz');
@@ -60,6 +60,22 @@ function Task({ task, links }: { task: LessonTask; links: readonly TopicRef[] })
         </pre>
       </details>
     </div>
+  );
+}
+
+/** A passed quiz, and a result the API did not save, with a way to send it again. */
+function QuizResult({ topicId, done }: { topicId: string; done: { score: number } | undefined }) {
+  const failed = useFailedCompletion(topicId);
+  const { mutate: completeTopic } = useCompleteTopic();
+  return (
+    <>
+      {done && (
+        <p className="notice notice--success">Done: you passed the quiz with {Math.round(done.score * 100)}%.</p>
+      )}
+      {failed && (
+        <SaveError what="Your quiz result" error={failed.error} onRetry={() => completeTopic(failed.update)} />
+      )}
+    </>
   );
 }
 
@@ -145,9 +161,7 @@ function Lesson({ view, done }: { view: LessonView; done: { score: number } | un
             </div>
           )}
         </dl>
-        {done && (
-          <p className="notice notice--success">Done: you passed the quiz with {Math.round(done.score * 100)}%.</p>
-        )}
+        <QuizResult topicId={topic.id} done={done} />
       </header>
 
       <section className="section" aria-labelledby="goals-title">

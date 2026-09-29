@@ -10,7 +10,7 @@ import {
   type TrackSummary,
   type TrackView,
 } from '@lp/contracts';
-import { queryOptions, useMutation, useQueryClient } from '@tanstack/react-query';
+import { queryOptions, useMutation, useMutationState, useQueryClient } from '@tanstack/react-query';
 
 /** An answer from the API that was not OK, with its status and the API's reason. */
 export class ApiRequestError extends Error {
@@ -66,6 +66,8 @@ export interface CompleteTopic extends ProgressUpdate {
   topicId: string;
 }
 
+const COMPLETE_TOPIC = ['progress', 'complete'];
+
 /**
  * Marks a topic done. The progress shows straight away (an optimistic update), goes back if the API refuses,
  * and is refetched either way so the screen ends up matching the server.
@@ -74,6 +76,7 @@ export function useCompleteTopic() {
   const client = useQueryClient();
   const { queryKey } = queries.progress();
   return useMutation({
+    mutationKey: COMPLETE_TOPIC,
     mutationFn: ({ topicId, trackId, score }: CompleteTopic) =>
       request<TopicProgress>(API.topicProgress(topicId), {
         method: 'PUT',
@@ -94,4 +97,17 @@ export function useCompleteTopic() {
     },
     onSettled: () => client.invalidateQueries({ queryKey }),
   });
+}
+
+/**
+ * The error and the update, when the latest attempt to mark `topicId` done failed, so the page can say so and
+ * send it again. Undefined when nothing failed, or once a later attempt is on its way or has succeeded.
+ */
+export function useFailedCompletion(topicId: string) {
+  const attempts = useMutationState({
+    filters: { mutationKey: COMPLETE_TOPIC },
+    select: ({ state }) => ({ status: state.status, error: state.error, update: state.variables as CompleteTopic }),
+  });
+  const last = attempts.findLast((attempt) => attempt.update.topicId === topicId);
+  return last?.status === 'error' ? { error: last.error, update: last.update } : undefined;
 }

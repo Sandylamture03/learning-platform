@@ -24,6 +24,14 @@ async function quizElement() {
   return quiz as unknown as HTMLElement & { ctx: PlatformContext };
 }
 
+/** The progress line on a track's card on the learning path. */
+function trackProgress(title: string) {
+  const tracks = screen.getByRole('region', { name: 'Tracks' });
+  const card = within(tracks).getByRole('link', { name: title }).closest('li');
+  if (!card) throw new Error(`No card for ${title}`);
+  return within(card).getByText(/ done$|on the way\.$/).textContent;
+}
+
 describe('the learning path', () => {
   it('lists the tracks with their lessons, and where to start', async () => {
     renderApp('/');
@@ -34,7 +42,13 @@ describe('the learning path', () => {
         .getAllByRole('heading', { level: 3 })
         .map((h) => h.textContent),
     ).toEqual(['HTML5 & CSS3', 'JavaScript', 'TypeScript', 'React', 'Node.js']);
-    expect(screen.getByText('0 of 5 lessons done')).toBeTruthy();
+    expect(['HTML5 & CSS3', 'JavaScript', 'TypeScript', 'React', 'Node.js'].map(trackProgress)).toEqual([
+      'Lessons for this track are on the way.',
+      '0 of 5 lessons done',
+      '0 of 5 lessons done',
+      '0 of 5 lessons done',
+      'Lessons for this track are on the way.',
+    ]);
     const start = screen.getByRole('region', { name: 'Start here' });
     expect(within(start).getByRole('link', { name: 'Scope and closures' }).getAttribute('href')).toBe(
       '/tracks/javascript/scope-and-closures',
@@ -46,7 +60,8 @@ describe('the learning path', () => {
     const api = createMockApi({ content: () => content });
     await complete(api, ['javascript', 'scope-and-closures']);
     renderApp('/', { api });
-    expect(await screen.findByText('1 of 5 lessons done')).toBeTruthy();
+    await waitFor(() => expect(trackProgress('JavaScript')).toBe('1 of 5 lessons done'));
+    expect(trackProgress('TypeScript')).toBe('0 of 5 lessons done');
     const next = await screen.findByRole('region', { name: 'Up next' });
     expect(within(next).getByRole('link', { name: 'Working with arrays and objects' })).toBeTruthy();
   });
@@ -127,7 +142,62 @@ describe('a lesson', () => {
     );
     const nav = screen.getByRole('navigation', { name: 'Main' });
     await user.click(within(nav).getByRole('link', { name: 'Learning path' }));
-    expect(await screen.findByText('1 of 5 lessons done')).toBeTruthy();
+    await waitFor(() => expect(trackProgress('JavaScript')).toBe('1 of 5 lessons done'));
+  });
+
+  it('shows a passed quiz at once, and says so when the API does not save it', async () => {
+    const user = userEvent.setup();
+    const api = createMockApi({ content: () => content });
+    // Each progress update waits until the test lets it through, and the first one is refused.
+    let release = () => {};
+    let refusals = 1;
+    const { fetch } = renderApp('/tracks/javascript/async-code', {
+      api,
+      fetch: async (input, init) => {
+        if (init?.method !== 'PUT') return callApi(api, input, init);
+        await new Promise<void>((resolve) => {
+          release = resolve;
+        });
+        if (refusals-- > 0) return new Response(JSON.stringify({ error: 'The server is restarting' }), { status: 503 });
+        return callApi(api, input, init);
+      },
+    });
+    const updates = () => fetch.mock.calls.filter(([, init]) => init?.method === 'PUT').length;
+    const quiz = await quizElement();
+    quiz.ctx.events.emit('topic.completed.v1', { trackId: 'javascript', topicId: 'async-code', score: 0.8 });
+
+    // The result shows before the API has answered…
+    expect(await screen.findByText('Done: you passed the quiz with 80%.')).toBeTruthy();
+    await waitFor(() => expect(updates()).toBe(1));
+    // …and goes again when the API refuses it, with the reason and a way to send it again.
+    release();
+    const alert = await screen.findByRole('alert');
+    expect(alert.textContent).toBe('Your quiz result could not be saved: The server is restarting.Try again');
+    expect(screen.queryByText('Done: you passed the quiz with 80%.')).toBeNull();
+
+    await user.click(within(alert).getByRole('button', { name: 'Try again' }));
+    expect(await screen.findByText('Done: you passed the quiz with 80%.')).toBeTruthy();
+    expect(screen.queryByRole('alert')).toBeNull();
+    await waitFor(() => expect(updates()).toBe(2));
+    release();
+    await waitFor(async () => {
+      const progress = await (await callApi(api, '/api/progress')).json();
+      expect(progress.completed.map((p: { topicId: string }) => p.topicId)).toEqual(['async-code']);
+    });
+  });
+
+  it('links a lesson to lessons in other tracks', async () => {
+    renderApp('/tracks/typescript/discriminated-unions-ui-state');
+    expect(await screen.findByRole('heading', { level: 1, name: 'Discriminated unions for UI state' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'the lists lesson' }).getAttribute('href')).toBe(
+      '/tracks/react/lists-and-conditional-rendering',
+    );
+    expect(screen.getByRole('link', { name: 'the narrowing lesson' }).getAttribute('href')).toBe(
+      '/tracks/typescript/narrowing',
+    );
+    expect(
+      screen.getByRole('heading', { level: 3, name: 'Coding task: Make impossible states impossible' }),
+    ).toBeTruthy();
   });
 
   it('moves a lesson filed under the wrong track to its own', async () => {

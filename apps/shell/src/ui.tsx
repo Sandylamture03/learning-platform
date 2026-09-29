@@ -18,12 +18,18 @@ export function Loading({ children }: { children: string }) {
   );
 }
 
-/** A request that failed: what did not load, why, and a way to try again. */
-export function LoadError({ what, error, onRetry }: { what: string; error: unknown; onRetry: () => void }) {
+interface FailureProps {
+  what: string;
+  error: unknown;
+  onRetry: () => void;
+}
+
+/** A request that failed: what went wrong, why, and a way to try again. */
+function Failure({ message, error, onRetry }: { message: string; error: unknown; onRetry: () => void }) {
   return (
     <div className="notice notice--error" role="alert">
       <p>
-        {what} could not load
+        {message}
         {error instanceof Error ? `: ${error.message}` : ''}.
       </p>
       <button type="button" className="button button--small" onClick={onRetry}>
@@ -31,6 +37,16 @@ export function LoadError({ what, error, onRetry }: { what: string; error: unkno
       </button>
     </div>
   );
+}
+
+/** A request that failed: what did not load, why, and a way to try again. */
+export function LoadError({ what, error, onRetry }: FailureProps) {
+  return <Failure message={`${what} could not load`} error={error} onRetry={onRetry} />;
+}
+
+/** A change the API did not save: what, why, and a way to send it again. */
+export function SaveError({ what, error, onRetry }: FailureProps) {
+  return <Failure message={`${what} could not be saved`} error={error} onRetry={onRetry} />;
 }
 
 export function PriorityBadge({ priority }: { priority: Priority }) {
