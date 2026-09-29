@@ -9,11 +9,12 @@ import {
 } from '@lp/contracts';
 import { useQuery } from '@tanstack/react-query';
 import { Fragment } from 'react';
-import { Link, Navigate, useParams } from 'react-router';
-import { isNotFound, queries, useCompleteTopic, useFailedCompletion } from '../api.ts';
+import { Link, Navigate, useLocation, useParams } from 'react-router';
+import { isNotFound, queries, useCompleteTopic, useFailedCompletion, useProgress } from '../api.ts';
 import { ModuleOutlet } from '../ModuleOutlet.tsx';
 import { InlineMarkdown, InlineNodes, Markdown, useHeadings } from '../markdown.tsx';
 import { paths } from '../paths.ts';
+import { usePendingResult } from '../platform.tsx';
 import { Breadcrumb, LoadError, Loading, NotFound, PriorityBadge, SaveError, Title } from '../ui.tsx';
 
 // Stable loaders, defined once: ModuleOutlet remounts its module whenever `load` changes.
@@ -63,15 +64,28 @@ function Task({ task, links }: { task: LessonTask; links: readonly TopicRef[] })
   );
 }
 
-/** A passed quiz, and a result the API did not save, with a way to send it again. */
+const percent = (score: number) => `${Math.round(score * 100)}%`;
+
+/**
+ * A passed quiz; one passed while signed out, waiting for an account; and a result the API did not save, with a
+ * way to send it again.
+ */
 function QuizResult({ topicId, done }: { topicId: string; done: { score: number } | undefined }) {
   const failed = useFailedCompletion(topicId);
+  const pending = usePendingResult(topicId);
   const { mutate: completeTopic } = useCompleteTopic();
+  const { pathname } = useLocation();
   return (
     <>
-      {done && (
-        <p className="notice notice--success">Done: you passed the quiz with {Math.round(done.score * 100)}%.</p>
+      {pending && !done && (
+        <div className="notice" role="status">
+          <p>
+            You passed the quiz with {percent(pending.score)}. <Link to={paths.signIn(pathname)}>Sign in</Link> or{' '}
+            <Link to={paths.signUp(pathname)}>create an account</Link> to save it.
+          </p>
+        </div>
       )}
+      {done && <p className="notice notice--success">Done: you passed the quiz with {percent(done.score)}.</p>}
       {failed && (
         <SaveError what="Your quiz result" error={failed.error} onRetry={() => completeTopic(failed.update)} />
       )}
@@ -269,7 +283,7 @@ function Lesson({ view, done }: { view: LessonView; done: { score: number } | un
 export function LessonPage() {
   const { trackId = '', topicId = '' } = useParams();
   const lesson = useQuery(queries.lesson(topicId));
-  const progress = useQuery(queries.progress());
+  const { done: finished } = useProgress();
 
   if (lesson.isPending) {
     return (
@@ -297,6 +311,6 @@ export function LessonPage() {
   if (lesson.data.track.id !== trackId) {
     return <Navigate replace to={paths.lesson(lesson.data.track.id, topicId)} />;
   }
-  const done = progress.data?.completed.find((p) => p.topicId === topicId);
+  const done = finished.get(topicId);
   return <Lesson key={topicId} view={lesson.data} done={done} />;
 }

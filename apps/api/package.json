@@ -1,0 +1,31 @@
+{
+  "name": "@lp/api",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The Node.js API: Express 5 on PostgreSQL. Serves the content, accounts, each learner's progress and the waitlist, at the paths @lp/contracts names.",
+  "type": "module",
+  "scripts": {
+    "dev": "node src/migrate-cli.ts && node --watch src/server.ts",
+    "start": "node src/server.ts",
+    "migrate": "node src/migrate-cli.ts",
+    "test": "vitest run",
+    "typecheck": "tsc -p ."
+  },
+  "dependencies": {
+    "@lp/content": "workspace:*",
+    "@lp/contracts": "workspace:*",
+    "express": "catalog:",
+    "express-rate-limit": "catalog:",
+    "helmet": "catalog:",
+    "pg": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@lp/config": "workspace:*",
+    "@types/express": "catalog:",
+    "@types/node": "catalog:",
+    "@types/pg": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

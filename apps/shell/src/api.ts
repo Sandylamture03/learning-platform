@@ -4,34 +4,53 @@ import {
   API,
   type ApiError,
   type LessonView,
+  type Me,
   type Progress,
   type ProgressUpdate,
+  type SignIn,
+  type SignUp,
   type TopicProgress,
   type TrackSummary,
   type TrackView,
 } from '@lp/contracts';
-import { queryOptions, useMutation, useMutationState, useQueryClient } from '@tanstack/react-query';
+import { queryOptions, useMutation, useMutationState, useQuery, useQueryClient } from '@tanstack/react-query';
 
-/** An answer from the API that was not OK, with its status and the API's reason. */
+/** An answer from the API that was not OK, with its status, the API's reason and any field problems. */
 export class ApiRequestError extends Error {
   readonly status: number;
+  readonly fields: Record<string, string>;
 
-  constructor(status: number, message: string) {
+  constructor(status: number, message: string, fields: Record<string, string> = {}) {
     super(message);
     this.name = 'ApiRequestError';
     this.status = status;
+    this.fields = fields;
   }
 }
 
 export const isNotFound = (error: unknown) => error instanceof ApiRequestError && error.status === 404;
 
-async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const response = await fetch(path, { ...init, headers: { accept: 'application/json', ...init.headers } });
+/** GETs `path`, or sends `body` as JSON. The session cookie goes along by itself: the API is on this origin. */
+async function request<T>(path: string, init: RequestInit & { json?: unknown } = {}): Promise<T> {
+  const { json, ...rest } = init;
+  const response = await fetch(path, {
+    ...rest,
+    headers: {
+      accept: 'application/json',
+      ...(json === undefined ? {} : { 'content-type': 'application/json' }),
+      ...rest.headers,
+    },
+    ...(json === undefined ? {} : { body: JSON.stringify(json) }),
+  });
   if (!response.ok) {
     const body = (await response.json().catch(() => undefined)) as ApiError | undefined;
-    throw new ApiRequestError(response.status, body?.error ?? `Request failed: ${response.status} ${path}`);
+    throw new ApiRequestError(
+      response.status,
+      body?.error ?? `Request failed: ${response.status} ${path}`,
+      body?.fields,
+    );
   }
-  return (await response.json()) as T;
+  return (response.status === 204 ? undefined : await response.json()) as T;
 }
 
 /** Retries network failures and server errors, but not answers such as 404 that will not change. */
@@ -53,6 +72,13 @@ export const queries = {
       queryKey: ['lessons', topicId],
       queryFn: ({ signal }) => request<LessonView>(API.lesson(topicId), { signal }),
     }),
+  /** Who is signed in. Signing in, up or out sets it directly, so it never needs refetching on its own. */
+  me: () =>
+    queryOptions({
+      queryKey: ['me'],
+      queryFn: ({ signal }) => request<Me>(API.me, { signal }),
+      staleTime: Number.POSITIVE_INFINITY,
+    }),
   progress: () =>
     queryOptions({
       queryKey: ['progress'],
@@ -62,6 +88,45 @@ export const queries = {
     }),
 };
 
+/**
+ * Who is signed in, and their progress. Progress is only asked for once someone is signed in; until then (and
+ * while `me` loads) there is none. `user` is undefined while loading, and null when nobody is signed in.
+ */
+export function useProgress() {
+  const me = useQuery(queries.me());
+  // If the API can't say who is signed in, carry on as signed out; the pages say what else failed to load.
+  const user = me.isError ? null : me.data?.user;
+  const progress = useQuery({ ...queries.progress(), enabled: Boolean(user) });
+  const done = new Map((user ? progress.data?.completed : undefined)?.map((p) => [p.topicId, p]));
+  return { me, user, progress, done };
+}
+
+/** Signs up or in, then shows the new learner's own progress (and nobody else's). */
+function useAccountMutation<T>(path: string) {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (details: T) => request<Me>(path, { method: 'POST', json: details }),
+    onSuccess: (me) => {
+      client.removeQueries({ queryKey: queries.progress().queryKey });
+      client.setQueryData(queries.me().queryKey, me);
+    },
+  });
+}
+
+export const useSignUp = () => useAccountMutation<SignUp>(API.signUp);
+export const useSignIn = () => useAccountMutation<SignIn>(API.signIn);
+
+export function useSignOut() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: () => request<void>(API.signOut, { method: 'POST', json: {} }),
+    onSuccess: () => {
+      client.removeQueries({ queryKey: queries.progress().queryKey });
+      client.setQueryData(queries.me().queryKey, { user: null } satisfies Me);
+    },
+  });
+}
+
 export interface CompleteTopic extends ProgressUpdate {
   topicId: string;
 }
@@ -69,8 +134,8 @@ export interface CompleteTopic extends ProgressUpdate {
 const COMPLETE_TOPIC = ['progress', 'complete'];
 
 /**
- * Marks a topic done. The progress shows straight away (an optimistic update), goes back if the API refuses,
- * and is refetched either way so the screen ends up matching the server.
+ * Marks a topic done for the signed-in learner. The progress shows straight away (an optimistic update), goes
+ * back if the API refuses, and is refetched either way so the screen ends up matching the server.
  */
 export function useCompleteTopic() {
   const client = useQueryClient();
@@ -80,8 +145,7 @@ export function useCompleteTopic() {
     mutationFn: ({ topicId, trackId, score }: CompleteTopic) =>
       request<TopicProgress>(API.topicProgress(topicId), {
         method: 'PUT',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ trackId, score } satisfies ProgressUpdate),
+        json: { trackId, score } satisfies ProgressUpdate,
       }),
     onMutate: async ({ topicId, trackId, score }) => {
       await client.cancelQueries({ queryKey });

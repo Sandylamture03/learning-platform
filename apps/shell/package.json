@@ -2,10 +2,11 @@
   "name": "@lp/shell",
   "version": "0.0.0",
   "private": true,
-  "description": "The React + TypeScript learning app: the learning path, tracks and lessons, with the Phase 2 widgets mounted unchanged. Reads a mock API until the Node.js API arrives in Phase 4.",
+  "description": "The React + TypeScript learning app: the learning path, tracks and lessons, accounts and saved progress, with the Phase 2 widgets mounted unchanged. Talks to the Node.js API (apps/api), or to a mock of it in tests and dev:mock.",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:mock": "vite --mode mock",
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc -p . && tsc -p tsconfig.node.json",
@@ -39,6 +40,7 @@
     "happy-dom": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "zod": "catalog:"
   }
 }

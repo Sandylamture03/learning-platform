@@ -1,5 +1,6 @@
 import type { RouteObject } from 'react-router';
 import { AppLayout, RouteError } from './layout.tsx';
+import { SignInPage, SignUpPage } from './pages/AccountPages.tsx';
 import { LessonPage } from './pages/LessonPage.tsx';
 import { PathPage } from './pages/PathPage.tsx';
 import { ResourcesPage } from './pages/ResourcesPage.tsx';
@@ -31,6 +32,8 @@ export const routes: RouteObject[] = [
             ],
           },
           { path: 'resources', Component: ResourcesPage },
+          { path: 'sign-in', Component: SignInPage },
+          { path: 'sign-up', Component: SignUpPage },
           { path: '*', Component: NotFoundPage },
         ],
       },

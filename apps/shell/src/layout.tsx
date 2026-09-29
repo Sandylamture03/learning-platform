@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Link, NavLink, Outlet, ScrollRestoration, useLocation, useRouteError } from 'react-router';
+import { useProgress, useSignOut } from './api.ts';
 import { paths } from './paths.ts';
 import { PlatformProvider } from './platform.tsx';
 import { APP_NAME, Title } from './ui.tsx';
@@ -18,6 +19,38 @@ function useFocusMainOnNavigate() {
     main.current?.focus();
   }, [pathname]);
   return main;
+}
+
+/** Who is signed in, with a way out; or a way in, coming back to this page. */
+function AccountNav() {
+  const { user } = useProgress();
+  const signOut = useSignOut();
+  const { pathname, search } = useLocation();
+  if (user === undefined) return null; // still asking
+  if (!user) {
+    const onAccountPage = pathname === paths.signIn() || pathname === paths.signUp();
+    return (
+      <li>
+        <NavLink to={onAccountPage ? paths.signIn() + search : paths.signIn(pathname)}>Sign in</NavLink>
+      </li>
+    );
+  }
+  return (
+    <li className="account">
+      <span className="account__name">
+        <span className="visually-hidden">Signed in as </span>
+        {user.name}
+      </span>
+      <button
+        type="button"
+        className="button button--small button--secondary"
+        disabled={signOut.isPending}
+        onClick={() => signOut.mutate()}
+      >
+        Sign out
+      </button>
+    </li>
+  );
 }
 
 /** The layout route: header, main content and footer around every page. */
@@ -46,6 +79,7 @@ export function AppLayout() {
               <li>
                 <NavLink to={paths.resources}>Resources</NavLink>
               </li>
+              <AccountNav />
             </ul>
           </nav>
         </div>
