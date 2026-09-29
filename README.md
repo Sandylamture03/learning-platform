@@ -191,30 +191,17 @@ The platform is set up for **Render** (`render.yaml`, a Blueprint): one Docker w
 2. Before the first deploy, check the region in `render.yaml` (both `region:` lines; `singapore` now, the closest to India; or `oregon`, `ohio`, `virginia`, `frankfurt`): a database cannot move regions later.
 3. In Render: **New → Blueprint**, pick this repository, review the two resources, and **Apply**. Render creates the database, builds the image and starts the service; the first build takes a few minutes.
 4. Open the service's `onrender.com` address: the site is at `/`, the app at `/app/`. Check it end to end with `pnpm smoke https://<your-service>.onrender.com`.
-5. Point the domain at it (below), then check `pnpm smoke https://ai-developer.in`.
+5. Point the domain at it (below), then check `pnpm smoke https://learn.ai-developer.in`.
 6. From then on, every merge to `main` deploys by itself once CI is green.
 
-### The domain: ai-developer.in
+### The domain: learn.ai-developer.in
 
-`render.yaml` attaches `ai-developer.in` to the service, and Render adds `www.ai-developer.in` with a redirect to it. Render only serves the domain once its DNS points there; that part happens at your domain provider (where you bought the domain, or wherever its DNS is managed):
+`render.yaml` attaches `learn.ai-developer.in` to the service. A subdomain needs a single DNS record, and whatever `ai-developer.in` itself serves stays as it is. Render only serves the address once the record points there:
 
-1. In Render, open the service → **Settings → Custom Domains**. `ai-developer.in` and `www.ai-developer.in` are listed with the exact records Render wants; use those values.
-2. At your DNS provider, for the root (`@`, the bare `ai-developer.in`), which cannot be a CNAME:
-   - If the provider supports **ALIAS**, **ANAME** or **CNAME flattening** (Cloudflare, Namecheap, DNSimple, NS1 do), point `@` at `<your-service>.onrender.com`. This is Render's preferred option, since it never hardcodes an IP.
-   - Otherwise, add an **A** record for `@` with the IP address Render shows (Render has documented `216.24.57.1`; use what the dashboard says).
-3. Add a **CNAME** record for `www` pointing at `<your-service>.onrender.com`.
-4. **Delete any AAAA (IPv6) records** for `@` and `www`: Render uses IPv4, and a leftover AAAA record breaks HTTPS for some visitors.
-5. If the domain has **CAA** records, add ones allowing `letsencrypt.org` and `pki.goog`, or Render can't issue the certificate.
-6. On Cloudflare, set both records to **DNS only** (grey cloud), at least until Render has issued the certificate. Proxied through Cloudflare, requests pass one more proxy, and `TRUST_PROXY=1` would then see Cloudflare's address instead of the learner's.
-**On Hostinger** (where ai-developer.in is registered): hPanel → **Domains** → ai-developer.in → **DNS / Nameservers** → **DNS records**.
-
-- Turn off Hostinger's CDN for the domain first, if it is on, and delete every **A** and **AAAA** record whose name is `@` or `www` (they point at Hostinger's servers).
-- Add type **CNAME**, name `@`, target `<your-service>.onrender.com`. At the root, Hostinger stores this as an ALIAS record, which is what Render prefers. The target is a host name, never an IP or a URL.
-- Add, or edit the existing, type **CNAME**, name `www`, target `<your-service>.onrender.com`.
-- If the list has **CAA** records, add two more: flag `0`, tag `issue`, values `letsencrypt.org` and `pki.goog`.
-- Leave MX and TXT records alone: they carry email and verifications, and don't affect the website.
-
-7. Back in Render, press **Verify**. DNS changes usually show within minutes (sometimes up to a few hours); Render then issues the HTTPS certificate and redirects `http://` to `https://` by itself.
+1. In Render, open the service → **Settings → Custom Domains**: `learn.ai-developer.in` is listed with the record Render expects.
+2. At the DNS provider for ai-developer.in (Hostinger: hPanel → **Domains** → ai-developer.in → **DNS / Nameservers** → **DNS records**), add type **CNAME**, name `learn`, target `<your-service>.onrender.com` (the host name only, no `https://`). If a record named `learn` already exists (A, AAAA or CNAME), delete it first.
+3. If the zone has **CAA** records, add two more so Render can issue the certificate: flag `0`, tag `issue`, values `letsencrypt.org` and `pki.goog`.
+4. Back in Render, press **Verify**. DNS changes usually show within minutes (sometimes up to a few hours); Render then issues the HTTPS certificate and redirects `http://` to `https://` by itself.
 
 Plans: `render.yaml` starts on the free plans, to try it. The free web service sleeps after 15 idle minutes (the next visit waits about a minute), and **the free database is deleted after 30 days**. For real learners, change the database to `basic-256mb` (or larger) and the service to `starter` in `render.yaml` or the dashboard. A custom domain is added in the service's settings; Render provides the certificate.
 

@@ -22,10 +22,10 @@ services:
     region: singapore
     dockerfilePath: ./Dockerfile
     healthCheckPath: /api/health
-    # The platform's domain. Render adds www.ai-developer.in itself, redirecting it here, and issues and renews
-    # the HTTPS certificates. The DNS records are yours to add at the domain's provider (README, "Deploying").
+    # The platform's address. Render issues and renews its HTTPS certificate once the domain's DNS has a CNAME
+    # for learn pointing at the service (README, "Deploying"); the rest of ai-developer.in is untouched.
     domains:
-      - ai-developer.in
+      - learn.ai-developer.in
     # Deploy main only after its CI checks pass.
     autoDeployTrigger: checksPass
     envVars:
