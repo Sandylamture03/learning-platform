@@ -1,12 +1,12 @@
 # Render Blueprint: the platform as one web service (the Dockerfile) and a managed PostgreSQL.
 # In Render: New → Blueprint → pick this repository → Apply. The README's "Deploying" section has the steps.
-# Pick the region before the first apply: a database cannot move regions afterwards.
+# The region is fixed at the first apply (a database cannot move regions): singapore is Render's closest to India.
 
 databases:
   - name: learning-platform-db
     # free expires 30 days after creation; basic-256mb or larger keeps your data.
     plan: free
-    region: oregon
+    region: singapore
     databaseName: learning_platform
     user: learning_platform
     postgresMajorVersion: "17"
@@ -19,9 +19,13 @@ services:
     runtime: docker
     # free sleeps after 15 idle minutes and takes about a minute to wake; starter stays up.
     plan: free
-    region: oregon
+    region: singapore
     dockerfilePath: ./Dockerfile
     healthCheckPath: /api/health
+    # The platform's domain. Render adds www.ai-developer.in itself, redirecting it here, and issues and renews
+    # the HTTPS certificates. The DNS records are yours to add at the domain's provider (README, "Deploying").
+    domains:
+      - ai-developer.in
     # Deploy main only after its CI checks pass.
     autoDeployTrigger: checksPass
     envVars:
