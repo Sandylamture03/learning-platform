@@ -2,7 +2,7 @@
 
 Learn the 20% of HTML5, CSS3, JavaScript, TypeScript, React and Node.js that real jobs use.
 
-This repo holds the first three phases of the Learning Platform build plan: **Phase 0** (monorepo, content schema, your 80/20 guides imported as track outlines, CI), **Phase 1** (the public site in semantic HTML5 and CSS3) and **Phase 2** (the first JavaScript: a resource finder and a quiz, written as plain custom elements that the React shell will later host unchanged).
+This repo holds the first three phases of the Learning Platform build plan: **Phase 0** (monorepo, content schema, your 80/20 guides imported as track outlines, CI), **Phase 1** (the public site in semantic HTML5 and CSS3) and **Phase 2** (the first JavaScript: a resource finder and a quiz, written as plain custom elements that the React shell will later host unchanged, and the five JavaScript P0 lessons).
 
 ## Quick start
 
@@ -25,7 +25,7 @@ To look at the site without installing anything, open `apps/site/dist/index.html
 | `apps/site` | The public site: a small TypeScript generator that turns the content into HTML pages, one CSS file and the JSON the widgets fetch. JavaScript only on the pages with a widget. |
 | `apps/shell` | The React 19 + TypeScript learning app (Phase 3). For now a placeholder that builds. |
 | `packages/widgets` | The Phase 2 widgets: `<lp-resource-finder>` and `<lp-quiz>`, plain JavaScript custom elements with no build step, type-checked through `// @ts-check` and JSDoc. |
-| `packages/content` | All content as JSON: 5 tracks, 179 web resources, your 46-file library and 25 quiz questions. Plus the loader and `check` command. |
+| `packages/content` | All content: 5 tracks (5 lessons written so far), 185 web resources, your 46-file library, 25 quiz questions and 5 coding challenges, as JSON, with lesson theory in Markdown and challenge code in JavaScript. Plus the loader and `check` command. |
 | `packages/contracts` | Zod schemas shared by everything: tracks, topics (the five-part template), questions, challenges, the sign-up form, and the shapes of the widgets' JSON. |
 | `packages/design-tokens` | Colours, type, spacing and shapes as CSS custom properties, light and dark. Contrast is tested. |
 | `packages/platform-kit` | The contract between the shell and its UI modules (`mount`/`unmount`) and a typed event bus. |
@@ -38,7 +38,7 @@ To look at the site without installing anything, open `apps/site/dist/index.html
 | --- | --- |
 | `pnpm dev` | Build the site, serve it on port 4321, rebuild when content or CSS changes |
 | `pnpm build` | Build every app (`apps/site/dist`, `apps/shell/dist`) |
-| `pnpm test` | Unit and build tests (Vitest) in every package |
+| `pnpm test` | Unit and build tests (Vitest) in every package, and every coding challenge's tests against its solution |
 | `pnpm test:e2e` | Browser checks with Playwright: axe in light and dark, 320px layouts, keyboard, the form, the widgets with and without JavaScript (run `pnpm --filter @lp/site exec playwright install chromium` once first, or set `PW_CHROMIUM_PATH` to an installed Chrome) |
 | `pnpm typecheck` | TypeScript 7 in strict mode, every package, including the widgets' JavaScript (`checkJs`) |
 | `pnpm lint` / `pnpm fix` | Biome: lint and format check / apply fixes |
@@ -59,7 +59,8 @@ data/
   resources.json             every web link, referenced by id
   library.json               the files in your study folders, with their verdicts
   questions/<track-id>.json  quiz and Interview Vault questions, one array per track
-  challenges/*.json          Practice Lab challenges (Phase 5)
+  challenges/<track-id>.json coding challenges, one array per track
+  challenges/<track>/<id>/   each challenge's starter.js, solution.js and tests.js
   theory/<track>/<topic>.md  theory for written topics
 ```
 
@@ -73,6 +74,12 @@ A topic moves through three statuses, and the schema tightens at each step:
 
 `pnpm check:content` reports every problem at once, with the file and field, for example
 `tracks/react.json topics[2].module: Unknown module "week-9" in track "react"`.
+
+Every written topic (draft or published) gets a lesson page at `lessons/<topic-id>.html`, linked from its row in the track's topic table: the header, the objectives, the theory, the code examples, the resources (required ones under "Start here") and "Check yourself", with the quiz and the coding task. The five JavaScript P0 topics are published; the other topics stay outlines until their lessons are written.
+
+- **Theory is Markdown, in a strict subset:** `##` and `###` headings, paragraphs, one level of `-` or `1.` list, fenced code blocks, and inline `` `code` ``, `**strong**`, `*emphasis*` and links. Link to the web with `https://`, or to another written lesson with `lesson:<topic-id>`. Anything else (raw HTML, tables, images, nested lists, an unclosed backtick) fails the build with the file and line, and every piece of text is escaped. Each theory file so far ends with "Say it in an interview", a model answer to practise out loud.
+- **Short text fields take inline Markdown:** objectives, example takeaways, resource notes, and challenge prompts and hints can use `` `code` ``, bold, emphasis and links. Summaries and `why` stay plain text, because they also go into meta descriptions and tables.
+- **A coding challenge is three files:** `starter.js` (what the learner starts from), `solution.js` and `tests.js`, which imports `./solution.js` (a DOM challenge adds `// @vitest-environment happy-dom`). `pnpm test` runs every `tests.js` against its solution, so a published challenge is known to be solvable. The lesson page shows the starter, the three hints and the solution behind disclosures, and lists the test names under "Done when it", so write each `it('…')` name to finish that sentence. A challenge lists its topics, and a topic may only use a challenge that lists it back.
 
 Every topic with quiz questions gets a quiz page, linked from its row in the track's topic table. A question joins a quiz when its `usage` includes `"quiz"` and it is one the browser can mark (`mcq`, `multi_select` or `predict_output`). An outline topic takes all of its quiz questions and a pass mark of 80%; a written topic takes the questions in its assessment, with its own pass mark. The 25 questions in `questions/javascript.json` cover the five JavaScript P0 topics the build plan lists for Phase 2.
 
@@ -98,7 +105,7 @@ Phase 2
 - [x] Both widgets work on the static site, in light and dark, at 320px and from the keyboard, with no axe violations (`pnpm test:e2e`)
 - [x] `checkJs` passes: the widgets are plain JavaScript that TypeScript checks against the shared contracts (`pnpm typecheck`)
 - [x] Typing fast never shows results for an old query (`packages/widgets/test/resource-finder.test.ts`, and in Chrome with a slow network in `pnpm test:e2e`)
-- [ ] Write the JavaScript P0 lessons (array methods, async/await and `fetch`, DOM events and delegation, closures, the event loop). Their quiz questions are done; the theory, examples and resources are next.
+- [x] The JavaScript P0 lessons are published (closures, array methods, DOM events and delegation, async/await and `fetch`, the event loop): theory, three examples, three to five resources, a five-question quiz and a coding task each, all passing the published-topic schema (`pnpm check:content`) and the browser checks above (`pnpm test:e2e`)
 
 ## Conventions
 

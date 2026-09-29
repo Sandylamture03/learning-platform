@@ -53,6 +53,7 @@ interface Origin {
  *   library.json                files in your own study folders
  *   questions/*.json            Interview Vault questions (arrays), optional
  *   challenges/*.json           Practice Lab challenges (arrays), optional
+ *   challenges/<track>/<id>/    each challenge's starter, solution and tests files, named in its `files`
  *   theory/<track>/<topic>.md   theory for written topics
  */
 export function checkContent(dir: string = DATA_DIR): CheckResult {
@@ -140,6 +141,13 @@ export function checkContent(dir: string = DATA_DIR): CheckResult {
         issues.push({ file, path: `topics[${ti}].theory`, message: `Missing ${topic.theory}` });
       }
     });
+  });
+  content.challenges.forEach((challenge, i) => {
+    const { file, index } = challenges.origins[i] ?? { file: 'challenges/' };
+    for (const [part, path] of Object.entries(challenge.files)) {
+      if (!existsSync(join(dir, path)))
+        issues.push({ file, path: `[${index}].files.${part}`, message: `Missing ${path}` });
+    }
   });
   if (issues.length > 0) return { ok: false, issues };
 

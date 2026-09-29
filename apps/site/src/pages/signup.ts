@@ -15,7 +15,7 @@ export function signupPage(content: Content): Page {
   const main = html`<div class="container">
   <header class="page-head">
     <h1>Sign up for early access</h1>
-    <p class="page-head__lead">The track outlines are open to everyone. Accounts, written lessons, quizzes and saved progress come with the learning app. Tell us where you want to start and we will email you when your track is ready.</p>
+    <p class="page-head__lead">The track outlines and the first lessons and quizzes are open to everyone. Accounts, saved progress and the rest of the lessons come with the learning app. Tell us where you want to start and we will email you when your track is ready.</p>
   </header>
 
   <form class="form" method="post" action="${WAITLIST_ENDPOINT}">

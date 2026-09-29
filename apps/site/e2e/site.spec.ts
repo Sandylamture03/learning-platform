@@ -6,6 +6,10 @@ import { expect, type Page, test } from '@playwright/test';
 
 const WIDGET_PAGES = ['/resources.html', '/quizzes/dom-and-events.html', '/quizzes/event-loop.html'];
 
+const LESSON_PAGES = ['scope-and-closures', 'arrays-and-objects', 'dom-and-events', 'async-code', 'event-loop'].map(
+  (topic) => `/lessons/${topic}.html`,
+);
+
 const PAGES = [
   '/',
   '/tracks/',
@@ -14,6 +18,7 @@ const PAGES = [
   '/tracks/typescript.html',
   '/tracks/react.html',
   '/tracks/nodejs.html',
+  ...LESSON_PAGES,
   ...WIDGET_PAGES,
   '/signup.html',
   '/thanks.html',
@@ -148,6 +153,26 @@ test('FAQ answers open and close without JavaScript', async ({ page }) => {
   await question.focus();
   await page.keyboard.press('Enter');
   await expect(answer).toBeVisible();
+});
+
+test('a lesson leads from the track to its quiz, with hints that open without JavaScript', async ({ page }) => {
+  await page.goto('/tracks/javascript.html');
+  await page.getByRole('link', { name: 'Lesson: 45 minutes' }).first().click();
+  await expect(page).toHaveURL(/lessons\/scope-and-closures\.html$/);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Scope and closures');
+
+  await page.getByRole('link', { name: 'Say it in an interview' }).click();
+  await expect(page.getByRole('heading', { level: 2, name: 'Say it in an interview' })).toBeInViewport();
+
+  const hint = page.getByText('Declare let timer inside debounce');
+  await expect(hint).toBeHidden();
+  await page.getByText('Hint 2', { exact: true }).click();
+  await expect(hint).toBeVisible();
+
+  await page.getByRole('link', { name: 'Take the quiz' }).click();
+  await expect(page).toHaveURL(/quizzes\/scope-and-closures\.html$/);
+  await page.getByRole('link', { name: 'Back to the lesson' }).click();
+  await expect(page).toHaveURL(/lessons\/scope-and-closures\.html$/);
 });
 
 test.describe('the resource finder', () => {

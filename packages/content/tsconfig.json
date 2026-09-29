@@ -1,4 +1,4 @@
 {
   "extends": "@lp/config/tsconfig.node.json",
-  "include": ["src", "test"]
+  "include": ["src", "test", "vitest.config.ts"]
 }

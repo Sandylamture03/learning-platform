@@ -1,5 +1,5 @@
 import type { Module, Priority, ResourceType, Track, WebResource } from '@lp/contracts';
-import { html, type SafeHtml } from '../html.ts';
+import { type HtmlValue, html, type SafeHtml } from '../html.ts';
 import { type Link, ROUTES } from '../routes.ts';
 
 export const TYPE_LABELS: Record<ResourceType, string> = {
@@ -89,6 +89,14 @@ export function resourceGroups(
 ${groups
   .filter((g) => g.ids.length > 0)
   .map((g) => html`<div>${heading(TYPE_LABELS[g.type])}${resourceList(g.ids, resources)}</div>\n`)}</div>`;
+}
+
+/** A page section with its h2, labelled by the heading. */
+export function section(id: string, title: string, body: HtmlValue): SafeHtml {
+  return html`<section class="section" id="${id}" aria-labelledby="${id}-title">
+    <h2 id="${id}-title">${title}</h2>
+    ${body}
+  </section>`;
 }
 
 export function textList(items: readonly string[], className = ''): SafeHtml {

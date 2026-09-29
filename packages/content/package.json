@@ -18,6 +18,7 @@
   "devDependencies": {
     "@lp/config": "workspace:*",
     "@types/node": "catalog:",
+    "happy-dom": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }

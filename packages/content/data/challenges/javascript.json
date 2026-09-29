@@ -1,0 +1,117 @@
+[
+  {
+    "id": "debounce",
+    "title": "Write debounce",
+    "kind": "function",
+    "mode": "build",
+    "difficulty": 2,
+    "priority": "P0",
+    "topics": ["scope-and-closures"],
+    "estMinutes": 20,
+    "prompt": "Write `debounce(fn, ms)`. It returns a new function, and every call of that function restarts a timer. `fn` runs only once `ms` milliseconds pass with no new call, and it gets the arguments of the last call. A search box uses this to send one request when the user stops typing, instead of one for every key.",
+    "files": {
+      "starter": "challenges/javascript/debounce/starter.js",
+      "solution": "challenges/javascript/debounce/solution.js",
+      "tests": "challenges/javascript/debounce/tests.js"
+    },
+    "hints": [
+      "`debounce` runs once, but the function it returns runs on every call. Which value has to survive from one call to the next, and where must it live so that every call sees the same one?",
+      "Declare `let timer` inside `debounce` but outside the function it returns. Each call clears the old timer with `clearTimeout(timer)` before it starts a new one.",
+      "`return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), ms); };`"
+    ],
+    "status": "published",
+    "version": 1
+  },
+  {
+    "id": "summarize-todos",
+    "title": "Summarise the todos by user",
+    "kind": "function",
+    "mode": "build",
+    "difficulty": 2,
+    "priority": "P0",
+    "topics": ["arrays-and-objects"],
+    "estMinutes": 30,
+    "prompt": "Write `summarizeTodos(todos)` for data shaped like the jsonplaceholder `/todos` list: objects with `userId`, `id`, `title` and `completed`. Return one object per user, `{ userId, done, total, rate }`, where `rate` is `done / total` rounded to two decimals. Put the highest rate first, and users with the same rate in `userId` order. Do not change the array or the todos in it.",
+    "files": {
+      "starter": "challenges/javascript/summarize-todos/starter.js",
+      "solution": "challenges/javascript/summarize-todos/solution.js",
+      "tests": "challenges/javascript/summarize-todos/tests.js"
+    },
+    "hints": [
+      "Work in two steps: first count `done` and `total` for each user, then turn those counts into the array of summaries.",
+      "Keep the counts in a `Map` keyed by `userId`, because the keys of a plain object become strings. Then `[...counts].map(...)` builds the summaries, and `toSorted` orders them without changing anything else.",
+      "Round with `Math.round((done / total) * 100) / 100`, and sort with `(a, b) => b.rate - a.rate || a.userId - b.userId`: when two rates are equal, the first part is 0 and the `userId` comparison decides."
+    ],
+    "status": "published",
+    "version": 1
+  },
+  {
+    "id": "delegate",
+    "title": "Write an event delegation helper",
+    "kind": "function",
+    "mode": "build",
+    "difficulty": 2,
+    "priority": "P0",
+    "topics": ["dom-and-events"],
+    "estMinutes": 25,
+    "prompt": "Write `delegate(root, type, selector, handler)`. It adds one listener for `type` events to `root`. When an event comes from inside an element that matches `selector`, and that element is inside `root`, it calls `handler(event, element)`. It must work for elements added later, and return a function that removes the listener.",
+    "files": {
+      "starter": "challenges/javascript/delegate/starter.js",
+      "solution": "challenges/javascript/delegate/solution.js",
+      "tests": "challenges/javascript/delegate/tests.js"
+    },
+    "hints": [
+      "One listener on `root` is enough, because events on its descendants bubble up to it. The real work is finding out which matching element, if any, the event came from.",
+      "`event.target.closest(selector)` walks up from where the event started. It can walk past `root`, so check `root.contains(match)` before you call the handler.",
+      "Keep the listener in a `const` and return `() => root.removeEventListener(type, listener)`: removing only works with the same function that was added."
+    ],
+    "status": "published",
+    "version": 1
+  },
+  {
+    "id": "load-profile",
+    "title": "Load a profile in parallel",
+    "kind": "function",
+    "mode": "build",
+    "difficulty": 2,
+    "priority": "P0",
+    "topics": ["async-code"],
+    "estMinutes": 25,
+    "prompt": "Write `loadProfile(userId)`. It requests `/api/users/<userId>` and `/api/users/<userId>/posts` at the same time with `fetch`, and resolves with `{ user, posts }`, both parsed from JSON. If either response is not ok, it throws an `Error` whose message is `Request failed: <status> <url>`, for example `Request failed: 404 /api/users/9`. Network errors pass through unchanged.",
+    "files": {
+      "starter": "challenges/javascript/load-profile/starter.js",
+      "solution": "challenges/javascript/load-profile/solution.js",
+      "tests": "challenges/javascript/load-profile/tests.js"
+    },
+    "hints": [
+      "The two requests don't need each other's results, so start both before you `await` anything.",
+      "`Promise.all` waits for both. `fetch` resolves even for a 404, so check `response.ok` on each response before you call `response.json()`.",
+      "Write a helper, `async function getJson(url)`, that fetches, throws when `response.ok` is false and returns `response.json()`. Then `const [user, posts] = await Promise.all([getJson(userUrl), getJson(postsUrl)]);`"
+    ],
+    "status": "published",
+    "version": 1
+  },
+  {
+    "id": "process-in-chunks",
+    "title": "Keep the page responsive",
+    "kind": "function",
+    "mode": "build",
+    "difficulty": 2,
+    "priority": "P0",
+    "topics": ["event-loop"],
+    "estMinutes": 25,
+    "prompt": "Write `processInChunks(items, handle, chunkSize)`. It calls `handle(item)` for every item, in order, but for at most `chunkSize` items per task: the first chunk runs straight away, and each later chunk waits for a new task with `setTimeout(…, 0)`, so the browser can render and respond to clicks in between. It returns a promise of the array of values that `handle` returned.",
+    "files": {
+      "starter": "challenges/javascript/process-in-chunks/starter.js",
+      "solution": "challenges/javascript/process-in-chunks/solution.js",
+      "tests": "challenges/javascript/process-in-chunks/tests.js"
+    },
+    "hints": [
+      "An `async` function runs straight away until its first `await`. Awaiting a promise that a `setTimeout` callback resolves pauses it until a later task.",
+      "Loop over the first index of each chunk, `for (let start = 0; start < items.length; start += chunkSize)`, and handle `items.slice(start, start + chunkSize)`.",
+      "Before every chunk except the first, `await new Promise((resolve) => setTimeout(resolve, 0))`. `await null` is not enough: it waits for a microtask, and microtasks run before the browser gets a turn."
+    ],
+    "status": "published",
+    "version": 1
+  }
+]

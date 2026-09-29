@@ -336,7 +336,7 @@ function checkReferences(c: ContentInput, ctx: Ctx) {
   const trackIds = new Set(c.tracks.map((t) => t.id));
   const resourceIds = new Set(c.resources.map((r) => r.id));
   const questions = new Map(c.questions.map((q) => [q.id, q]));
-  const challengeIds = new Set(c.challenges.map((ch) => ch.id));
+  const challenges = new Map(c.challenges.map((ch) => [ch.id, ch]));
   const topicIds = new Set<string>();
   const topicHome = new Map<string, string>();
 
@@ -391,7 +391,10 @@ function checkReferences(c: ContentInput, ctx: Ctx) {
           issue(at('assessment', 'questionIds', qi), `Question "${qid}" belongs to "${q.topic}"`);
       });
       topic.assessment.challengeIds.forEach((id, ci) => {
-        if (!challengeIds.has(id)) issue(at('assessment', 'challengeIds', ci), `Unknown challenge "${id}"`);
+        const challenge = challenges.get(id);
+        if (!challenge) issue(at('assessment', 'challengeIds', ci), `Unknown challenge "${id}"`);
+        else if (!challenge.topics.includes(topic.id))
+          issue(at('assessment', 'challengeIds', ci), `Challenge "${id}" does not list topic "${topic.id}"`);
       });
     });
   });
@@ -406,7 +409,7 @@ function checkReferences(c: ContentInput, ctx: Ctx) {
     if (!topicIds.has(q.topic)) issue(['questions', i, 'topic'], `Unknown topic "${q.topic}"`);
     if (!q.id.startsWith(`${q.topic}.`))
       issue(['questions', i, 'id'], `Question ids start with their topic: "${q.topic}.q01"`);
-    if (q.type === 'coding' && !challengeIds.has(q.challenge)) {
+    if (q.type === 'coding' && !challenges.has(q.challenge)) {
       issue(['questions', i, 'challenge'], `Unknown challenge "${q.challenge}"`);
     }
   });
@@ -433,6 +436,7 @@ export const Content = ContentShape.superRefine(checkReferences);
 export type Id = z.infer<typeof Id>;
 export type Technology = z.infer<typeof Technology>;
 export type Priority = z.infer<typeof Priority>;
+export type Level = z.infer<typeof Level>;
 export type ResourceType = z.infer<typeof ResourceType>;
 export type WebResource = z.infer<typeof WebResource>;
 export type Verdict = z.infer<typeof Verdict>;
@@ -441,6 +445,8 @@ export type SkipItem = z.infer<typeof SkipItem>;
 export type Build = z.infer<typeof Build>;
 export type Module = z.infer<typeof Module>;
 export type Topic = z.infer<typeof Topic>;
+export type CodeExample = z.infer<typeof CodeExample>;
+export type TopicResource = z.infer<typeof TopicResource>;
 export type TopicOutline = z.infer<typeof TopicOutline>;
 export type DraftTopic = z.infer<typeof DraftTopic>;
 export type PublishedTopic = z.infer<typeof PublishedTopic>;

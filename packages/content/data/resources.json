@@ -60,6 +60,12 @@
     "type": "course"
   },
   {
+    "id": "bubbling-and-capturing",
+    "title": "Bubbling and capturing",
+    "url": "https://javascript.info/bubbling-and-capturing",
+    "type": "docs"
+  },
+  {
     "id": "bullmq",
     "title": "BullMQ",
     "url": "https://docs.bullmq.io/",
@@ -183,6 +189,12 @@
     "id": "event-delegation",
     "title": "Event delegation",
     "url": "https://javascript.info/event-delegation",
+    "type": "docs"
+  },
+  {
+    "id": "event-loop-microtasks-and-macrotasks",
+    "title": "Event loop: microtasks and macrotasks",
+    "url": "https://javascript.info/event-loop",
     "type": "docs"
   },
   {
@@ -486,6 +498,12 @@
     "type": "docs"
   },
   {
+    "id": "mdn-closures",
+    "title": "MDN: Closures",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Closures",
+    "type": "docs"
+  },
+  {
     "id": "mdn-http",
     "title": "MDN — HTTP",
     "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP",
@@ -501,6 +519,12 @@
     "id": "mdn-using-fetch",
     "title": "MDN: Using Fetch",
     "url": "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch",
+    "type": "docs"
+  },
+  {
+    "id": "mdn-using-promises",
+    "title": "MDN: Using promises",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises",
     "type": "docs"
   },
   {
@@ -627,6 +651,12 @@
     "id": "node-redis-guide",
     "title": "node-redis guide",
     "url": "https://redis.io/docs/latest/develop/clients/nodejs/",
+    "type": "docs"
+  },
+  {
+    "id": "object-references-and-copying",
+    "title": "Object references and copying",
+    "url": "https://javascript.info/object-copy",
     "type": "docs"
   },
   {
@@ -892,6 +922,12 @@
     "title": "TanStack Query: Overview",
     "url": "https://tanstack.com/query/latest/docs/framework/react/overview",
     "type": "docs"
+  },
+  {
+    "id": "tasks-microtasks-queues-and-schedules",
+    "title": "Tasks, microtasks, queues and schedules (Jake Archibald)",
+    "url": "https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/",
+    "type": "article"
   },
   {
     "id": "the-node-js-event-loop",

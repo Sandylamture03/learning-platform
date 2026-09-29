@@ -20,6 +20,18 @@
       "preset": "recommended"
     }
   },
+  "overrides": [
+    {
+      "includes": ["packages/content/data/challenges/**/starter.js"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedFunctionParameters": "off"
+          }
+        }
+      }
+    }
+  ],
   "assist": {
     "actions": {
       "source": {

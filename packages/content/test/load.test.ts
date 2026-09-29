@@ -77,6 +77,45 @@ describe('the content check', () => {
     ]);
   });
 
+  it('wants every file a challenge names', () => {
+    rmSync(join(dir, 'challenges', 'javascript', 'debounce', 'tests.js'));
+    const result = checkContent(dir);
+    expect(result.ok ? [] : result.issues).toEqual([
+      {
+        file: 'challenges/javascript.json',
+        path: '[0].files.tests',
+        message: 'Missing challenges/javascript/debounce/tests.js',
+      },
+    ]);
+  });
+
+  it('wants the theory file of every written topic', () => {
+    rmSync(join(dir, 'theory', 'javascript', 'scope-and-closures.md'));
+    const result = checkContent(dir);
+    expect(result.ok ? [] : result.issues).toEqual([
+      {
+        file: 'tracks/javascript.json',
+        path: 'topics[0].theory',
+        message: 'Missing theory/javascript/scope-and-closures.md',
+      },
+    ]);
+  });
+
+  it('wants the coding task of a topic to name that topic back', () => {
+    const file = join(dir, 'challenges', 'javascript.json');
+    const challenges = JSON.parse(readFileSync(file, 'utf8'));
+    challenges[0].topics = ['arrays-and-objects'];
+    writeFileSync(file, JSON.stringify(challenges, null, 2));
+    const result = checkContent(dir);
+    expect(result.ok ? [] : result.issues).toEqual([
+      {
+        file: 'tracks/javascript.json',
+        path: 'topics[0].assessment.challengeIds[0]',
+        message: 'Challenge "debounce" does not list topic "scope-and-closures"',
+      },
+    ]);
+  });
+
   it('reports broken JSON with its file name', () => {
     writeFileSync(join(dir, 'resources.json'), '[{ "id": "oops", }]');
     const result = checkContent(dir);
