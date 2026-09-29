@@ -32,7 +32,7 @@
       }
     },
     {
-      "includes": ["packages/content/data/challenges/**/starter.js"],
+      "includes": ["packages/content/data/challenges/**/starter.{js,jsx,ts}"],
       "linter": {
         "rules": {
           "correctness": {

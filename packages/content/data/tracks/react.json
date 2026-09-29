@@ -3,7 +3,7 @@
   "order": 4,
   "title": "React",
   "technologies": ["react"],
-  "status": "outline",
+  "status": "draft",
   "summary": "Seventeen skills cover nearly all day-to-day React work; everything else you learn on the job when a ticket needs it.",
   "pace": {
     "weeks": 8,
@@ -348,7 +348,81 @@
       "priority": "P0",
       "module": "week-1",
       "why": "Break every screen into reusable pieces that pass data down",
-      "status": "outline"
+      "status": "published",
+      "summary": "Split a screen into components: functions that take props and return JSX, nest like HTML, and get their data from their parent.",
+      "level": "foundation",
+      "difficulty": 1,
+      "estMinutes": 45,
+      "prerequisites": ["arrays-and-objects"],
+      "objectives": [
+        "Write a component as a function that takes props and returns JSX, following the JSX rules",
+        "Pass data down with props, including `children` for wrapper components, without ever changing them",
+        "Break a page into a tree of small components that each do one job"
+      ],
+      "examples": [
+        {
+          "id": "avatar",
+          "title": "Props with a default",
+          "language": "jsx",
+          "code": "function Avatar({ name, size = 48 }) {\n  const initials = name\n    .split(' ')\n    .map((word) => word[0])\n    .join('');\n  return (\n    <span className=\"avatar\" style={{ width: size, height: size }} title={name}>\n      {initials}\n    </span>\n  );\n}\n\n// <Avatar name=\"Asha Rao\" />              a 48px circle showing \"AR\"\n// <Avatar name=\"Ben Okafor\" size={32} />  a 32px circle showing \"BO\"",
+          "takeaway": "Destructuring in the parameter list names the props the component reads, a default fills in `size` when the parent leaves it out, and `style` takes an object."
+        },
+        {
+          "id": "card-children",
+          "title": "Wrapping content with children",
+          "language": "jsx",
+          "code": "function Card({ title, children }) {\n  return (\n    <section className=\"card\">\n      <h2>{title}</h2>\n      {children}\n    </section>\n  );\n}\n\nfunction Profile() {\n  return (\n    <Card title=\"About\">\n      <p>Front-end developer in Pune.</p>\n      <a href=\"/cv.pdf\">Download my CV</a>\n    </Card>\n  );\n}",
+          "takeaway": "Whatever sits between `<Card>` and `</Card>` arrives as `children`, so one `Card` can wrap any content."
+        },
+        {
+          "id": "component-tree",
+          "title": "A page as a tree of components",
+          "language": "jsx",
+          "code": "const products = [\n  { id: 'p1', name: 'Keyboard', cents: 4900 },\n  { id: 'p2', name: 'Mouse', cents: 1900 },\n];\n\nexport default function App() {\n  return (\n    <Layout>\n      <ProductList products={products} />\n    </Layout>\n  );\n}\n\nfunction ProductList({ products }) {\n  return (\n    <ul className=\"grid\">\n      {products.map((product) => (\n        <li key={product.id}>\n          <ProductCard product={product} />\n        </li>\n      ))}\n    </ul>\n  );\n}\n\nfunction ProductCard({ product }) {\n  return (\n    <article>\n      <h3>{product.name}</h3>\n      <Price cents={product.cents} />\n    </article>\n  );\n}",
+          "takeaway": "Data starts at the top and flows down through props; each component knows only the props it is given."
+        }
+      ],
+      "resources": [
+        {
+          "id": "your-first-component",
+          "note": "What a component is, how to write one and how to nest them.",
+          "required": true
+        },
+        {
+          "id": "passing-props-to-a-component",
+          "note": "Props in depth: destructuring, defaults, `children`, and why they are read-only.",
+          "required": true
+        },
+        {
+          "id": "describing-the-ui",
+          "note": "The whole first chapter of the React docs, with small challenges after each page.",
+          "required": false
+        },
+        {
+          "id": "thinking-in-react",
+          "note": "How to turn a design into a tree of components, and decide where each piece of data lives.",
+          "required": false
+        },
+        {
+          "id": "scrimba-learn-react",
+          "note": "An interactive course, if you learn best by typing along with a video.",
+          "required": false
+        }
+      ],
+      "assessment": {
+        "passMark": 0.8,
+        "questionIds": [
+          "jsx-components-props.q01",
+          "jsx-components-props.q02",
+          "jsx-components-props.q03",
+          "jsx-components-props.q04",
+          "jsx-components-props.q05"
+        ],
+        "challengeIds": ["product-card"]
+      },
+      "theory": "theory/react/jsx-components-props.md",
+      "version": 1,
+      "updatedAt": "2026-09-29"
     },
     {
       "id": "lists-and-conditional-rendering",
@@ -356,7 +430,71 @@
       "priority": "P0",
       "module": "week-1",
       "why": "Render API results, plus empty, loading and error states",
-      "status": "outline"
+      "status": "published",
+      "summary": "Turn arrays into lists with map and stable keys, and show the right thing for every state: loading, error, empty and loaded.",
+      "level": "foundation",
+      "difficulty": 1,
+      "estMinutes": 40,
+      "prerequisites": ["jsx-components-props"],
+      "objectives": [
+        "Render an array with `map`, giving every item a stable, unique `key` from the data",
+        "Explain what goes wrong when the array index is the key and the list changes",
+        "Show loading, error, empty and loaded states with early returns, the ternary and `&&`"
+      ],
+      "examples": [
+        {
+          "id": "keys-from-data",
+          "title": "Keys that come from the data",
+          "language": "jsx",
+          "code": "function TodoList({ todos }) {\n  return (\n    <ul>\n      {todos.map((todo) => (\n        <li key={todo.id}>\n          <label>\n            <input type=\"checkbox\" defaultChecked={todo.done} /> {todo.title}\n          </label>\n        </li>\n      ))}\n    </ul>\n  );\n}",
+          "takeaway": "`key={todo.id}` follows each todo wherever it moves, so a ticked checkbox stays with its own item when the list is sorted or filtered."
+        },
+        {
+          "id": "every-state",
+          "title": "Every state, with early returns",
+          "language": "jsx",
+          "code": "function SearchResults({ status, results, error }) {\n  if (status === 'loading') return <p role=\"status\">Searching…</p>;\n  if (status === 'error') return <p role=\"alert\">The search failed: {error}</p>;\n  if (results.length === 0) return <p>Nothing found. Try another word.</p>;\n\n  return (\n    <ul>\n      {results.map((result) => (\n        <li key={result.id}>\n          <a href={result.url}>{result.title}</a>\n        </li>\n      ))}\n    </ul>\n  );\n}",
+          "takeaway": "Each early return handles one state, so the `map` at the end only runs when there is something to show."
+        },
+        {
+          "id": "zero-trap",
+          "title": "The 0 trap with &&",
+          "language": "jsx",
+          "code": "function InboxHeading({ unread }) {\n  return (\n    <h1>\n      Inbox {unread > 0 && <span className=\"badge\">{unread} new</span>}\n    </h1>\n  );\n}\n\n// With {unread && <span>…</span>}, the heading reads \"Inbox 0\" when unread is 0:\n// && returns its left side, and React renders numbers.",
+          "takeaway": "Make the left side of `&&` a real boolean, such as `unread > 0`, so a count of zero shows nothing instead of a stray 0."
+        }
+      ],
+      "resources": [
+        {
+          "id": "rendering-lists",
+          "note": "Rendering arrays with `map` and `filter`, and the rules for keys, with a clear picture of why they matter.",
+          "required": true
+        },
+        {
+          "id": "conditional-rendering",
+          "note": "Early returns, the ternary and `&&`, including the 0 trap.",
+          "required": true
+        },
+        {
+          "id": "thinking-in-react",
+          "note": "Its product table is a filtered, keyed list built step by step.",
+          "required": false
+        }
+      ],
+      "assessment": {
+        "passMark": 0.8,
+        "questionIds": [
+          "lists-and-conditional-rendering.q01",
+          "lists-and-conditional-rendering.q02",
+          "lists-and-conditional-rendering.q03",
+          "lists-and-conditional-rendering.q04",
+          "lists-and-conditional-rendering.q05"
+        ],
+        "challengeIds": ["people-list"]
+      },
+      "theory": "theory/react/lists-and-conditional-rendering.md",
+      "version": 1,
+      "updatedAt": "2026-09-29"
     },
     {
       "id": "usestate-and-events",
@@ -364,7 +502,81 @@
       "priority": "P0",
       "module": "week-2",
       "why": "Every button, toggle, modal, tab and input",
-      "status": "outline"
+      "status": "published",
+      "summary": "Give components memory with useState, respond to clicks and typing with event handlers, and update state the way React expects.",
+      "level": "foundation",
+      "difficulty": 2,
+      "estMinutes": 50,
+      "prerequisites": ["jsx-components-props", "dom-and-events"],
+      "objectives": [
+        "Add state with `useState`, and change it from event handlers such as `onClick` and `onChange`",
+        "Explain why state is a snapshot, and use the updater form when the next value depends on the last",
+        "Update objects and arrays in state by copying them, never by changing them in place"
+      ],
+      "examples": [
+        {
+          "id": "add-three",
+          "title": "The updater form",
+          "language": "jsx",
+          "code": "import { useState } from 'react';\n\nexport function Counter() {\n  const [count, setCount] = useState(0);\n\n  function addThree() {\n    setCount((c) => c + 1);\n    setCount((c) => c + 1);\n    setCount((c) => c + 1);\n  }\n\n  return (\n    <>\n      <p>Count: {count}</p>\n      <button type=\"button\" onClick={() => setCount(count + 1)}>\n        Add one\n      </button>\n      <button type=\"button\" onClick={addThree}>\n        Add three\n      </button>\n    </>\n  );\n}",
+          "takeaway": "Each updater gets the latest queued value, so three of them add three. `setCount(count + 1)` three times would add one."
+        },
+        {
+          "id": "controlled-input",
+          "title": "A controlled input",
+          "language": "jsx",
+          "code": "import { useState } from 'react';\n\nexport function Greeting() {\n  const [name, setName] = useState('');\n  const trimmed = name.trim(); // derived while rendering, not stored\n\n  return (\n    <>\n      <label htmlFor=\"name\">Your name</label>\n      <input id=\"name\" value={name} onChange={(event) => setName(event.target.value)} />\n      <p>{trimmed ? `Hello, ${trimmed}!` : 'Type your name to be greeted.'}</p>\n    </>\n  );\n}",
+          "takeaway": "`value` comes from state and `onChange` writes it back, so the input and the greeting always agree, and the greeting is derived, not stored."
+        },
+        {
+          "id": "array-state",
+          "title": "Adding to and changing an array in state",
+          "language": "jsx",
+          "code": "import { useState } from 'react';\n\nexport function TodoApp() {\n  const [todos, setTodos] = useState([{ id: 1, title: 'Learn useState', done: false }]);\n  const [title, setTitle] = useState('');\n\n  function handleSubmit(event) {\n    event.preventDefault();\n    if (!title.trim()) return;\n    setTodos((list) => [...list, { id: Date.now(), title: title.trim(), done: false }]);\n    setTitle('');\n  }\n\n  function toggle(id) {\n    setTodos((list) => list.map((todo) => (todo.id === id ? { ...todo, done: !todo.done } : todo)));\n  }\n\n  return (\n    <form onSubmit={handleSubmit}>\n      <input aria-label=\"New todo\" value={title} onChange={(event) => setTitle(event.target.value)} />\n      <button type=\"submit\">Add</button>\n      <ul>\n        {todos.map((todo) => (\n          <li key={todo.id}>\n            <label>\n              <input type=\"checkbox\" checked={todo.done} onChange={() => toggle(todo.id)} /> {todo.title}\n            </label>\n          </li>\n        ))}\n      </ul>\n    </form>\n  );\n}",
+          "takeaway": "Adding spreads the old array into a new one, and toggling maps to a new array with one new object: React sees new references and renders again."
+        }
+      ],
+      "resources": [
+        {
+          "id": "state-a-components-memory",
+          "note": "Why ordinary variables are not enough, and how `useState` works.",
+          "required": true
+        },
+        {
+          "id": "responding-to-events",
+          "note": "Event handlers, passing them as props, and stopping default actions.",
+          "required": true
+        },
+        {
+          "id": "state-as-a-snapshot",
+          "note": "The snapshot model, step by step, and why `setCount(count + 1)` three times adds one.",
+          "required": false
+        },
+        {
+          "id": "updating-arrays-in-state",
+          "note": "Every copying pattern for arrays in state, next to the mutating one it replaces.",
+          "required": false
+        },
+        {
+          "id": "why-react-re-renders",
+          "note": "An illustrated guide to what makes React render again, and what doesn’t.",
+          "required": false
+        }
+      ],
+      "assessment": {
+        "passMark": 0.8,
+        "questionIds": [
+          "usestate-and-events.q01",
+          "usestate-and-events.q02",
+          "usestate-and-events.q03",
+          "usestate-and-events.q04",
+          "usestate-and-events.q05"
+        ],
+        "challengeIds": ["quantity-picker"]
+      },
+      "theory": "theory/react/usestate-and-events.md",
+      "version": 1,
+      "updatedAt": "2026-09-29"
     },
     {
       "id": "immutable-updates",
@@ -388,7 +600,70 @@
       "priority": "P0",
       "module": "week-3",
       "why": "Sync with timers, subscriptions, browser APIs; avoid effect spaghetti",
-      "status": "outline"
+      "status": "published",
+      "summary": "Keep a component in sync with something outside React (a timer, a subscription, the network), clean up after it, and know when an effect is the wrong tool.",
+      "level": "core",
+      "difficulty": 2,
+      "estMinutes": 60,
+      "prerequisites": ["usestate-and-events", "async-code"],
+      "objectives": [
+        "Use `useEffect` to sync with a timer, a browser API or the network, with the right dependencies",
+        "Write the cleanup function, and explain why Strict Mode runs effects twice in development",
+        "Spot effects you don’t need: values you can calculate while rendering, and work caused by an event"
+      ],
+      "examples": [
+        {
+          "id": "clock",
+          "title": "Set up, clean up",
+          "language": "jsx",
+          "code": "import { useEffect, useState } from 'react';\n\nexport function Clock() {\n  const [now, setNow] = useState(() => new Date());\n\n  useEffect(() => {\n    const id = setInterval(() => setNow(new Date()), 1000);\n    return () => clearInterval(id); // stop the timer when the clock leaves the page\n  }, []);\n\n  return <time dateTime={now.toISOString()}>{now.toLocaleTimeString()}</time>;\n}",
+          "takeaway": "The cleanup undoes exactly what the effect started: without it, every visit to the page would leave another interval running."
+        },
+        {
+          "id": "window-width",
+          "title": "Subscribe to a browser event",
+          "language": "jsx",
+          "code": "import { useEffect, useState } from 'react';\n\nexport function WindowWidth() {\n  const [width, setWidth] = useState(() => window.innerWidth);\n\n  useEffect(() => {\n    const onResize = () => setWidth(window.innerWidth);\n    window.addEventListener('resize', onResize);\n    return () => window.removeEventListener('resize', onResize);\n  }, []);\n\n  return <p>The window is {width}px wide.</p>;\n}",
+          "takeaway": "The listener is added once, after the first render, and removed by the same function reference when the component leaves the page."
+        },
+        {
+          "id": "derive-dont-sync",
+          "title": "You might not need an effect",
+          "language": "jsx",
+          "code": "import { useEffect, useState } from 'react';\n\n// Before: an effect copies a calculation into state. The first render shows a stale total,\n// then the effect sets it and React renders again.\nfunction CartTotalWithEffect({ items }) {\n  const [total, setTotal] = useState(0);\n  useEffect(() => {\n    setTotal(items.reduce((sum, item) => sum + item.price * item.quantity, 0));\n  }, [items]);\n  return <p>Total: {total}</p>;\n}\n\n// After: calculate it while rendering. Always right, and one render instead of two.\nfunction CartTotal({ items }) {\n  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);\n  return <p>Total: {total}</p>;\n}",
+          "takeaway": "A value calculated from props needs no effect and no state: calculate it while rendering, and it can never be stale."
+        }
+      ],
+      "resources": [
+        {
+          "id": "synchronizing-with-effects",
+          "note": "What effects are for, dependencies, cleanup, and why development runs them twice.",
+          "required": true
+        },
+        {
+          "id": "you-might-not-need-an-effect",
+          "note": "The page that removes half the effects in a typical codebase. Read it twice.",
+          "required": true
+        },
+        {
+          "id": "learn-useeffect-in-13-minutes",
+          "note": "A short video walk-through of dependencies and cleanup.",
+          "required": false
+        },
+        {
+          "id": "escape-hatches",
+          "note": "The docs chapter effects belong to, including refs and custom hooks.",
+          "required": false
+        }
+      ],
+      "assessment": {
+        "passMark": 0.8,
+        "questionIds": ["useeffect.q01", "useeffect.q02", "useeffect.q03", "useeffect.q04", "useeffect.q05"],
+        "challengeIds": ["user-card"]
+      },
+      "theory": "theory/react/useeffect.md",
+      "version": 1,
+      "updatedAt": "2026-09-29"
     },
     {
       "id": "useref",
@@ -404,7 +679,71 @@
       "priority": "P0",
       "module": "week-3",
       "why": "Share logic across the team (useDebounce, useAuth)",
-      "status": "outline"
+      "status": "published",
+      "summary": "Pull stateful logic out of components into functions that start with use, so several components can share it.",
+      "level": "core",
+      "difficulty": 2,
+      "estMinutes": 45,
+      "prerequisites": ["useeffect"],
+      "objectives": [
+        "Move repeated state and effect logic into a custom hook, and follow the rules of hooks",
+        "Explain that a custom hook shares logic, not state: every component that calls it gets its own",
+        "Write `useDebounce` and `useLocalStorage`, two hooks most teams have"
+      ],
+      "examples": [
+        {
+          "id": "use-online-status",
+          "title": "Wrapping a subscription in a hook",
+          "language": "jsx",
+          "code": "import { useEffect, useState } from 'react';\n\nexport function useOnlineStatus() {\n  const [online, setOnline] = useState(() => navigator.onLine);\n  useEffect(() => {\n    const update = () => setOnline(navigator.onLine);\n    window.addEventListener('online', update);\n    window.addEventListener('offline', update);\n    return () => {\n      window.removeEventListener('online', update);\n      window.removeEventListener('offline', update);\n    };\n  }, []);\n  return online;\n}\n\nfunction SaveButton() {\n  const online = useOnlineStatus();\n  return (\n    <button type=\"submit\" disabled={!online}>\n      {online ? 'Save' : 'Reconnecting…'}\n    </button>\n  );\n}",
+          "takeaway": "The component asks for what it needs, `useOnlineStatus()`, and the listeners and their cleanup live in one place."
+        },
+        {
+          "id": "use-debounce",
+          "title": "useDebounce",
+          "language": "jsx",
+          "code": "import { useEffect, useState } from 'react';\n\nexport function useDebounce(value, delay = 300) {\n  const [debounced, setDebounced] = useState(value);\n  useEffect(() => {\n    const id = setTimeout(() => setDebounced(value), delay);\n    return () => clearTimeout(id); // a newer value arrived first: drop this one\n  }, [value, delay]);\n  return debounced;\n}\n\nfunction CitySearch() {\n  const [query, setQuery] = useState('');\n  const debouncedQuery = useDebounce(query, 300);\n  // Fetch results for debouncedQuery here: one request after the user pauses, not one per key.\n  return <input aria-label=\"City\" value={query} onChange={(event) => setQuery(event.target.value)} />;\n}",
+          "takeaway": "Every new value restarts the timer, because the effect’s cleanup clears the previous one; the debounced value changes only after a pause."
+        },
+        {
+          "id": "use-toggle",
+          "title": "A hook that returns a pair",
+          "language": "jsx",
+          "code": "import { useCallback, useState } from 'react';\n\nexport function useToggle(initial = false) {\n  const [on, setOn] = useState(initial);\n  const toggle = useCallback(() => setOn((value) => !value), []);\n  return [on, toggle];\n}\n\nfunction Question({ question, answer }) {\n  const [open, toggle] = useToggle();\n  return (\n    <div>\n      <button type=\"button\" aria-expanded={open} onClick={toggle}>\n        {question}\n      </button>\n      {open && <p>{answer}</p>}\n    </div>\n  );\n}",
+          "takeaway": "Each `Question` gets its own `open` state: the hook shares the logic, never the value."
+        }
+      ],
+      "resources": [
+        {
+          "id": "reusing-logic-with-custom-hooks",
+          "note": "When to extract a hook, how to name it, and what it shares.",
+          "required": true
+        },
+        {
+          "id": "rules-of-hooks",
+          "note": "The two rules, and exactly where hooks may and may not be called.",
+          "required": true
+        },
+        {
+          "id": "cosden-solutions",
+          "note": "Short videos on React patterns, including many custom hooks.",
+          "required": false
+        }
+      ],
+      "assessment": {
+        "passMark": 0.8,
+        "questionIds": [
+          "custom-hooks.q01",
+          "custom-hooks.q02",
+          "custom-hooks.q03",
+          "custom-hooks.q04",
+          "custom-hooks.q05"
+        ],
+        "challengeIds": ["use-local-storage"]
+      },
+      "theory": "theory/react/custom-hooks.md",
+      "version": 1,
+      "updatedAt": "2026-09-29"
     },
     {
       "id": "context",

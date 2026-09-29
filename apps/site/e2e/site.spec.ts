@@ -4,11 +4,30 @@
 import { AxeBuilder } from '@axe-core/playwright';
 import { expect, type Page, test } from '@playwright/test';
 
-const WIDGET_PAGES = ['/resources.html', '/quizzes/dom-and-events.html', '/quizzes/event-loop.html'];
+const WIDGET_PAGES = [
+  '/resources.html',
+  '/quizzes/dom-and-events.html',
+  '/quizzes/event-loop.html',
+  '/quizzes/discriminated-unions-ui-state.html',
+];
 
-const LESSON_PAGES = ['scope-and-closures', 'arrays-and-objects', 'dom-and-events', 'async-code', 'event-loop'].map(
-  (topic) => `/lessons/${topic}.html`,
-);
+const LESSON_PAGES = [
+  'scope-and-closures',
+  'arrays-and-objects',
+  'dom-and-events',
+  'async-code',
+  'event-loop',
+  'types-and-interfaces',
+  'unions-and-literal-types',
+  'narrowing',
+  'reading-generics',
+  'discriminated-unions-ui-state',
+  'jsx-components-props',
+  'lists-and-conditional-rendering',
+  'usestate-and-events',
+  'useeffect',
+  'custom-hooks',
+].map((topic) => `/lessons/${topic}.html`);
 
 const PAGES = [
   '/',

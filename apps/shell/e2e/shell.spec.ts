@@ -9,6 +9,8 @@ const PAGES = [
   '/tracks/react',
   '/tracks/javascript/async-code',
   '/tracks/javascript/event-loop',
+  '/tracks/typescript/discriminated-unions-ui-state',
+  '/tracks/react/useeffect',
   '/resources',
   '/no-such-page',
 ];

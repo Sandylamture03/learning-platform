@@ -13,9 +13,27 @@ let data: string[];
 const read = (page: string) => readFileSync(join(outDir, page), 'utf8');
 const readJson = <T>(file: string): T => JSON.parse(read(file));
 
-const JS_P0_TOPICS = ['scope-and-closures', 'arrays-and-objects', 'dom-and-events', 'async-code', 'event-loop'];
-const LESSON_PAGES = JS_P0_TOPICS.map((topic) => `lessons/${topic}.html`);
-const QUIZ_PAGES = JS_P0_TOPICS.map((topic) => `quizzes/${topic}.html`);
+/** The written lessons of each track, in catalogue order. */
+const WRITTEN: Record<string, string[]> = {
+  javascript: ['scope-and-closures', 'arrays-and-objects', 'dom-and-events', 'async-code', 'event-loop'],
+  typescript: [
+    'types-and-interfaces',
+    'unions-and-literal-types',
+    'narrowing',
+    'reading-generics',
+    'discriminated-unions-ui-state',
+  ],
+  react: [
+    'jsx-components-props',
+    'lists-and-conditional-rendering',
+    'usestate-and-events',
+    'useeffect',
+    'custom-hooks',
+  ],
+};
+const WRITTEN_TOPICS = Object.values(WRITTEN).flat();
+const LESSON_PAGES = WRITTEN_TOPICS.map((topic) => `lessons/${topic}.html`);
+const QUIZ_PAGES = WRITTEN_TOPICS.map((topic) => `quizzes/${topic}.html`);
 
 beforeAll(() => {
   ({ outDir, pages, data } = buildSite({ outDir: mkdtempSync(join(tmpdir(), 'lp-site-')) }));
@@ -118,52 +136,57 @@ describe('the built site', () => {
     expect(titles).toEqual([...titles].sort((a, b) => a.localeCompare(b, 'en')));
   });
 
-  it('writes a quiz for each topic that has questions, linked from its track', () => {
-    const track = read('tracks/javascript.html');
-    for (const page of QUIZ_PAGES) {
-      const topic = posix.basename(page, '.html');
-      const quiz = readJson<QuizData>(`data/quizzes/${topic}.json`);
-      expect(quiz.topic.id).toBe(topic);
-      expect(quiz.track.id).toBe('javascript');
-      expect(quiz.passMark).toBe(0.8);
-      expect(quiz.questions.length, topic).toBeGreaterThanOrEqual(4);
-      for (const q of quiz.questions) expect(q.topic).toBe(topic);
-      expect(track).toContain(`<a href="../${page}">Quiz: ${quiz.questions.length} questions</a>`);
-    }
-  });
-
-  it('writes a lesson for each written topic: theory, examples, resources and a coding task', () => {
-    const content = loadContent();
-    const track = content.tracks.find((t) => t.id === 'javascript');
-    const written = track?.topics.filter((t) => t.status !== 'outline') ?? [];
-    expect(written.map((t) => t.id)).toEqual(JS_P0_TOPICS);
-
-    for (const topic of written) {
-      const page = read(`lessons/${topic.id}.html`);
-      expect(page, topic.id).toContain(`<h1>${topic.title}</h1>`);
-      // Every part of the five-part template is on the page.
-      expect(
-        page.match(/<ul class="done-list">\n(?:<li>.*<\/li>\n){3}<\/ul>/),
-        `${topic.id} objectives`,
-      ).not.toBeNull();
-      expect(
-        page.match(/<div class="prose">[\s\S]*?<h2 id="say-it-in-an-interview">/),
-        `${topic.id} theory`,
-      ).not.toBeNull();
-      expect(page.match(/<section class="example" /g)).toHaveLength(topic.examples.length);
-      for (const r of topic.resources) {
-        const url = content.resources.find((w) => w.id === r.id)?.url;
-        expect(page, `${topic.id} links ${r.id}`).toContain(`<a href="${url}">`);
+  it.each(Object.entries(WRITTEN))(
+    'writes a quiz for each %s topic that has questions, linked from its track',
+    (trackId, topics) => {
+      const track = read(`tracks/${trackId}.html`);
+      for (const topic of topics) {
+        const quiz = readJson<QuizData>(`data/quizzes/${topic}.json`);
+        expect(quiz.topic.id).toBe(topic);
+        expect(quiz.track.id).toBe(trackId);
+        expect(quiz.passMark).toBe(0.8);
+        expect(quiz.questions.length, topic).toBeGreaterThanOrEqual(4);
+        for (const q of quiz.questions) expect(q.topic).toBe(topic);
+        expect(track).toContain(`<a href="../quizzes/${topic}.html">Quiz: ${quiz.questions.length} questions</a>`);
       }
-      expect(page).toContain(`<a class="button" href="../quizzes/${topic.id}.html">Take the quiz</a>`);
-      for (const id of topic.assessment.challengeIds) {
-        const challenge = content.challenges.find((c) => c.id === id);
-        expect(page, `${topic.id} task ${id}`).toContain(`<h3>Coding task: ${challenge?.title}</h3>`);
+    },
+  );
+
+  it.each(Object.entries(WRITTEN))(
+    'writes a lesson for each written %s topic: theory, examples, resources and a coding task',
+    (trackId, topics) => {
+      const content = loadContent();
+      const track = content.tracks.find((t) => t.id === trackId);
+      const written = track?.topics.filter((t) => t.status !== 'outline') ?? [];
+      expect(written.map((t) => t.id)).toEqual(topics);
+
+      for (const topic of written) {
+        const page = read(`lessons/${topic.id}.html`);
+        expect(page, topic.id).toContain(`<h1>${topic.title}</h1>`);
+        // Every part of the five-part template is on the page.
+        expect(
+          page.match(/<ul class="done-list">\n(?:<li>.*<\/li>\n){3}<\/ul>/),
+          `${topic.id} objectives`,
+        ).not.toBeNull();
+        expect(
+          page.match(/<div class="prose">[\s\S]*?<h2 id="say-it-in-an-interview">/),
+          `${topic.id} theory`,
+        ).not.toBeNull();
+        expect(page.match(/<section class="example" /g)).toHaveLength(topic.examples.length);
+        for (const r of topic.resources) {
+          const url = content.resources.find((w) => w.id === r.id)?.url;
+          expect(page, `${topic.id} links ${r.id}`).toContain(`<a href="${url}">`);
+        }
+        expect(page).toContain(`<a class="button" href="../quizzes/${topic.id}.html">Take the quiz</a>`);
+        for (const id of topic.assessment.challengeIds) {
+          const challenge = content.challenges.find((c) => c.id === id);
+          expect(page, `${topic.id} task ${id}`).toContain(`<h3>Coding task: ${challenge?.title}</h3>`);
+        }
+        expect(page.match(/<summary>Hint \d<\/summary>/g)).toHaveLength(3);
+        expect(page).toContain('<summary>Show a solution</summary>');
       }
-      expect(page.match(/<summary>Hint \d<\/summary>/g)).toHaveLength(3);
-      expect(page).toContain('<summary>Show a solution</summary>');
-    }
-  });
+    },
+  );
 
   it('lists what the tests of a coding task check, and escapes its code', () => {
     const page = read('lessons/dom-and-events.html');
@@ -174,9 +197,9 @@ describe('the built site', () => {
   });
 
   it('links lessons to their track, their quiz and each other', () => {
-    const track = read('tracks/javascript.html');
-    for (const page of LESSON_PAGES) {
-      expect(track).toContain(`<a href="../${page}">Lesson: `);
+    for (const [trackId, topics] of Object.entries(WRITTEN)) {
+      const track = read(`tracks/${trackId}.html`);
+      for (const topic of topics) expect(track).toContain(`<a href="../lessons/${topic}.html">Lesson: `);
     }
     const lesson = read('lessons/async-code.html');
     expect(lesson).toContain('<a href="arrays-and-objects.html">Working with arrays and objects</a>'); // read first
@@ -186,6 +209,8 @@ describe('the built site', () => {
     const quiz = read('quizzes/async-code.html');
     expect(quiz).toContain('<li><a href="../lessons/async-code.html">Async code</a></li>');
     expect(quiz).toContain('<a class="pager__link" href="../lessons/async-code.html">');
+    // A lesson can link to one in another track: lesson pages share one folder.
+    expect(read('lessons/discriminated-unions-ui-state.html')).toContain('href="lists-and-conditional-rendering.html"');
   });
 
   it('ships the widgets as written: every import resolves, and text never goes in as HTML', () => {
