@@ -1,3 +1,4 @@
+import { APP_BASE } from '@lp/contracts';
 import { html, type SafeHtml } from './html.ts';
 import { type Link, ROUTES } from './routes.ts';
 
@@ -49,6 +50,7 @@ ${o.scripts?.map((src) => html`<script type="module" src="${o.link(src)}"></scri
       <ul class="nav-list" role="list">
         <li><a href="${o.link(ROUTES.tracks)}"${current('tracks')}>Tracks</a></li>
         <li><a href="${o.link(ROUTES.resources)}"${current('resources')}>Resources</a></li>
+        <li><a href="${APP_BASE}">Learning app</a></li>
         <li><a class="button button--small" href="${o.link(ROUTES.signup)}"${current('signup')}>Sign up</a></li>
       </ul>
     </nav>
@@ -65,6 +67,7 @@ ${o.main}
         <li><a href="${o.link(ROUTES.home)}">Home</a></li>
         <li><a href="${o.link(ROUTES.tracks)}">Tracks</a></li>
         <li><a href="${o.link(ROUTES.resources)}">Resources</a></li>
+        <li><a href="${APP_BASE}">Learning app</a></li>
         <li><a href="${o.link(ROUTES.signup)}">Sign up</a></li>
       </ul>
     </nav>

@@ -28,7 +28,12 @@ export const API = {
   signIn: '/api/auth/sign-in',
   /** POST {}: ends the session and answers 204. */
   signOut: '/api/auth/sign-out',
+  /** GET: { ok: true } when the API can reach its database, else 503. For load balancers and uptime checks. */
+  health: '/api/health',
 } as const;
+
+/** Where the learning app lives on the platform's domain; the site has the root, the API has /api. */
+export const APP_BASE = '/app/';
 
 /**
  * Every error answer: { "error": "No track called react-native" }. A body that fails its schema also names

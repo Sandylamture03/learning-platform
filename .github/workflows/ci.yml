@@ -90,3 +90,42 @@ jobs:
           path: |
             apps/site/playwright-report
             apps/shell/playwright-report
+
+  docker:
+    name: Docker image (build and smoke test)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: learning_platform
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile # for the smoke test script
+      # The image Render deploys, built and run exactly as in production.
+      - run: docker build -t learning-platform .
+      - run: >-
+          docker run --detach --name platform --network host
+          -e NODE_ENV=production -e PORT=3000
+          -e DATABASE_URL=postgres://postgres:postgres@localhost:5432/learning_platform
+          learning-platform
+      - run: pnpm smoke http://localhost:3000
+        env:
+          EXPECT_SECURE_COOKIE: '1' # production sets Secure on the session cookie
+      - name: Container logs
+        if: always()
+        run: docker logs platform

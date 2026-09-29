@@ -14,6 +14,8 @@ const Env = z.object({
   SESSION_DAYS: z.coerce.number().int().min(1).max(365).default(30),
   /** Failed sign-ins, and sign-ups, allowed per address in each 15 minutes. */
   AUTH_ATTEMPTS: z.coerce.number().int().min(1).default(20),
+  /** Also serve the built site at / and the built app at /app/ (on by default in production). */
+  SERVE_WEB: z.enum(['true', 'false', '1', '0']).optional(),
 });
 
 export interface Config {
@@ -23,6 +25,7 @@ export interface Config {
   trustProxy: number;
   sessionDays: number;
   authAttempts: number;
+  serveWeb: boolean;
 }
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
@@ -31,7 +34,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     const problems = parsed.error.issues.map((i) => `  ${i.path.join('.')}: ${i.message}`).join('\n');
     throw new Error(`The API's environment variables have problems:\n${problems}`);
   }
-  const { NODE_ENV, DATABASE_URL, PORT, TRUST_PROXY, SESSION_DAYS, AUTH_ATTEMPTS } = parsed.data;
+  const { NODE_ENV, DATABASE_URL, PORT, TRUST_PROXY, SESSION_DAYS, AUTH_ATTEMPTS, SERVE_WEB } = parsed.data;
   const production = NODE_ENV === 'production';
   if (production && !DATABASE_URL) throw new Error('Set DATABASE_URL: production has no default database');
   return {
@@ -41,5 +44,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     trustProxy: TRUST_PROXY,
     sessionDays: SESSION_DAYS,
     authAttempts: AUTH_ATTEMPTS,
+    serveWeb: SERVE_WEB === undefined ? production : SERVE_WEB === 'true' || SERVE_WEB === '1',
   };
 }

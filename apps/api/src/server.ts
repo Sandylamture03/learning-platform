@@ -3,6 +3,7 @@ import { loadContent } from '@lp/content';
 import pg from 'pg';
 import { createApp } from './app.ts';
 import { loadConfig } from './config.ts';
+import { WEB_DIRS } from './web.ts';
 
 const config = loadConfig();
 const db = new pg.Pool({ connectionString: config.databaseUrl });
@@ -16,10 +17,16 @@ const app = createApp({
   trustProxy: config.trustProxy,
   sessionDays: config.sessionDays,
   authAttempts: config.authAttempts,
+  ...(config.serveWeb ? { web: WEB_DIRS } : {}),
 });
 
 const server = app.listen(config.port, () => {
-  console.log(`The API is listening on http://localhost:${config.port}/api`);
+  const base = `http://localhost:${config.port}`;
+  console.log(
+    config.serveWeb
+      ? `Serving the site at ${base}/, the app at ${base}/app/ and the API at ${base}/api`
+      : `The API is listening on ${base}/api`,
+  );
 });
 
 // Stop taking new requests, finish the ones in flight, then close the database pool.

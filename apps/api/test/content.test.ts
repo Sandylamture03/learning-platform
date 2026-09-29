@@ -50,7 +50,7 @@ describe('every answer', () => {
     const { headers } = await browser.get(API.tracks);
     expect(headers.get('cache-control')).toBe('no-store');
     expect(headers.get('x-content-type-options')).toBe('nosniff');
-    expect(headers.get('content-security-policy')).toContain("default-src 'self'");
+    expect(headers.get('content-security-policy')).toContain("default-src 'none';script-src 'self'");
     expect(headers.get('x-powered-by')).toBeNull();
   });
 });

@@ -2,7 +2,7 @@ import { cpSync, existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, wri
 import { tmpdir } from 'node:os';
 import { join, posix } from 'node:path';
 import { DATA_DIR, loadContent } from '@lp/content';
-import type { QuizData, ResourceCatalogue } from '@lp/contracts';
+import { APP_BASE, type QuizData, type ResourceCatalogue } from '@lp/contracts';
 import { HtmlValidate } from 'html-validate';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { buildSite, renderPages } from '../src/build.ts';
@@ -241,6 +241,7 @@ describe('the built site', () => {
       const doc = read(page);
       for (const [, href = ''] of doc.matchAll(/(?:href|src)="([^"]+)"/g)) {
         if (/^https:\/\//.test(href)) continue;
+        if (href === APP_BASE) continue; // the learning app: served beside the site in production, not built here
         const [path = '', fragment] = href.split('#');
         const target = path ? posix.join(posix.dirname(page), path) : page;
         if (!existsSync(join(outDir, target))) {

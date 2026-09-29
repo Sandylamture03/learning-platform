@@ -9,7 +9,8 @@
     "start": "node src/server.ts",
     "migrate": "node src/migrate-cli.ts",
     "test": "vitest run",
-    "typecheck": "tsc -p ."
+    "typecheck": "tsc -p .",
+    "smoke": "node scripts/smoke-test.ts"
   },
   "dependencies": {
     "@lp/content": "workspace:*",
