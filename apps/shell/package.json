@@ -2,26 +2,43 @@
   "name": "@lp/shell",
   "version": "0.0.0",
   "private": true,
-  "description": "The React + TypeScript learning app (Phase 3). For now, a placeholder that builds.",
+  "description": "The React + TypeScript learning app: the learning path, tracks and lessons, with the Phase 2 widgets mounted unchanged. Reads a mock API until the Node.js API arrives in Phase 4.",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "typecheck": "tsc -p ."
+    "typecheck": "tsc -p . && tsc -p tsconfig.node.json",
+    "test": "vitest run",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@lp/contracts": "workspace:*",
     "@lp/design-tokens": "workspace:*",
+    "@lp/markdown": "workspace:*",
     "@lp/platform-kit": "workspace:*",
+    "@lp/styles": "workspace:*",
+    "@lp/widgets": "workspace:*",
+    "@tanstack/react-query": "catalog:",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "react-router": "catalog:"
   },
   "devDependencies": {
+    "@axe-core/playwright": "catalog:",
     "@lp/config": "workspace:*",
+    "@lp/content": "workspace:*",
+    "@playwright/test": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/user-event": "catalog:",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
+    "happy-dom": "catalog:",
     "typescript": "catalog:",
-    "vite": "catalog:"
+    "vite": "catalog:",
+    "vitest": "catalog:"
   }
 }

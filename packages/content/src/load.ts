@@ -1,10 +1,13 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { Content } from '@lp/contracts';
 
-/** The content that ships with the repo. Tests and tools can point the loader at a copy instead. */
-export const DATA_DIR = fileURLToPath(new URL('../data/', import.meta.url));
+/**
+ * The content that ships with the repo. Tests and tools can point the loader at a copy instead.
+ * (import.meta.dirname rather than new URL(…, import.meta.url): the app's tests run in happy-dom, whose URL
+ * does not resolve file: URLs.)
+ */
+export const DATA_DIR = join(import.meta.dirname, '..', 'data');
 
 /** One problem, located by file and by the field inside it: `tracks/react.json topics[2].module`. */
 export interface ContentIssue {

@@ -22,6 +22,16 @@
   },
   "overrides": [
     {
+      "includes": ["**/*.tsx"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "noRedundantRoles": "off"
+          }
+        }
+      }
+    },
+    {
       "includes": ["packages/content/data/challenges/**/starter.js"],
       "linter": {
         "rules": {

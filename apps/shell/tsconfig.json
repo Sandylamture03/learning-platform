@@ -3,5 +3,6 @@
   "compilerOptions": {
     "types": ["vite/client"]
   },
-  "include": ["src", "vite.config.ts"]
+  // The app itself: browser code only. tsconfig.node.json checks the Vite config, the mock API and the tests.
+  "include": ["src"]
 }

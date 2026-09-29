@@ -1,0 +1,18 @@
+{
+  "extends": "@lp/config/tsconfig.node.json",
+  "compilerOptions": {
+    // The tests render the app in happy-dom and the e2e tests run code in the browser, so they need DOM types and JSX.
+    "lib": ["es2024", "dom", "dom.iterable"],
+    "jsx": "react-jsx",
+    "types": ["node", "vite/client"]
+  },
+  "include": [
+    "vite.config.ts",
+    "vitest.config.ts",
+    "playwright.config.ts",
+    "mock-api",
+    "test",
+    "e2e",
+    "src/widgets.d.ts"
+  ]
+}
