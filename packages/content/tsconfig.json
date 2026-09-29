@@ -1,4 +1,6 @@
 {
   "extends": "@lp/config/tsconfig.node.json",
-  "include": ["src", "test"]
+  // TypeScript challenges are type-checked too: their tests assert types (expectTypeOf, @ts-expect-error),
+  // so `pnpm typecheck` fails when a solution's types are wrong.
+  "include": ["src", "test", "vitest.config.ts", "data/challenges/**/*.ts"]
 }

@@ -1,8 +1,8 @@
+import type { TopicQuiz } from '@lp/content';
 import type { QuizQuestion } from '@lp/contracts';
 import { html, type SafeHtml } from '../html.ts';
 import { layout, type Page } from '../layout.ts';
 import { linkFrom, ROUTES } from '../routes.ts';
-import type { TopicQuiz } from '../widget-data.ts';
 import { topicAnchor } from './track.ts';
 
 interface QuizPageInput extends TopicQuiz {
@@ -37,7 +37,11 @@ function staticQuestion(q: QuizQuestion, index: number): SafeHtml {
 export function quizPage({ track, topic, quiz, next }: QuizPageInput): Page {
   const path = ROUTES.quiz(topic.id);
   const link = linkFrom(path);
-  const back = `${ROUTES.track(track.id)}#${topicAnchor(topic)}`;
+  // A written topic's quiz belongs to its lesson; an outline's to its row on the track page.
+  const lesson = topic.status !== 'outline' && ROUTES.lesson(topic.id);
+  const back = lesson
+    ? html`<a class="pager__link" href="${link(lesson)}"><span aria-hidden="true">←</span> Back to the lesson</a>`
+    : html`<a class="pager__link" href="${link(`${ROUTES.track(track.id)}#${topicAnchor(topic)}`)}"><span aria-hidden="true">←</span> Back to the ${track.title} track</a>`;
 
   // The quiz's children are what shows without JavaScript: every question, with its answer behind a disclosure.
   const main = html`<div class="container">
@@ -46,6 +50,7 @@ export function quizPage({ track, topic, quiz, next }: QuizPageInput): Page {
       <li><a href="${link(ROUTES.home)}">Home</a></li>
       <li><a href="${link(ROUTES.tracks)}">Tracks</a></li>
       <li><a href="${link(ROUTES.track(track.id))}">${track.title}</a></li>
+      ${lesson && html`<li><a href="${link(lesson)}">${topic.title}</a></li>`}
       <li><a href="${link(path)}" aria-current="page">Quiz: ${topic.title}</a></li>
     </ol>
   </nav>
@@ -61,7 +66,7 @@ export function quizPage({ track, topic, quiz, next }: QuizPageInput): Page {
   </lp-quiz>
 
   <nav class="pager" aria-label="Quizzes">
-    <a class="pager__link" href="${link(back)}"><span aria-hidden="true">←</span> Back to the ${track.title} track</a>
+    ${back}
     ${next && html`<a class="pager__link pager__link--next" href="${link(ROUTES.quiz(next.topic.id))}">Next quiz: ${next.topic.title} <span aria-hidden="true">→</span></a>`}
   </nav>
 </div>`;

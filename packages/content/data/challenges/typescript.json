@@ -1,0 +1,117 @@
+[
+  {
+    "id": "shopping-cart",
+    "title": "Type a shopping cart",
+    "kind": "function",
+    "mode": "build",
+    "difficulty": 1,
+    "priority": "P0",
+    "topics": ["types-and-interfaces"],
+    "estMinutes": 25,
+    "prompt": "Finish the types, then the functions. A `Product` has an `id`, a `name`, a `priceCents` and an optional `salePriceCents`; a `CartLine` has a `product` and a `quantity`; and a `Cart` is a read-only array of lines. Then write `unitPrice(product)` (the sale price when there is one), `addToCart(cart, product)`, which returns a new cart with a new line of one or one more on the existing line and never changes the cart it is given, and `cartTotal(cart)`. The tests check the types too: `pnpm typecheck` fails while they are too loose.",
+    "files": {
+      "starter": "challenges/typescript/shopping-cart/starter.ts",
+      "solution": "challenges/typescript/shopping-cart/solution.ts",
+      "tests": "challenges/typescript/shopping-cart/tests.ts"
+    },
+    "hints": [
+      "Mark the optional field with `?`: `salePriceCents?: number`. For the cart, `readonly CartLine[]` removes `push`, `sort` and every other method that changes an array in place.",
+      "`product.salePriceCents ?? product.priceCents` gives the sale price when it is set, and the price otherwise.",
+      "In `addToCart`, `find` the existing line. Without one, return `[...cart, { product, quantity: 1 }]`; with one, `map` to a copy of it with `quantity + 1`."
+    ],
+    "status": "published",
+    "version": 1
+  },
+  {
+    "id": "task-statuses",
+    "title": "Derive a union from the data",
+    "kind": "function",
+    "mode": "build",
+    "difficulty": 1,
+    "priority": "P0",
+    "topics": ["unions-and-literal-types"],
+    "estMinutes": 20,
+    "prompt": "A task board has the columns `'todo'`, `'doing'` and `'done'`, in that order. Keep them in `STATUSES` and derive `TaskStatus` from it, so the type is exactly those three strings. Then write `isTaskStatus(value)`, a type guard for strings from a URL or a form; `nextStatus(status)`, which moves a task one column to the right and leaves `'done'` as it is; and `statusLabel(status)`, which gives “To do”, “In progress” or “Done”.",
+    "files": {
+      "starter": "challenges/typescript/task-statuses/starter.ts",
+      "solution": "challenges/typescript/task-statuses/solution.ts",
+      "tests": "challenges/typescript/task-statuses/tests.ts"
+    },
+    "hints": [
+      "Add `as const` to the array, then `type TaskStatus = (typeof STATUSES)[number];` turns its elements into the union.",
+      "`STATUSES.includes(value)` doesn’t compile for any string, because a readonly tuple only takes its own members. Widen it first: `(STATUSES as readonly string[]).includes(value)`.",
+      "A `Record<TaskStatus, string>` of labels must list every status, so adding a column later makes the compiler point at it."
+    ],
+    "status": "published",
+    "version": 1
+  },
+  {
+    "id": "format-cell",
+    "title": "Narrow values for a data table",
+    "kind": "function",
+    "mode": "build",
+    "difficulty": 2,
+    "priority": "P0",
+    "topics": ["narrowing"],
+    "estMinutes": 25,
+    "prompt": "Write `formatCell(value)` for a data table. A `Cell` is `string | number | boolean | Date | null | undefined`, and each kind is shown its own way: “—” for `null`, `undefined` or an empty string; a number with thousands separators (`1234.5` → “1,234.5”, and `0` → “0”); “Yes” or “No” for a boolean; a date as `YYYY-MM-DD`, in UTC; and any other string trimmed. Then write `isUser(value)`, a type guard that checks unknown JSON is an object with a number `id` and a string `name`.",
+    "files": {
+      "starter": "challenges/typescript/format-cell/starter.ts",
+      "solution": "challenges/typescript/format-cell/solution.ts",
+      "tests": "challenges/typescript/format-cell/tests.ts"
+    },
+    "hints": [
+      "Handle one type per `if` with an early return: `value == null` catches both `null` and `undefined`, then `typeof` for numbers and booleans, and `instanceof Date` for dates. Whatever is left is a string.",
+      "Don’t start with `if (!value)`: it would treat `0` and `false` as empty. `value.toLocaleString('en')` adds the separators, and `value.toISOString().slice(0, 10)` gives the date.",
+      "In `isUser`, check `typeof value === 'object' && value !== null` first (`typeof null` is `'object'`), then `'id' in value && typeof value.id === 'number'`, and the same for `name`."
+    ],
+    "status": "published",
+    "version": 1
+  },
+  {
+    "id": "generic-helpers",
+    "title": "Write generic helpers",
+    "kind": "function",
+    "mode": "build",
+    "difficulty": 2,
+    "priority": "P0",
+    "topics": ["reading-generics"],
+    "estMinutes": 30,
+    "prompt": "Replace every `unknown` with type parameters, so the return types follow the arguments. `first(items)` returns the first item or `undefined`; `pluck(items, key)` returns each item’s value for `key`, typed as that property, and only accepts real property names; `groupBy(items, keyOf)` groups the items by the key `keyOf` returns, keeping their order. The tests check the types with `expectTypeOf`, so `pnpm typecheck` fails while a helper returns `unknown`.",
+    "files": {
+      "starter": "challenges/typescript/generic-helpers/starter.ts",
+      "solution": "challenges/typescript/generic-helpers/solution.ts",
+      "tests": "challenges/typescript/generic-helpers/tests.ts"
+    },
+    "hints": [
+      "`first` needs one type parameter: `function first<T>(items: readonly T[]): T | undefined`.",
+      "For `pluck`, add a second parameter constrained to the first one’s keys, `K extends keyof T`, and return `T[K][]`: the type of that property, for each item.",
+      "For `groupBy`, the key type is whatever `keyOf` returns: `K extends PropertyKey`. Return `Partial<Record<K, T[]>>`, since keys with no items are missing, and for each item either push it onto its group or start the group with `[item]`."
+    ],
+    "status": "published",
+    "version": 1
+  },
+  {
+    "id": "request-state",
+    "title": "Make impossible states impossible",
+    "kind": "function",
+    "mode": "build",
+    "difficulty": 2,
+    "priority": "P0",
+    "topics": ["discriminated-unions-ui-state"],
+    "estMinutes": 30,
+    "prompt": "Replace the optional fields with discriminated unions. `RequestState<T>` is idle, loading, success (with `data`) or error (with an `error` message); `RequestEvent<T>` is start, succeed (with `data`), fail (with `error`) or reset. Write `requestReducer(state, event)`: start always leads to loading and reset to idle, while succeed and fail only count while loading, so a late answer is ignored. Then write `describeRequest(state)`: “Not loaded yet”, “Loading…”, “No results”, “1 result”, “3 results” or “Failed: Network down”.",
+    "files": {
+      "starter": "challenges/typescript/request-state/starter.ts",
+      "solution": "challenges/typescript/request-state/solution.ts",
+      "tests": "challenges/typescript/request-state/tests.ts"
+    },
+    "hints": [
+      "Tag every member: `{ status: 'success'; data: T }` for the state and `{ type: 'succeed'; data: T }` for the event. A member without data has only its tag.",
+      "Switch on `event.type`. For succeed and fail, check `state.status === 'loading'` and return `state` unchanged otherwise.",
+      "End the reducer’s switch with `default: { const unhandled: never = event; return unhandled; }`, so a new event type becomes a compile error. In `describeRequest`, `state.data` is only readable in the success case."
+    ],
+    "status": "published",
+    "version": 1
+  }
+]

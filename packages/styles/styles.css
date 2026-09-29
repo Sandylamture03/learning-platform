@@ -1,6 +1,7 @@
 /*
- * The public site's styles. Colours, type and spacing come from @lp/design-tokens (the tokens layer),
- * which the build puts in front of this file. Later layers win: reset < tokens < base < layout < components < utilities.
+ * The styles the public site and the learning app share, so a lesson looks the same in both. Colours, type and
+ * spacing come from @lp/design-tokens (the tokens layer). Load layers.css first, then the tokens, then this file.
+ * Later layers win: reset < tokens < base < layout < components < utilities.
  */
 
 @layer reset {
@@ -469,7 +470,8 @@
     margin-block-start: var(--space-3);
   }
 
-  .quiz-static summary {
+  .quiz-static summary,
+  .task summary {
     color: var(--color-accent);
     font-weight: 650;
     cursor: pointer;
@@ -784,6 +786,88 @@
 
   .pager__link--next {
     margin-inline-start: auto;
+  }
+
+  /* Inline code in running text. Code blocks (.code) have their own look. */
+  :not(pre) > code {
+    padding: 0.1em 0.3em;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-sunken);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    overflow-wrap: anywhere;
+  }
+
+  /* Lessons: theory, code examples, resources with notes, and the quiz and coding tasks. */
+  .prose {
+    max-inline-size: var(--width-prose);
+  }
+
+  .prose > h2 {
+    margin-block-start: var(--space-8);
+  }
+
+  .prose > h3 {
+    margin-block-start: var(--space-6);
+  }
+
+  .prose > :is(p, ul, ol, pre) {
+    margin-block-start: var(--space-4);
+  }
+
+  .prose > :is(h2, h3) + * {
+    margin-block-start: var(--space-3);
+  }
+
+  .example,
+  .task {
+    padding: var(--space-5);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+  }
+
+  .example + .example {
+    margin-block-start: var(--space-5);
+  }
+
+  .example__takeaway {
+    max-inline-size: var(--width-prose);
+    margin-block-start: var(--space-3);
+  }
+
+  .resource-list__note {
+    display: block;
+    margin-block-start: var(--space-1);
+    font-size: var(--text-sm);
+  }
+
+  .tasks {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .task {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .task > .code {
+    margin-block-start: 0;
+  }
+
+  .task h4 {
+    margin-block-start: var(--space-2);
+  }
+
+  .task__meta,
+  .task__note {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .task details > :not(summary) {
+    margin-block-start: var(--space-2);
   }
 
   /* Forms */

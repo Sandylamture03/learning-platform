@@ -6,6 +6,7 @@ export const ROUTES = {
   tracks: 'tracks/index.html',
   track: (id: string) => `tracks/${id}.html`,
   resources: 'resources.html',
+  lesson: (topicId: string) => `lessons/${topicId}.html`,
   quiz: (topicId: string) => `quizzes/${topicId}.html`,
   signup: 'signup.html',
   thanks: 'thanks.html',

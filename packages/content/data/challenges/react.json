@@ -1,0 +1,117 @@
+[
+  {
+    "id": "product-card",
+    "title": "Build a ProductCard",
+    "kind": "component",
+    "mode": "build",
+    "difficulty": 1,
+    "priority": "P0",
+    "topics": ["jsx-components-props"],
+    "estMinutes": 25,
+    "prompt": "Write `ProductCard({ name, price, salePrice, inStock, onAdd })` for a catalogue grid. Prices are in cents, and `formatPrice` is written for you. Show the name as a heading and the price in dollars. When `salePrice` is lower than `price`, show a “Sale” badge, then the sale price and the old price inside `<s>`. When `inStock` is false, show “Out of stock” and disable the “Add to cart” button; otherwise the button calls `onAdd`.",
+    "files": {
+      "starter": "challenges/react/product-card/starter.jsx",
+      "solution": "challenges/react/product-card/solution.jsx",
+      "tests": "challenges/react/product-card/tests.jsx"
+    },
+    "hints": [
+      "Work the conditions out above the `return`: `const onSale = salePrice !== undefined && salePrice < price;` reads better than a long expression inside the JSX.",
+      "Use `&&` for the parts that are either there or not (the badge, “Out of stock”) and a ternary for the price, which is one thing or the other.",
+      "`<button type=\"button\" disabled={!inStock} onClick={onAdd}>` covers the button, and a fragment, `<>{formatPrice(salePrice)} <s>{formatPrice(price)}</s></>`, puts the two prices side by side."
+    ],
+    "status": "published",
+    "version": 1
+  },
+  {
+    "id": "people-list",
+    "title": "Render a list with every state",
+    "kind": "component",
+    "mode": "build",
+    "difficulty": 2,
+    "priority": "P0",
+    "topics": ["lists-and-conditional-rendering"],
+    "estMinutes": 30,
+    "prompt": "Write `PeopleList({ status, people, query })` for a team directory. While `status` is `\"loading\"`, show “Loading people…” with `role=\"status\"`; for `\"error\"`, show “Could not load people. Try again later.” with `role=\"alert\"`. Otherwise show the people whose name contains `query` (trimmed, ignoring case) in a list, as “Asha Rao (Engineer)”, after a count: “1 person” or “3 people”. With no matches, show “No one matches “zed”.”, or “No people yet.” when there is no query. Give each item a stable key.",
+    "files": {
+      "starter": "challenges/react/people-list/starter.jsx",
+      "solution": "challenges/react/people-list/solution.jsx",
+      "tests": "challenges/react/people-list/tests.jsx"
+    },
+    "hints": [
+      "Start with one early return for each of the loading and error states. The rest of the function then only deals with a loaded list.",
+      "Filter with `person.name.toLowerCase().includes(search.toLowerCase())`, where `search` is the trimmed query, and handle an empty result before the `return` that renders the list.",
+      "Use `key={person.id}` on the `<li>`: the index would keep a person’s element in the same place when the list is reordered, and one of the tests reorders it."
+    ],
+    "status": "published",
+    "version": 1
+  },
+  {
+    "id": "quantity-picker",
+    "title": "Build a quantity picker",
+    "kind": "component",
+    "mode": "build",
+    "difficulty": 2,
+    "priority": "P0",
+    "topics": ["usestate-and-events"],
+    "estMinutes": 25,
+    "prompt": "Write `QuantityPicker({ min = 1, max = 10, initial = min, onChange })`: a “−” button, the quantity in an `<output>`, and a “+” button, inside a `<fieldset>` with the legend “Quantity”. Give the buttons the accessible names “Decrease” and “Increase” with `aria-label`. Each click changes the quantity by one, never past `min` or `max`, and each button is disabled at its limit. Every change calls `onChange` with the new quantity, and each picker on the page keeps its own quantity.",
+    "files": {
+      "starter": "challenges/react/quantity-picker/starter.jsx",
+      "solution": "challenges/react/quantity-picker/solution.jsx",
+      "tests": "challenges/react/quantity-picker/tests.jsx"
+    },
+    "hints": [
+      "Keep the quantity in state with `useState(initial)`. The disabled states are derived from it during render, so they need no state of their own.",
+      "Write one handler, `change(by)`, that works out the next value with `Math.min(max, Math.max(min, quantity + by))`, sets it and calls `onChange`.",
+      "Call `onChange?.(next)` in the handler, not in an effect: the handler is where you know the quantity changed and why. `onClick={() => change(-1)}` and `onClick={() => change(1)}` wire it up."
+    ],
+    "status": "published",
+    "version": 1
+  },
+  {
+    "id": "user-card",
+    "title": "Fetch in an effect, without races",
+    "kind": "component",
+    "mode": "build",
+    "difficulty": 3,
+    "priority": "P0",
+    "topics": ["useeffect"],
+    "estMinutes": 35,
+    "prompt": "Write `UserCard({ userId })`. It fetches `/api/users/<userId>`, shows “Loading…” with `role=\"status\"` until the answer arrives, then the user’s `name` in an `<h2>`. If the response is not ok, it shows “Could not load user 9.” (with the id) and `role=\"alert\"`. When `userId` changes, or the card leaves the page, it cancels its request with an `AbortController`, so an old answer can never replace a newer one.",
+    "files": {
+      "starter": "challenges/react/user-card/starter.jsx",
+      "solution": "challenges/react/user-card/solution.jsx",
+      "tests": "challenges/react/user-card/tests.jsx"
+    },
+    "hints": [
+      "Keep the whole request in one state value, such as `{ status: \"loading\" }`, `{ status: \"success\", user }` or `{ status: \"error\" }`, and render one early return per status.",
+      "In `useEffect(() => { … }, [userId])`, create an `AbortController`, pass `{ signal: controller.signal }` to `fetch`, and return `() => controller.abort()` as the cleanup.",
+      "An aborted fetch rejects with an error named `AbortError`. Ignore it in your `catch`, because it means a newer request (or unmounting) replaced this one, not that something failed."
+    ],
+    "status": "published",
+    "version": 1
+  },
+  {
+    "id": "use-local-storage",
+    "title": "Write useLocalStorage",
+    "kind": "hook",
+    "mode": "build",
+    "difficulty": 2,
+    "priority": "P0",
+    "topics": ["custom-hooks"],
+    "estMinutes": 25,
+    "prompt": "Write `useLocalStorage(key, initialValue)`. It works like `useState`: it returns `[value, setValue]`, and `setValue` takes a value or an updater function. The first value is read from `localStorage` (as JSON) once, on the first render, falling back to `initialValue` when the key is missing or its text is not valid JSON. Every change is saved back under `key` as JSON.",
+    "files": {
+      "starter": "challenges/react/use-local-storage/starter.js",
+      "solution": "challenges/react/use-local-storage/solution.js",
+      "tests": "challenges/react/use-local-storage/tests.js"
+    },
+    "hints": [
+      "Start from `useState`: the hook returns exactly what `useState` returns, so the updater form comes for free.",
+      "Pass a function to `useState`, `useState(() => read(key, initialValue))`, so storage is read on the first render only. Wrap `JSON.parse` in `try`/`catch` to fall back on bad text.",
+      "Save in an effect: `useEffect(() => { localStorage.setItem(key, JSON.stringify(value)); }, [key, value]);`."
+    ],
+    "status": "published",
+    "version": 1
+  }
+]

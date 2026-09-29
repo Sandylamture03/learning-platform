@@ -3,7 +3,7 @@
   "order": 3,
   "title": "TypeScript",
   "technologies": ["typescript"],
-  "status": "outline",
+  "status": "draft",
   "summary": "Only the TypeScript that React and Node.js work needs: everyday types, typed components and API data, and TypeScript on Node.js.",
   "pace": {
     "weeks": 3,
@@ -98,7 +98,71 @@
       "priority": "P0",
       "module": "everyday-types",
       "why": "The everyday vocabulary of every TypeScript codebase.",
-      "status": "outline"
+      "status": "published",
+      "summary": "Describe the shape of your data with annotations, object types and interfaces, so the editor and tsc catch mistakes before the code runs.",
+      "level": "foundation",
+      "difficulty": 1,
+      "estMinutes": 45,
+      "prerequisites": ["arrays-and-objects"],
+      "objectives": [
+        "Annotate parameters and return values, and let inference handle the rest",
+        "Describe objects with `interface` or `type`, including optional and `readonly` properties",
+        "Choose between `type` and `interface`, and read the errors tsc gives you"
+      ],
+      "examples": [
+        {
+          "id": "inference",
+          "title": "Annotations and inference",
+          "language": "ts",
+          "code": "let count = 0; // inferred: number\ncount = 'ten'; // Error: Type 'string' is not assignable to type 'number'.\n\nconst city = 'Pune'; // inferred: the literal type 'Pune', because a const never changes\n\nfunction formatPrice(cents: number, currency = 'USD'): string {\n  return new Intl.NumberFormat('en', { style: 'currency', currency }).format(cents / 100);\n}\n\nformatPrice(1999); // '$19.99'\nformatPrice('1999'); // Error: Argument of type 'string' is not assignable to parameter of type 'number'.",
+          "takeaway": "Only the parameters needed annotating; TypeScript inferred the rest, and still caught both mistakes."
+        },
+        {
+          "id": "api-user",
+          "title": "An interface for data from an API",
+          "language": "ts",
+          "code": "interface Address {\n  city: string;\n  country: string;\n}\n\ninterface User {\n  readonly id: number;\n  name: string;\n  email: string;\n  address?: Address; // may be missing\n  tags: string[];\n}\n\nfunction describeUser(user: User): string {\n  const place = user.address ? ` from ${user.address.city}` : '';\n  return `${user.name}${place} (${user.tags.length} tags)`;\n}\n\nconst asha: User = { id: 1, name: 'Asha', email: 'asha@example.com', tags: ['admin'] };\ndescribeUser(asha); // 'Asha (1 tags)'\nasha.id = 2; // Error: Cannot assign to 'id' because it is a read-only property.",
+          "takeaway": "`?` makes TypeScript check that `address` exists before it is used, and `readonly` stops the id from being overwritten."
+        },
+        {
+          "id": "type-or-interface",
+          "title": "type or interface?",
+          "language": "ts",
+          "code": "// The same shape, either way.\ntype Point = { x: number; y: number };\ninterface PointShape {\n  x: number;\n  y: number;\n}\n\n// Only a type alias can name a union.\ntype Id = string | number;\n\n// Building on another type: extends for interfaces, & for type aliases.\ninterface Person {\n  name: string;\n}\ninterface Employee extends Person {\n  team: string;\n}\ntype Contractor = Person & { agency: string };\n\nconst lead: Employee = { name: 'Asha', team: 'web' };\nconst designer: Contractor = { name: 'Ben', agency: 'Studio North' };",
+          "takeaway": "For object shapes either works; only a type alias can name a union such as `string | number`."
+        }
+      ],
+      "resources": [
+        {
+          "id": "ts-handbook-everyday-types",
+          "note": "The official tour of the types you use every day, from primitives to unions.",
+          "required": true
+        },
+        {
+          "id": "ts-handbook-object-types",
+          "note": "Optional and readonly properties, extending types, and index signatures.",
+          "required": false
+        },
+        {
+          "id": "total-typescript-beginner-s-typescript",
+          "note": "Free interactive exercises that run in your editor.",
+          "required": false
+        }
+      ],
+      "assessment": {
+        "passMark": 0.8,
+        "questionIds": [
+          "types-and-interfaces.q01",
+          "types-and-interfaces.q02",
+          "types-and-interfaces.q03",
+          "types-and-interfaces.q04",
+          "types-and-interfaces.q05"
+        ],
+        "challengeIds": ["shopping-cart"]
+      },
+      "theory": "theory/typescript/types-and-interfaces.md",
+      "version": 1,
+      "updatedAt": "2026-09-29"
     },
     {
       "id": "unions-and-literal-types",
@@ -106,7 +170,71 @@
       "priority": "P0",
       "module": "everyday-types",
       "why": "Model values that can be one of a few shapes, such as ‘idle’ | ‘loading’ | ‘error’.",
-      "status": "outline"
+      "status": "published",
+      "summary": "Say exactly which values are allowed: unions for “this or that”, literal types for fixed strings, and as const to derive them from data.",
+      "level": "foundation",
+      "difficulty": 1,
+      "estMinutes": 40,
+      "prerequisites": ["types-and-interfaces"],
+      "objectives": [
+        "Write union types such as `string | number`, and unions of literals such as `'sm' | 'md' | 'lg'`",
+        "Derive a union from an array with `as const`, so the list and the type never drift apart",
+        "Handle `null` and `undefined` explicitly when `strict` is on"
+      ],
+      "examples": [
+        {
+          "id": "literal-unions",
+          "title": "Literal unions instead of magic strings",
+          "language": "ts",
+          "code": "type Variant = 'primary' | 'secondary' | 'ghost';\ntype Size = 'sm' | 'md' | 'lg';\n\nfunction buttonClass(variant: Variant, size: Size = 'md'): string {\n  return `button button--${variant} button--${size}`;\n}\n\nbuttonClass('primary'); // 'button button--primary button--md'\nbuttonClass('danger'); // Error: Argument of type '\"danger\"' is not assignable to parameter of type 'Variant'.",
+          "takeaway": "The allowed values show up in autocomplete, and a typo such as `'danger'` is caught before it becomes an unstyled button."
+        },
+        {
+          "id": "as-const",
+          "title": "Derive the type from the data",
+          "language": "ts",
+          "code": "const ROLES = ['viewer', 'editor', 'admin'] as const;\ntype Role = (typeof ROLES)[number]; // 'viewer' | 'editor' | 'admin'\n\nfunction isRole(value: string): value is Role {\n  return (ROLES as readonly string[]).includes(value);\n}\n\n// A value from outside is just a string until it is checked.\nconst fromUrl = new URLSearchParams(location.search).get('role') ?? '';\nconst role: Role = isRole(fromUrl) ? fromUrl : 'viewer';",
+          "takeaway": "The array is the single source of truth: add a role to it and `Role` follows, and `isRole` checks strings from outside against the same list."
+        },
+        {
+          "id": "null-in-union",
+          "title": "null is part of the type",
+          "language": "ts",
+          "code": "interface User {\n  id: number;\n  name: string;\n}\n\nfunction greeting(user: User | null): string {\n  return user ? `Welcome back, ${user.name}` : 'Sign in to save your progress';\n}\n\nfunction firstName(user: User | null): string {\n  return user?.name.split(' ')[0] ?? 'Guest';\n}\n\nfunction initial(user: User | null): string {\n  return user.name.charAt(0); // Error: 'user' is possibly 'null'.\n}",
+          "takeaway": "`User | null` makes the missing case visible, and TypeScript refuses to read `user.name` until it is handled."
+        }
+      ],
+      "resources": [
+        {
+          "id": "ts-handbook-everyday-types",
+          "note": "Read its sections on union types and literal types.",
+          "required": true
+        },
+        {
+          "id": "ts-handbook-indexed-access-types",
+          "note": "How `(typeof SIZES)[number]` turns an array’s elements into a union.",
+          "required": false
+        },
+        {
+          "id": "total-typescript-beginner-s-typescript",
+          "note": "Exercises on unions and literal types, among others.",
+          "required": false
+        }
+      ],
+      "assessment": {
+        "passMark": 0.8,
+        "questionIds": [
+          "unions-and-literal-types.q01",
+          "unions-and-literal-types.q02",
+          "unions-and-literal-types.q03",
+          "unions-and-literal-types.q04",
+          "unions-and-literal-types.q05"
+        ],
+        "challengeIds": ["task-statuses"]
+      },
+      "theory": "theory/typescript/unions-and-literal-types.md",
+      "version": 1,
+      "updatedAt": "2026-09-29"
     },
     {
       "id": "narrowing",
@@ -114,7 +242,65 @@
       "priority": "P0",
       "module": "everyday-types",
       "why": "How TypeScript follows your checks so unions become safe to use.",
-      "status": "outline"
+      "status": "published",
+      "summary": "Turn a union into the one type you need with typeof, instanceof, in, equality and truthiness checks, and write your own type guards.",
+      "level": "core",
+      "difficulty": 2,
+      "estMinutes": 45,
+      "prerequisites": ["unions-and-literal-types"],
+      "objectives": [
+        "Narrow unions with `typeof`, `instanceof`, `in`, equality and truthiness checks",
+        "Write a type guard (`value is Type`) for data you can’t trust, such as JSON",
+        "Use `never` so the compiler checks that every case is handled"
+      ],
+      "examples": [
+        {
+          "id": "format-value",
+          "title": "One check per type",
+          "language": "ts",
+          "code": "function formatValue(value: string | number | Date | null): string {\n  if (value === null) return '—';\n  if (typeof value === 'number') return value.toFixed(2); // value: number\n  if (value instanceof Date) return value.toISOString().slice(0, 10); // value: Date\n  return value.trim(); // value: string, the only type left\n}\n\nformatValue(3.14159); // '3.14'\nformatValue(new Date(Date.UTC(2026, 8, 29))); // '2026-09-29'",
+          "takeaway": "Each early return removes one member of the union, so by the last line only `string` is left."
+        },
+        {
+          "id": "in-operator",
+          "title": "Telling object shapes apart with in",
+          "language": "ts",
+          "code": "type Circle = { radius: number };\ntype Rectangle = { width: number; height: number };\n\nfunction area(shape: Circle | Rectangle): number {\n  if ('radius' in shape) return Math.PI * shape.radius ** 2; // shape: Circle\n  return shape.width * shape.height; // shape: Rectangle\n}\n\narea({ radius: 1 }); // 3.141592653589793\narea({ width: 2, height: 3 }); // 6",
+          "takeaway": "`'radius' in shape` is a runtime check that TypeScript also reads as a type check."
+        },
+        {
+          "id": "guard-api-data",
+          "title": "A type guard for data from an API",
+          "language": "ts",
+          "code": "interface User {\n  id: number;\n  name: string;\n}\n\nfunction isUser(value: unknown): value is User {\n  return (\n    typeof value === 'object' &&\n    value !== null &&\n    'id' in value &&\n    typeof value.id === 'number' &&\n    'name' in value &&\n    typeof value.name === 'string'\n  );\n}\n\nasync function loadUser(id: number): Promise<User> {\n  const response = await fetch(`/api/users/${id}`);\n  const data: unknown = await response.json();\n  if (!isUser(data)) throw new Error(`/api/users/${id} did not answer with a user`);\n  return data; // data: User\n}",
+          "takeaway": "The data starts as `unknown` and becomes a `User` only after the guard has checked every field it relies on."
+        }
+      ],
+      "resources": [
+        {
+          "id": "ts-handbook-narrowing",
+          "note": "Every narrowing check, type predicates, discriminated unions and `never`, in one page.",
+          "required": true
+        },
+        {
+          "id": "total-typescript-beginner-s-typescript",
+          "note": "Exercises that practise narrowing in realistic code.",
+          "required": false
+        },
+        {
+          "id": "zod-docs",
+          "note": "When a type guard grows long, a Zod schema writes the checks and the type for you.",
+          "required": false
+        }
+      ],
+      "assessment": {
+        "passMark": 0.8,
+        "questionIds": ["narrowing.q01", "narrowing.q02", "narrowing.q03", "narrowing.q04", "narrowing.q05"],
+        "challengeIds": ["format-cell"]
+      },
+      "theory": "theory/typescript/narrowing.md",
+      "version": 1,
+      "updatedAt": "2026-09-29"
     },
     {
       "id": "reading-generics",
@@ -122,7 +308,71 @@
       "priority": "P0",
       "module": "everyday-types",
       "why": "Enough generics to read library types such as useState<User | null>(null).",
-      "status": "outline"
+      "status": "published",
+      "summary": "Read and write generics: type parameters that let one function or type work with many types while keeping them connected.",
+      "level": "core",
+      "difficulty": 2,
+      "estMinutes": 45,
+      "prerequisites": ["types-and-interfaces"],
+      "objectives": [
+        "Read generic types such as `useState<User | null>(null)`, `Promise<Response>` and `Record<string, number>`",
+        "Write a generic function whose return type follows its arguments, like `first<T>`",
+        "Constrain a type parameter with `extends`, and use `keyof` to accept only real property names"
+      ],
+      "examples": [
+        {
+          "id": "first-and-last",
+          "title": "A generic function",
+          "language": "ts",
+          "code": "function first<T>(items: readonly T[]): T | undefined {\n  return items[0];\n}\n\nfunction last<T>(items: readonly T[]): T | undefined {\n  return items[items.length - 1];\n}\n\nconst lowest = first([3, 1, 2]); // lowest: number | undefined\nconst newest = last(['draft', 'review', 'live']); // newest: string | undefined",
+          "takeaway": "TypeScript infers `T` from each call, so the same function returns a `number` for numbers and a `string` for strings."
+        },
+        {
+          "id": "usestate",
+          "title": "Generics in React: useState",
+          "language": "tsx",
+          "code": "import { useState } from 'react';\n\ninterface User {\n  id: number;\n  name: string;\n}\n\nfunction Profile() {\n  // From null alone, TypeScript would infer the type null, and setUser(someUser) would be an error.\n  const [user, setUser] = useState<User | null>(null);\n  // A real starting value is enough for inference: count is a number.\n  const [count, setCount] = useState(0);\n\n  return user ? <p>{user.name}</p> : <button onClick={() => setUser({ id: 1, name: 'Asha' })}>Sign in</button>;\n}",
+          "takeaway": "Pass the type yourself when the starting value can’t describe the state; otherwise let inference work."
+        },
+        {
+          "id": "sort-by-key",
+          "title": "Constraining a key with keyof",
+          "language": "ts",
+          "code": "function sortBy<T, K extends keyof T>(items: readonly T[], key: K): T[] {\n  return items.toSorted((a, b) => (a[key] < b[key] ? -1 : a[key] > b[key] ? 1 : 0));\n}\n\nconst people = [\n  { name: 'Sam', age: 31 },\n  { name: 'Asha', age: 27 },\n];\n\nsortBy(people, 'age'); // [{ name: 'Asha', age: 27 }, { name: 'Sam', age: 31 }]\nsortBy(people, 'email'); // Error: Argument of type '\"email\"' is not assignable to parameter of type '\"age\" | \"name\"'.",
+          "takeaway": "`K extends keyof T` accepts only property names that exist, so a misspelt key is a compile error instead of a silent no-op."
+        }
+      ],
+      "resources": [
+        {
+          "id": "ts-handbook-generics",
+          "note": "Type parameters, constraints and generic types, from first principles.",
+          "required": true
+        },
+        {
+          "id": "ts-handbook-indexed-access-types",
+          "note": "How `T[K]` looks up a property’s type.",
+          "required": false
+        },
+        {
+          "id": "react-typescript-cheatsheet",
+          "note": "How the React types use generics, from `useState` to event handlers.",
+          "required": false
+        }
+      ],
+      "assessment": {
+        "passMark": 0.8,
+        "questionIds": [
+          "reading-generics.q01",
+          "reading-generics.q02",
+          "reading-generics.q03",
+          "reading-generics.q04",
+          "reading-generics.q05"
+        ],
+        "challengeIds": ["generic-helpers"]
+      },
+      "theory": "theory/typescript/reading-generics.md",
+      "version": 1,
+      "updatedAt": "2026-09-29"
     },
     {
       "id": "typing-props-state-events",
@@ -146,7 +396,71 @@
       "priority": "P0",
       "module": "typescript-for-react",
       "why": "Make impossible states, like loading and error at once, unrepresentable.",
-      "status": "outline"
+      "status": "published",
+      "summary": "Model data that arrives over time as a union of tagged states, so impossible combinations like “loading with an error” can’t even be written.",
+      "level": "core",
+      "difficulty": 2,
+      "estMinutes": 45,
+      "prerequisites": ["narrowing", "lists-and-conditional-rendering"],
+      "objectives": [
+        "Replace separate `isLoading`, `error` and `data` fields with one discriminated union",
+        "Narrow on the tag with `if` and `switch`, in functions and in JSX",
+        "Add a `never` check, so adding a state shows every place that must handle it"
+      ],
+      "examples": [
+        {
+          "id": "flags-to-union",
+          "title": "From flags to a union",
+          "language": "ts",
+          "code": "interface User {\n  id: number;\n  name: string;\n}\n\n// Before: three flags make 8 combinations, and only 4 of them are real states.\ninterface UsersState {\n  isLoading: boolean;\n  error?: string;\n  users?: User[];\n}\n\n// After: exactly the 4 real states, each carrying only what it has.\ntype UsersRequest =\n  | { status: 'idle' }\n  | { status: 'loading' }\n  | { status: 'success'; users: User[] }\n  | { status: 'error'; message: string };\n\nconst broken: UsersState = { isLoading: true, error: 'Timeout' }; // allowed, but meaningless\nconst impossible: UsersRequest = { status: 'loading', message: 'Timeout' }; // Error: Object literal may only specify known properties, and 'message' does not exist in type '{ status: \"loading\"; }'.",
+          "takeaway": "The flags accept a meaningless state without complaint; the union rejects it at compile time."
+        },
+        {
+          "id": "render-each-state",
+          "title": "One case per state in JSX",
+          "language": "tsx",
+          "code": "interface User {\n  id: number;\n  name: string;\n}\n\ntype UsersRequest =\n  | { status: 'idle' }\n  | { status: 'loading' }\n  | { status: 'success'; users: User[] }\n  | { status: 'error'; message: string };\n\nfunction UsersPanel({ request, onLoad }: { request: UsersRequest; onLoad: () => void }) {\n  switch (request.status) {\n    case 'idle':\n      return (\n        <button type=\"button\" onClick={onLoad}>\n          Load users\n        </button>\n      );\n    case 'loading':\n      return <p role=\"status\">Loading…</p>;\n    case 'error':\n      return <p role=\"alert\">{request.message}</p>;\n    case 'success':\n      return (\n        <ul>\n          {request.users.map((user) => (\n            <li key={user.id}>{user.name}</li>\n          ))}\n        </ul>\n      );\n  }\n}",
+          "takeaway": "`request.users` and `request.message` are only readable in the cases where they exist."
+        },
+        {
+          "id": "reducer-never",
+          "title": "A reducer with an exhaustive check",
+          "language": "ts",
+          "code": "interface User {\n  id: number;\n  name: string;\n}\n\ntype UsersRequest =\n  | { status: 'idle' }\n  | { status: 'loading' }\n  | { status: 'success'; users: User[] }\n  | { status: 'error'; message: string };\n\ntype Action = { type: 'fetch' } | { type: 'resolve'; users: User[] } | { type: 'reject'; message: string };\n\nfunction reducer(state: UsersRequest, action: Action): UsersRequest {\n  switch (action.type) {\n    case 'fetch':\n      return { status: 'loading' };\n    case 'resolve':\n      return { status: 'success', users: action.users };\n    case 'reject':\n      return { status: 'error', message: action.message };\n    default: {\n      // Add an action type without a case, and this line stops compiling.\n      const unhandled: never = action;\n      return unhandled;\n    }\n  }\n}",
+          "takeaway": "Actions are a discriminated union too, and the `never` line turns a forgotten case into a compile error."
+        }
+      ],
+      "resources": [
+        {
+          "id": "ts-handbook-narrowing",
+          "note": "Read its sections on discriminated unions and exhaustiveness checking.",
+          "required": true
+        },
+        {
+          "id": "stop-using-isloading-booleans",
+          "note": "The argument for status values instead of booleans, with a React example.",
+          "required": true
+        },
+        {
+          "id": "react-typescript-cheatsheet",
+          "note": "Typing `useState` and `useReducer` with unions like these.",
+          "required": false
+        }
+      ],
+      "assessment": {
+        "passMark": 0.8,
+        "questionIds": [
+          "discriminated-unions-ui-state.q01",
+          "discriminated-unions-ui-state.q02",
+          "discriminated-unions-ui-state.q03",
+          "discriminated-unions-ui-state.q04",
+          "discriminated-unions-ui-state.q05"
+        ],
+        "challengeIds": ["request-state"]
+      },
+      "theory": "theory/typescript/discriminated-unions-ui-state.md",
+      "version": 1,
+      "updatedAt": "2026-09-29"
     },
     {
       "id": "strict-mode",

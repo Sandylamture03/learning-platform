@@ -1,29 +1,14 @@
-import type { Module, Priority, ResourceType, Track, WebResource } from '@lp/contracts';
-import { html, type SafeHtml } from '../html.ts';
+import {
+  hostOf,
+  type Module,
+  type Priority,
+  RESOURCE_TYPE_LABELS,
+  RESOURCE_TYPE_ORDER,
+  type Track,
+  type WebResource,
+} from '@lp/contracts';
+import { type HtmlValue, html, type SafeHtml } from '../html.ts';
 import { type Link, ROUTES } from '../routes.ts';
-
-export const TYPE_LABELS: Record<ResourceType, string> = {
-  docs: 'Docs',
-  article: 'Article',
-  video: 'Video',
-  course: 'Course',
-  interactive: 'Practice',
-  cheatsheet: 'Cheat sheet',
-  tool: 'Tool',
-  reference: 'Reference',
-};
-
-/** Order of resource types in grouped lists and filters: structured learning first. */
-export const TYPE_ORDER: ResourceType[] = [
-  'course',
-  'docs',
-  'interactive',
-  'video',
-  'article',
-  'cheatsheet',
-  'tool',
-  'reference',
-];
 
 const NUMBER_WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
 
@@ -61,13 +46,8 @@ export function priorityBadge(priority: Priority): SafeHtml {
   return html`<span class="badge badge--${priority.toLowerCase()}">${priority}</span>`;
 }
 
-/** "developer.mozilla.org": the site a link goes to, without "www.". */
-export function hostOf(url: string): string {
-  return new URL(url).hostname.replace(/^www\./, '');
-}
-
 function resourceItem(r: WebResource): SafeHtml {
-  const meta = `${TYPE_LABELS[r.type]} · ${hostOf(r.url)}`;
+  const meta = `${RESOURCE_TYPE_LABELS[r.type]} · ${hostOf(r.url)}`;
   return html`<li><a href="${r.url}">${r.title}</a> <span class="resource-list__meta">${meta}</span></li>\n`;
 }
 
@@ -83,12 +63,23 @@ export function resourceGroups(
   headingLevel: 2 | 3,
 ): SafeHtml {
   const known = ids.map((id) => resources.get(id)).filter((r): r is WebResource => r !== undefined);
-  const groups = TYPE_ORDER.map((type) => ({ type, ids: known.filter((r) => r.type === type).map((r) => r.id) }));
+  const groups = RESOURCE_TYPE_ORDER.map((type) => ({
+    type,
+    ids: known.filter((r) => r.type === type).map((r) => r.id),
+  }));
   const heading = (text: string) => (headingLevel === 2 ? html`<h2>${text}</h2>` : html`<h3>${text}</h3>`);
   return html`<div class="resource-groups">
 ${groups
   .filter((g) => g.ids.length > 0)
-  .map((g) => html`<div>${heading(TYPE_LABELS[g.type])}${resourceList(g.ids, resources)}</div>\n`)}</div>`;
+  .map((g) => html`<div>${heading(RESOURCE_TYPE_LABELS[g.type])}${resourceList(g.ids, resources)}</div>\n`)}</div>`;
+}
+
+/** A page section with its h2, labelled by the heading. */
+export function section(id: string, title: string, body: HtmlValue): SafeHtml {
+  return html`<section class="section" id="${id}" aria-labelledby="${id}-title">
+    <h2 id="${id}-title">${title}</h2>
+    ${body}
+  </section>`;
 }
 
 export function textList(items: readonly string[], className = ''): SafeHtml {

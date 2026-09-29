@@ -17,6 +17,8 @@
     "@lp/content": "workspace:*",
     "@lp/contracts": "workspace:*",
     "@lp/design-tokens": "workspace:*",
+    "@lp/markdown": "workspace:*",
+    "@lp/styles": "workspace:*",
     "@lp/widgets": "workspace:*"
   },
   "devDependencies": {

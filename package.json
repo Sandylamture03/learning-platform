@@ -11,8 +11,9 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "pnpm --filter @lp/site dev",
+    "dev:app": "pnpm --filter @lp/shell dev",
     "test": "turbo run test",
-    "test:e2e": "pnpm --filter @lp/site test:e2e",
+    "test:e2e": "pnpm --filter @lp/site test:e2e && pnpm --filter @lp/shell test:e2e",
     "typecheck": "turbo run typecheck && tsc -p .",
     "lint": "biome check .",
     "fix": "biome check --write .",

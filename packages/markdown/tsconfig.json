@@ -1,0 +1,4 @@
+{
+  "extends": "@lp/config/tsconfig.browser.json",
+  "include": ["src", "test"]
+}

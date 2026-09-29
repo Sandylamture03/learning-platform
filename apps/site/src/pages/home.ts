@@ -60,7 +60,7 @@ ${content.tracks.map((t) => trackCard(t, link, 3))}    </ul>
       </details>
       <details>
         <summary>Why sign up now?</summary>
-        <p>The track outlines, the resource finder and the first quizzes are open to everyone. Accounts, written lessons and progress that follows you between devices come with the learning app; sign up to hear when your track is ready.</p>
+        <p>The track outlines, the resource finder and the first lessons with their quizzes are open to everyone. Accounts, the rest of the lessons and progress that follows you between devices come with the learning app; sign up to hear when your track is ready.</p>
       </details>
     </div>
   </section>

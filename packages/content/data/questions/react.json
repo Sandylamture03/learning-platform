@@ -1,0 +1,459 @@
+[
+  {
+    "id": "jsx-components-props.q01",
+    "topic": "jsx-components-props",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["components", "jsx"],
+    "prompt": "Why must a component's name start with a capital letter, as in <ProductCard />?",
+    "options": [
+      {
+        "id": "a",
+        "text": "JSX treats a lowercase tag as a built-in HTML element, so <productCard /> would create an unknown HTML tag instead of calling your function"
+      },
+      { "id": "b", "text": "Capitalised components render faster" },
+      { "id": "c", "text": "It is only a style convention; a lowercase name works the same" },
+      { "id": "d", "text": "A capital letter exports the component automatically" }
+    ],
+    "answer": "a",
+    "explanation": "JSX decides what a tag is by its first letter. A lowercase name becomes a string such as 'div' or 'productcard', an HTML element; a capitalised name refers to the function in scope, which React calls."
+  },
+  {
+    "id": "jsx-components-props.q02",
+    "topic": "jsx-components-props",
+    "type": "multi_select",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["jsx"],
+    "prompt": "Which of these can a component return as it is? Pick every one that follows the JSX rules.",
+    "options": [
+      { "id": "a", "text": "<><h1>Title</h1><p>Text</p></>" },
+      { "id": "b", "text": "<h1>Title</h1><p>Text</p>" },
+      { "id": "c", "text": "<img src={url} alt=\"\">" },
+      { "id": "d", "text": "<p>{if (done) 'Done'}</p>" },
+      { "id": "e", "text": "<input value={name} onChange={handleChange} />" }
+    ],
+    "answers": ["a", "e"],
+    "explanation": "A component returns one root, so two siblings need a fragment around them. Every tag must be closed, including <img />. Braces take expressions, not statements, so an if has to become a ternary or move above the return."
+  },
+  {
+    "id": "jsx-components-props.q03",
+    "topic": "jsx-components-props",
+    "type": "predict_output",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["props", "defaults"],
+    "prompt": "What text does <Greeting excited /> show? Write it as it appears on the page.",
+    "code": "function Greeting({ name = 'friend', excited }) {\n  return (\n    <p>\n      Hello, {name}\n      {excited && '!'}\n    </p>\n  );\n}",
+    "answer": "Hello, friend!",
+    "explanation": "name is not passed, so its default, 'friend', applies. A prop written with no value, like excited, is true, so excited && '!' gives '!'. The line breaks in the JSX add no spaces between the pieces."
+  },
+  {
+    "id": "jsx-components-props.q04",
+    "topic": "jsx-components-props",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["props", "immutability"],
+    "prompt": "A child component receives items as a prop and calls items.push(newItem) when a button is clicked. What is wrong?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Props are read-only: pushing changes the parent's data behind React's back, and nothing re-renders. The parent should own the list and pass down a function that adds to it."
+      },
+      { "id": "b", "text": "Nothing: props are the child's own copy" },
+      { "id": "c", "text": "push is too slow for React; use concat" },
+      { "id": "d", "text": "Children cannot receive arrays as props" }
+    ],
+    "answer": "a",
+    "explanation": "Props are a view of the parent's data. Changing them in place skips React's re-render and breaks the one-way flow of data. Keep the list in the parent's state, and pass an onAdd callback for the child to call."
+  },
+  {
+    "id": "jsx-components-props.q05",
+    "topic": "jsx-components-props",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["children", "composition"],
+    "prompt": "In <Card title=\"About\"><p>Hi</p></Card>, what does Card receive as its children prop?",
+    "options": [
+      { "id": "a", "text": "The <p>Hi</p> element placed between the opening and closing tags" },
+      { "id": "b", "text": "The string \"About\"" },
+      { "id": "c", "text": "A list of every Card on the page" },
+      { "id": "d", "text": "Nothing: children has to be passed as an attribute" }
+    ],
+    "answer": "a",
+    "explanation": "Whatever sits between a component's opening and closing tags arrives as props.children. That is how wrappers such as Card, Layout and Modal hold content they know nothing about."
+  },
+  {
+    "id": "lists-and-conditional-rendering.q01",
+    "topic": "lists-and-conditional-rendering",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["keys"],
+    "prompt": "A to-do list uses the array index as each item's key. Why does that break when an item is deleted?",
+    "options": [
+      {
+        "id": "a",
+        "text": "The indexes of the items after it shift, so React matches their DOM and state (a ticked checkbox, typed text) to the wrong todos"
+      },
+      { "id": "b", "text": "Keys must be strings, and indexes are numbers" },
+      { "id": "c", "text": "React refuses index keys and throws an error" },
+      { "id": "d", "text": "Index keys make every item re-render on every render" }
+    ],
+    "answer": "a",
+    "explanation": "React identifies items by key between renders. Delete item 0 and the old item 1 now has key 0, so React reuses the first row's DOM and state for it. A key from the data, such as the todo's id, moves with the item. Numbers are fine as keys, and React does not warn about index keys."
+  },
+  {
+    "id": "lists-and-conditional-rendering.q02",
+    "topic": "lists-and-conditional-rendering",
+    "type": "predict_output",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["conditional-rendering", "and-operator"],
+    "prompt": "What text does <Inbox unread={0} /> show?",
+    "code": "function Inbox({ unread }) {\n  return <p>Inbox {unread && `(${unread} new)`}</p>;\n}",
+    "answer": "Inbox 0",
+    "explanation": "unread && … returns its left side when that side is falsy, so the expression is 0, and React renders numbers. false, null and undefined would render nothing. Write unread > 0 && … so the condition is a real boolean."
+  },
+  {
+    "id": "lists-and-conditional-rendering.q03",
+    "topic": "lists-and-conditional-rendering",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["keys"],
+    "prompt": "Where does the key go in items.map((item) => <li><ItemRow item={item} /></li>)?",
+    "options": [
+      { "id": "a", "text": "On the <li>, the element map returns: <li key={item.id}>" },
+      { "id": "b", "text": "On <ItemRow>, inside the <li>" },
+      { "id": "c", "text": "On the <ul> around the list" },
+      { "id": "d", "text": "Nowhere: React works keys out on its own" }
+    ],
+    "answer": "a",
+    "explanation": "React compares the elements in the array map returns, so the key belongs on the outermost element of each one. A key on an element inside it does nothing for the list."
+  },
+  {
+    "id": "lists-and-conditional-rendering.q04",
+    "topic": "lists-and-conditional-rendering",
+    "type": "multi_select",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["conditional-rendering"],
+    "prompt": "Which of these render nothing at all when placed in JSX? Pick every one.",
+    "options": [
+      { "id": "a", "text": "{null}" },
+      { "id": "b", "text": "{false}" },
+      { "id": "c", "text": "{0}" },
+      { "id": "d", "text": "{undefined}" },
+      { "id": "e", "text": "{true}" }
+    ],
+    "answers": ["a", "b", "d", "e"],
+    "explanation": "React skips null, undefined and both booleans, which is what makes condition && <Thing /> work. Numbers are content, so {0} shows a 0."
+  },
+  {
+    "id": "lists-and-conditional-rendering.q05",
+    "topic": "lists-and-conditional-rendering",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["keys"],
+    "prompt": "What goes wrong with key={Math.random()} on list items?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Every render makes new keys, so React throws every item away and builds it again, losing its state and focus"
+      },
+      { "id": "b", "text": "Nothing: keys only need to be unique" },
+      { "id": "c", "text": "Two random numbers might clash, but that is the only risk" },
+      { "id": "d", "text": "JSX does not allow function calls in a key" }
+    ],
+    "answer": "a",
+    "explanation": "Keys must be stable as well as unique. A key that changes on every render tells React each item is new, so it unmounts the old ones and mounts fresh copies: slow, and any typed text or focus inside them is lost."
+  },
+  {
+    "id": "usestate-and-events.q01",
+    "topic": "usestate-and-events",
+    "type": "predict_output",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["usestate", "snapshot"],
+    "prompt": "The button is clicked once. What number does it show?",
+    "code": "function Counter() {\n  const [count, setCount] = useState(0);\n  function handleClick() {\n    setCount(count + 1);\n    setCount(count + 1);\n    setCount(count + 1);\n  }\n  return <button onClick={handleClick}>{count}</button>;\n}",
+    "answer": "1",
+    "explanation": "count is a snapshot: in this render it is 0, so all three calls ask for 0 + 1. React batches them into one render, which shows 1. setCount((c) => c + 1) three times would show 3."
+  },
+  {
+    "id": "usestate-and-events.q02",
+    "topic": "usestate-and-events",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["usestate", "updater"],
+    "prompt": "Which call adds 3 to count when it runs three times in one click handler?",
+    "options": [
+      { "id": "a", "text": "setCount((c) => c + 1)" },
+      { "id": "b", "text": "setCount(count + 1)" },
+      { "id": "c", "text": "setCount(count++)" },
+      { "id": "d", "text": "count += 1; setCount(count)" }
+    ],
+    "answer": "a",
+    "explanation": "An updater function receives the latest value, including updates already queued, so three of them add three. The others all start from the same snapshot, and count++ and count += 1 fail anyway, because count is a const."
+  },
+  {
+    "id": "usestate-and-events.q03",
+    "topic": "usestate-and-events",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["events"],
+    "prompt": "What happens with <button onClick={save()}>Save</button>?",
+    "options": [
+      {
+        "id": "a",
+        "text": "save runs while the component renders, not on click, and its return value becomes the click handler"
+      },
+      { "id": "b", "text": "save runs once, when the button is clicked" },
+      { "id": "c", "text": "React throws, because handlers cannot have parentheses" },
+      { "id": "d", "text": "save runs on every click and every render" }
+    ],
+    "answer": "a",
+    "explanation": "Braces take an expression, and save() is a call, so it runs during render. Pass the function itself, onClick={save}, or wrap it to add arguments: onClick={() => save(draft)}."
+  },
+  {
+    "id": "usestate-and-events.q04",
+    "topic": "usestate-and-events",
+    "type": "multi_select",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["immutability", "arrays"],
+    "prompt": "items is an array of objects in state. Which of these update it correctly, so React re-renders and no existing state is changed? Pick every one.",
+    "options": [
+      { "id": "a", "text": "setItems([...items, newItem])" },
+      { "id": "b", "text": "items.push(newItem); setItems(items)" },
+      { "id": "c", "text": "setItems(items.filter((item) => item.id !== id))" },
+      { "id": "d", "text": "items[0].done = true; setItems([...items])" },
+      { "id": "e", "text": "setItems(items.map((item) => (item.id === id ? { ...item, done: true } : item)))" }
+    ],
+    "answers": ["a", "c", "e"],
+    "explanation": "push changes the array React already has and sets the same reference, so React sees no change. The spread in the fourth option makes a new array, but the object inside is still changed in place, which breaks anything holding the old state. Build new arrays, and new objects for the items that change."
+  },
+  {
+    "id": "usestate-and-events.q05",
+    "topic": "usestate-and-events",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["derived-state"],
+    "prompt": "State holds a list of products and the search text. Where should the list of matching products come from?",
+    "options": [
+      { "id": "a", "text": "Calculate it while rendering: products.filter(...) with the search text" },
+      { "id": "b", "text": "A third useState, updated whenever the products or the text change" },
+      { "id": "c", "text": "An effect that copies the filtered list into state" },
+      { "id": "d", "text": "A variable outside the component, updated in the change handler" }
+    ],
+    "answer": "a",
+    "explanation": "The matches can always be calculated from the two values you already store, so calculate them. A second copy in state has to be kept in step by hand, and sooner or later it shows stale results."
+  },
+  {
+    "id": "useeffect.q01",
+    "topic": "useeffect",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["dependencies"],
+    "prompt": "When does an effect with the dependency array [userId] run?",
+    "options": [
+      { "id": "a", "text": "After the first render, and after any later render where userId changed" },
+      { "id": "b", "text": "Before every render" },
+      { "id": "c", "text": "Once, when the component first appears" },
+      { "id": "d", "text": "Only when userId changes, never on the first render" }
+    ],
+    "answer": "a",
+    "explanation": "An effect always runs after the first render. After that, React compares each dependency with its value from the previous render and runs the effect again, after cleaning up the last run, only if one changed."
+  },
+  {
+    "id": "useeffect.q02",
+    "topic": "useeffect",
+    "type": "predict_output",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["cleanup", "lifecycle"],
+    "prompt": "Demo appears on the page once, and is then removed. There is no Strict Mode. What is logged, in order? Separate the words with a space or a comma.",
+    "code": "function Demo() {\n  console.log('render');\n  useEffect(() => {\n    console.log('effect');\n    return () => console.log('cleanup');\n  }, []);\n  return null;\n}",
+    "answer": "render, effect, cleanup",
+    "explanation": "The component renders first. React runs the effect after the render is on the page, and runs its cleanup when the component is removed. With an empty dependency array there are no runs in between."
+  },
+  {
+    "id": "useeffect.q03",
+    "topic": "useeffect",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["strict-mode", "cleanup"],
+    "prompt": "In development, with Strict Mode, an effect runs, cleans up and runs again when its component first appears. Why?",
+    "options": [
+      {
+        "id": "a",
+        "text": "React does it on purpose, to expose effects whose cleanup is missing or incomplete; production runs it once"
+      },
+      { "id": "b", "text": "It is a bug in React" },
+      { "id": "c", "text": "The component's state changed during the first render" },
+      { "id": "d", "text": "An empty dependency array always runs twice" }
+    ],
+    "answer": "a",
+    "explanation": "Strict Mode simulates the component being removed and added again. A correct effect plus its cleanup leaves no trace, so running it twice changes nothing; two intervals or two subscriptions mean the cleanup is missing."
+  },
+  {
+    "id": "useeffect.q04",
+    "topic": "useeffect",
+    "type": "multi_select",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["when-to-use"],
+    "prompt": "Which of these need an effect? Pick every one.",
+    "options": [
+      { "id": "a", "text": "Listening to window resize events while a chart is on screen" },
+      { "id": "b", "text": "Working out a cart's total from its items" },
+      { "id": "c", "text": "Sending an analytics event when the user clicks Buy" },
+      { "id": "d", "text": "Starting a timer that updates a clock every second" },
+      { "id": "e", "text": "Fetching a user by hand when the userId in the URL changes" }
+    ],
+    "answers": ["a", "d", "e"],
+    "explanation": "Effects keep a component in sync with something outside React: a listener, a timer, a request tied to a prop. A total is calculated during render, and work caused by a click belongs in the click handler."
+  },
+  {
+    "id": "useeffect.q05",
+    "topic": "useeffect",
+    "type": "mcq",
+    "difficulty": 3,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["race-conditions", "abort-controller"],
+    "prompt": "A profile switches from user 1 to user 2 quickly, and user 1's slower answer arrives last. What stops it from replacing user 2 on screen?",
+    "options": [
+      {
+        "id": "a",
+        "text": "The effect's cleanup aborts user 1's request (or marks it as ignored) before the effect runs for user 2"
+      },
+      { "id": "b", "text": "React cancels fetch requests by itself when a prop changes" },
+      { "id": "c", "text": "Putting userId in the dependency array is enough" },
+      { "id": "d", "text": "setState ignores values that arrive late" }
+    ],
+    "answer": "a",
+    "explanation": "When userId changes, React runs the old effect's cleanup before the new effect. Aborting the old request there (or setting a flag its callback checks) means its answer can never set state. The dependency array only decides when the effect runs again."
+  },
+  {
+    "id": "custom-hooks.q01",
+    "topic": "custom-hooks",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["custom-hooks", "state"],
+    "prompt": "Two components both call a custom hook, useCounter(). What do they share?",
+    "options": [
+      { "id": "a", "text": "The logic only: each component gets its own state from its own useState call" },
+      { "id": "b", "text": "The same count: a custom hook works like a shared store" },
+      { "id": "c", "text": "Nothing: a custom hook can only be used by one component" },
+      { "id": "d", "text": "The state, but only while both are on the page" }
+    ],
+    "answer": "a",
+    "explanation": "Calling a hook is like pasting its code into the component: the useState inside runs for each component separately. To share one value, lift it to a common parent or put it in Context."
+  },
+  {
+    "id": "custom-hooks.q02",
+    "topic": "custom-hooks",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["rules-of-hooks"],
+    "prompt": "Why must hooks never be called inside an if?",
+    "options": [
+      {
+        "id": "a",
+        "text": "React matches each piece of state to a hook by the order of the calls, so a call skipped on some renders mixes the state up"
+      },
+      { "id": "b", "text": "Hooks run more slowly inside conditions" },
+      { "id": "c", "text": "JavaScript does not allow function calls inside an if" },
+      { "id": "d", "text": "It is a style rule for readability only" }
+    ],
+    "answer": "a",
+    "explanation": "React has no names for a component's hooks, only their order: the first useState, the second, and so on. If a condition skips one, every hook after it gets the wrong state. Put the condition inside the hook instead."
+  },
+  {
+    "id": "custom-hooks.q03",
+    "topic": "custom-hooks",
+    "type": "multi_select",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["rules-of-hooks"],
+    "prompt": "Where may useState be called? Pick every one.",
+    "options": [
+      { "id": "a", "text": "At the top of a function component" },
+      { "id": "b", "text": "At the top of a custom hook named useCart" },
+      { "id": "c", "text": "Inside an onClick handler" },
+      { "id": "d", "text": "In a plain helper function, formatCart, that a component calls" },
+      { "id": "e", "text": "Inside a for loop in a component" }
+    ],
+    "answers": ["a", "b"],
+    "explanation": "Hooks go at the top level of components and custom hooks, where they run on every render in the same order. Handlers run later, helpers are not hooks, and loops can run a different number of times per render."
+  },
+  {
+    "id": "custom-hooks.q04",
+    "topic": "custom-hooks",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["usedebounce", "cleanup"],
+    "prompt": "useDebounce(query, 300) returns query only once it has stopped changing for 300 ms. What does the cleanup of its effect do?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Clears the pending timer, so a value that changed again within 300 ms is never used"
+      },
+      { "id": "b", "text": "Resets the debounced value to an empty string" },
+      { "id": "c", "text": "Nothing; the timer is cleared on its own" },
+      { "id": "d", "text": "Starts the next timer" }
+    ],
+    "answer": "a",
+    "explanation": "Each new query runs the effect again, and React first runs the previous cleanup, which clears the previous timer. Only a timer that survives 300 ms without a newer value sets the debounced value."
+  },
+  {
+    "id": "custom-hooks.q05",
+    "topic": "custom-hooks",
+    "type": "predict_output",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["lazy-initial-state"],
+    "prompt": "A component calls useSaved('theme') and renders three times, with no Strict Mode. How many times is \"read\" logged?",
+    "code": "function useSaved(key) {\n  const [value, setValue] = useState(() => {\n    console.log('read');\n    return localStorage.getItem(key);\n  });\n  return [value, setValue];\n}",
+    "answer": "1",
+    "explanation": "A function passed to useState is the lazy initial state: React calls it on the first render only and keeps the result. Passing localStorage.getItem(key) itself would read storage on every render and throw the result away."
+  }
+]

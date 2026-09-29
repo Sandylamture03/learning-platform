@@ -1,29 +1,128 @@
-body {
-  margin: 0;
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-family: var(--font-sans);
-  line-height: var(--leading-normal);
+/*
+ * The app's own styles, on top of @lp/styles (the site's). Only what the site does not have: the React root,
+ * progress, topic lists, loading and status notices. Colours come only from the design tokens.
+ */
+
+@layer layout {
+  /* React renders into #root, so it takes over the body's column layout: header, a growing main, footer. */
+  #root {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
+
+  /* Focus moves to main after each navigation; it is a starting point for reading, not a control. */
+  .site-main:focus {
+    outline: none;
+  }
 }
 
-.shell {
-  width: min(100% - 2 * var(--gutter), var(--width-prose));
-  margin: var(--space-7) auto;
-}
+@layer components {
+  .loading {
+    margin-block-start: var(--space-6);
+    color: var(--color-text-muted);
+  }
 
-.shell button {
-  min-block-size: 2.75rem;
-  padding: var(--space-2) var(--space-5);
-  border: 0;
-  border-radius: var(--radius-pill);
-  background: var(--color-accent);
-  color: var(--color-on-accent);
-  font: inherit;
-  font-weight: 650;
-  cursor: pointer;
-}
+  .notice--error {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+    border-inline-start-color: var(--color-danger);
+    background: var(--color-surface);
+  }
 
-.shell :focus-visible {
-  outline: var(--focus-ring);
-  outline-offset: 2px;
+  .notice--success {
+    border-inline-start-color: var(--color-success);
+    background: var(--color-surface);
+  }
+
+  .card-grid {
+    margin-block-start: var(--space-4);
+  }
+
+  .progress {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .progress__label {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .progress progress {
+    inline-size: 100%;
+    block-size: 0.5rem;
+    accent-color: var(--color-success);
+  }
+
+  .next-lesson {
+    max-inline-size: var(--width-prose);
+    margin-block-start: var(--space-4);
+    padding: var(--space-5);
+    border: 1px solid var(--color-border);
+    border-inline-start: 4px solid var(--color-accent);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+  }
+
+  .next-lesson > * + * {
+    margin-block-start: var(--space-2);
+  }
+
+  .next-lesson__title {
+    font-size: var(--text-lg);
+    font-weight: 650;
+  }
+
+  .topic-list {
+    display: grid;
+    gap: var(--space-4);
+    margin-block-start: var(--space-4);
+    padding: 0;
+    list-style: none;
+  }
+
+  .topic-list > li {
+    margin: 0;
+  }
+
+  .topic {
+    padding-inline-start: var(--space-4);
+    border-inline-start: 3px solid var(--color-border);
+  }
+
+  .topic--done {
+    border-inline-start-color: var(--color-success);
+  }
+
+  .topic__title {
+    font-weight: 650;
+  }
+
+  .topic__done {
+    color: var(--color-success);
+  }
+
+  .topic__why,
+  .topic__meta {
+    max-inline-size: var(--width-prose);
+    margin-block-start: var(--space-1);
+  }
+
+  .topic__meta,
+  .module__build {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .module__build {
+    margin-block-start: var(--space-4);
+  }
+
+  /* A mounted widget (ModuleOutlet) sits in the flow like the site's widgets do; inside a task, the grid spaces it. */
+  .widget {
+    display: block;
+    margin-block-start: var(--space-6);
+  }
 }

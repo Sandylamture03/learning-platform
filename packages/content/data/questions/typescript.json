@@ -1,0 +1,481 @@
+[
+  {
+    "id": "types-and-interfaces.q01",
+    "topic": "types-and-interfaces",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["inference"],
+    "prompt": "What is the type of count after let count = 0;, and what happens on count = 'ten';?",
+    "options": [
+      { "id": "a", "text": "number, inferred from 0, so assigning a string is a compile error" },
+      { "id": "b", "text": "any, because there is no annotation, so the assignment is fine" },
+      { "id": "c", "text": "The literal type 0, so any other number is an error too" },
+      { "id": "d", "text": "number | string, from the two assignments" }
+    ],
+    "answer": "a",
+    "explanation": "TypeScript infers a variable's type from its first value. A let can change, so the literal 0 widens to number, and a later string is rejected: Type 'string' is not assignable to type 'number'."
+  },
+  {
+    "id": "types-and-interfaces.q02",
+    "topic": "types-and-interfaces",
+    "type": "multi_select",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["interfaces", "readonly", "optional"],
+    "prompt": "interface User { readonly id: number; name: string; avatarUrl?: string }. With strict on, which lines compile? Pick every one. (u is the User from the first line.)",
+    "options": [
+      { "id": "a", "text": "const u: User = { id: 1, name: 'Asha' };" },
+      { "id": "b", "text": "const v: User = { id: 2 };" },
+      { "id": "c", "text": "u.name = 'Ben';" },
+      { "id": "d", "text": "u.id = 3;" },
+      { "id": "e", "text": "const w: User = { id: 4, name: 'Chen', role: 'admin' };" }
+    ],
+    "answers": ["a", "c"],
+    "explanation": "avatarUrl is optional, so it can be left out, but name cannot. name is an ordinary property and can change; id is readonly. An object literal with a property the type doesn't have, like role, is flagged as a likely typo."
+  },
+  {
+    "id": "types-and-interfaces.q03",
+    "topic": "types-and-interfaces",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["any", "unknown"],
+    "prompt": "What is the difference between any and unknown?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Both accept any value, but unknown makes you check the value before you use it, while any turns checking off"
+      },
+      { "id": "b", "text": "unknown can only hold numbers" },
+      { "id": "c", "text": "any is safer, because it keeps the value's real type" },
+      { "id": "d", "text": "There is none; unknown is just the newer name" }
+    ],
+    "answer": "a",
+    "explanation": "Anything can be assigned to either. With any you can then do anything, unchecked, and the lack of safety spreads to everything it touches. With unknown you must narrow first (typeof, a type guard, a schema), which is why data from outside should start as unknown."
+  },
+  {
+    "id": "types-and-interfaces.q04",
+    "topic": "types-and-interfaces",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["type-alias", "interfaces"],
+    "prompt": "When do you need a type alias rather than an interface?",
+    "options": [
+      {
+        "id": "a",
+        "text": "To name something that is not an object shape, such as a union: type Id = string | number"
+      },
+      { "id": "b", "text": "To give an object optional properties" },
+      { "id": "c", "text": "To make properties readonly" },
+      { "id": "d", "text": "To build one object type on top of another" }
+    ],
+    "answer": "a",
+    "explanation": "Interfaces describe object shapes only. Both can have optional and readonly properties and build on other types (extends for interfaces, & for types), but only a type alias can name a union, a primitive, a tuple or a function type."
+  },
+  {
+    "id": "types-and-interfaces.q05",
+    "topic": "types-and-interfaces",
+    "type": "multi_select",
+    "difficulty": 3,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["structural-typing", "excess-property-checks"],
+    "prompt": "function greet(user: { name: string }) takes any object with a string name. Which calls compile? Pick every one.",
+    "options": [
+      { "id": "a", "text": "const asha = { name: 'Asha', age: 27 }; greet(asha);" },
+      { "id": "b", "text": "greet({ name: 'Asha', age: 27 });" },
+      { "id": "c", "text": "greet({ name: 'Asha' });" },
+      { "id": "d", "text": "greet({ nmae: 'Asha' });" }
+    ],
+    "answers": ["a", "c"],
+    "explanation": "TypeScript compares shapes: a variable with extra properties still has a string name, so it fits. An object literal written straight into the call is checked more strictly, because an unknown property there (age, or a misspelt nmae) is usually a typo."
+  },
+  {
+    "id": "unions-and-literal-types.q01",
+    "topic": "unions-and-literal-types",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["literal-types", "widening"],
+    "prompt": "What type does TypeScript infer for status in let status = 'idle';?",
+    "options": [
+      { "id": "a", "text": "string, because a let variable may later hold any other string" },
+      { "id": "b", "text": "The literal type 'idle'" },
+      { "id": "c", "text": "any" },
+      { "id": "d", "text": "'idle' | string" }
+    ],
+    "answer": "a",
+    "explanation": "A let can be reassigned, so its literal widens to string. const status = 'idle' keeps the literal type 'idle', because it can never change. To keep a let narrow, annotate it: let status: Status = 'idle'."
+  },
+  {
+    "id": "unions-and-literal-types.q02",
+    "topic": "unions-and-literal-types",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["as-const"],
+    "prompt": "const SIZES = ['sm', 'md', 'lg'] as const; What is (typeof SIZES)[number]?",
+    "options": [
+      { "id": "a", "text": "'sm' | 'md' | 'lg'" },
+      { "id": "b", "text": "string" },
+      { "id": "c", "text": "number" },
+      { "id": "d", "text": "readonly string[]" }
+    ],
+    "answer": "a",
+    "explanation": "as const keeps each element's literal type and makes the array a readonly tuple. Indexing its type with number asks for the type of any element: the union of the three literals. Without as const, it would be string."
+  },
+  {
+    "id": "unions-and-literal-types.q03",
+    "topic": "unions-and-literal-types",
+    "type": "multi_select",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["literal-types", "widening"],
+    "prompt": "type Variant = 'primary' | 'ghost'; function button(options: { variant: Variant }) {}. Which calls compile? Pick every one.",
+    "options": [
+      { "id": "a", "text": "button({ variant: 'primary' });" },
+      { "id": "b", "text": "button({ variant: 'Primary' });" },
+      { "id": "c", "text": "const v = 'ghost'; button({ variant: v });" },
+      { "id": "d", "text": "let v = 'ghost'; button({ variant: v });" },
+      { "id": "e", "text": "const v: string = 'ghost'; button({ variant: v });" }
+    ],
+    "answers": ["a", "c"],
+    "explanation": "Literal types are exact, so 'Primary' is not 'primary'. A const keeps the type 'ghost', which is in the union. A let widens to string, and so does a variable annotated as string, and not every string is a Variant."
+  },
+  {
+    "id": "unions-and-literal-types.q04",
+    "topic": "unions-and-literal-types",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["enum", "type-stripping"],
+    "prompt": "Why do codebases that run TypeScript by stripping out the types, as Node.js does, avoid enum?",
+    "options": [
+      {
+        "id": "a",
+        "text": "An enum generates JavaScript code, so it can't simply be erased; a union of string literals is types only"
+      },
+      { "id": "b", "text": "Enums are slow at runtime" },
+      { "id": "c", "text": "Enums have been removed from TypeScript" },
+      { "id": "d", "text": "Enums cannot hold string values" }
+    ],
+    "answer": "a",
+    "explanation": "Type stripping deletes type syntax and runs what is left, so the code must still be valid JavaScript without the types. An enum becomes a real object at runtime, so it can't be deleted. A union like 'sm' | 'md' | 'lg', or an as const array, gives the same safety with nothing to generate."
+  },
+  {
+    "id": "unions-and-literal-types.q05",
+    "topic": "unions-and-literal-types",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["null", "strict"],
+    "prompt": "With strict on, function greet(user: User | null) { return user.name; } does not compile. Why?",
+    "options": [
+      {
+        "id": "a",
+        "text": "user may be null, and TypeScript wants that case handled before a property is read"
+      },
+      { "id": "b", "text": "User has no name property" },
+      { "id": "c", "text": "Parameters cannot have union types" },
+      { "id": "d", "text": "strict forbids null altogether" }
+    ],
+    "answer": "a",
+    "explanation": "In strict mode, null is only allowed where the type says so, and then TypeScript makes you deal with it: 'user' is possibly 'null'. Check it first, or write user?.name ?? 'Guest'."
+  },
+  {
+    "id": "narrowing.q01",
+    "topic": "narrowing",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["typeof", "null"],
+    "prompt": "What does typeof null evaluate to in JavaScript?",
+    "options": [
+      { "id": "a", "text": "'object', so typeof value === 'object' does not rule out null" },
+      { "id": "b", "text": "'null'" },
+      { "id": "c", "text": "'undefined'" },
+      { "id": "d", "text": "It throws a TypeError" }
+    ],
+    "answer": "a",
+    "explanation": "typeof null is 'object', a mistake from JavaScript's first version that can never be fixed. TypeScript knows it, so after typeof value === 'object' the type still includes null until you also check value !== null."
+  },
+  {
+    "id": "narrowing.q02",
+    "topic": "narrowing",
+    "type": "multi_select",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["typeof", "truthiness"],
+    "prompt": "value has the type string | number | null. Inside which of these ifs is value narrowed to string? Pick every one.",
+    "options": [
+      { "id": "a", "text": "if (typeof value === 'string')" },
+      { "id": "b", "text": "if (value)" },
+      { "id": "c", "text": "if (value !== null && typeof value !== 'number')" },
+      { "id": "d", "text": "if (typeof value === 'object')" }
+    ],
+    "answers": ["a", "c"],
+    "explanation": "typeof 'string' leaves only string, and so does removing null and number. A truthiness check removes null but keeps both string and number, and typeof 'object' is true only for null here."
+  },
+  {
+    "id": "narrowing.q03",
+    "topic": "narrowing",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["type-guards"],
+    "prompt": "What does a function with the return type value is User do?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Where it returns true, TypeScript treats the argument as a User. The compiler trusts it, so the function must really check."
+      },
+      { "id": "b", "text": "It converts the value into a User" },
+      { "id": "c", "text": "It throws when the value is not a User" },
+      { "id": "d", "text": "TypeScript checks the value against User at runtime for you" }
+    ],
+    "answer": "a",
+    "explanation": "A type guard is an ordinary function whose true result narrows the type. Types don't exist at runtime, so the checks inside are all the checking there is: a guard that returns true without looking would let bad data through with a trusted type."
+  },
+  {
+    "id": "narrowing.q04",
+    "topic": "narrowing",
+    "type": "predict_output",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["truthiness"],
+    "prompt": "What does this log?",
+    "code": "function formatCount(count: number | null): string {\n  if (!count) return 'none';\n  return `${count} items`;\n}\n\nconsole.log(formatCount(0));",
+    "answer": "none",
+    "explanation": "!count is true for null, but also for 0, so a real count of zero is treated as missing. When 0, '' or false are real values, check exactly what you mean: if (count === null)."
+  },
+  {
+    "id": "narrowing.q05",
+    "topic": "narrowing",
+    "type": "mcq",
+    "difficulty": 3,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["never", "exhaustiveness"],
+    "prompt": "In the default branch of a switch over a union, what does const unhandled: never = shape; give you?",
+    "options": [
+      {
+        "id": "a",
+        "text": "A compile error whenever a member of the union has no case, for example after a new member is added"
+      },
+      { "id": "b", "text": "A runtime error for shapes the switch does not know" },
+      { "id": "c", "text": "Faster code, because TypeScript removes the default branch" },
+      { "id": "d", "text": "Nothing: never is an alias for undefined" }
+    ],
+    "answer": "a",
+    "explanation": "When every member has a case, nothing is left for the default branch, so shape has the type never there and the assignment compiles. Add a member without a case and shape is that member in the default branch, which can't be assigned to never."
+  },
+  {
+    "id": "reading-generics.q01",
+    "topic": "reading-generics",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["usestate", "type-arguments"],
+    "prompt": "Why write useState<User | null>(null) instead of useState(null)?",
+    "options": [
+      {
+        "id": "a",
+        "text": "From null alone TypeScript infers the type null, so setting a User later would be a compile error"
+      },
+      { "id": "b", "text": "useState always needs a type argument" },
+      { "id": "c", "text": "It makes the state read-only" },
+      { "id": "d", "text": "It checks the user data at runtime" }
+    ],
+    "answer": "a",
+    "explanation": "Type parameters are usually inferred from the arguments, and null tells TypeScript nothing about the users to come. Passing User | null says what the state will hold. With a real starting value, as in useState(0), inference is enough."
+  },
+  {
+    "id": "reading-generics.q02",
+    "topic": "reading-generics",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["inference"],
+    "prompt": "function first<T>(items: readonly T[]): T | undefined. What is the type of first(['a', 'b'])?",
+    "options": [
+      { "id": "a", "text": "string | undefined" },
+      { "id": "b", "text": "T" },
+      { "id": "c", "text": "any" },
+      { "id": "d", "text": "'a' | 'b'" }
+    ],
+    "answer": "a",
+    "explanation": "TypeScript infers T from the argument: an array of strings, so T is string, and the return type T | undefined becomes string | undefined. The literals widen to string because the array could hold any strings."
+  },
+  {
+    "id": "reading-generics.q03",
+    "topic": "reading-generics",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["keyof", "constraints"],
+    "prompt": "In function pluck<T, K extends keyof T>(items: T[], key: K): T[K][], what does K extends keyof T do?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Only the names of T's properties can be passed as key, and T[K] is the type of that property"
+      },
+      { "id": "b", "text": "It lets key be any string" },
+      { "id": "c", "text": "It limits key to numbers" },
+      { "id": "d", "text": "It makes K a class that extends T" }
+    ],
+    "answer": "a",
+    "explanation": "keyof T is the union of T's property names, and extends limits K to them, so a misspelt key is a compile error. T[K] then looks up that property's type, so plucking 'age' from people returns number[]."
+  },
+  {
+    "id": "reading-generics.q04",
+    "topic": "reading-generics",
+    "type": "multi_select",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["reading-types"],
+    "prompt": "Which of these are generic types given type arguments? Pick every one.",
+    "options": [
+      { "id": "a", "text": "Promise<Response>" },
+      { "id": "b", "text": "Record<string, number>" },
+      { "id": "c", "text": "Map<string, User[]>" },
+      { "id": "d", "text": "User | null" },
+      { "id": "e", "text": "'sm' | 'md'" }
+    ],
+    "answers": ["a", "b", "c"],
+    "explanation": "Angle brackets pass types to a generic type: a promise of a Response, a record from strings to numbers, a map from strings to arrays of users. The other two are unions."
+  },
+  {
+    "id": "reading-generics.q05",
+    "topic": "reading-generics",
+    "type": "mcq",
+    "difficulty": 3,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["runtime", "validation"],
+    "prompt": "async function getPage<T>(url: string): Promise<Page<T>> returns await response.json(). What does getPage<User>('/api/users') check?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Nothing at runtime: <User> is a promise to the compiler, and the JSON could be anything; validate it to be sure"
+      },
+      { "id": "b", "text": "That every item is a User" },
+      { "id": "c", "text": "That the response is valid JSON" },
+      { "id": "d", "text": "That the server answered 200" }
+    ],
+    "answer": "a",
+    "explanation": "Types are erased before the code runs, and response.json() returns any, which fits any type. The generic only tells the rest of your code what to expect. Check data from outside with a type guard or a schema such as Zod."
+  },
+  {
+    "id": "discriminated-unions-ui-state.q01",
+    "topic": "discriminated-unions-ui-state",
+    "type": "mcq",
+    "difficulty": 1,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["ui-state"],
+    "prompt": "Why is { isLoading: boolean; error?: string; data?: User[] } a weak way to model a request?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Its fields combine into states that should be impossible, such as loading with an error, and nothing stops them"
+      },
+      { "id": "b", "text": "Optional properties are not allowed in React state" },
+      { "id": "c", "text": "Booleans cannot be stored in state" },
+      { "id": "d", "text": "It uses too much memory" }
+    ],
+    "answer": "a",
+    "explanation": "Three independent fields make eight combinations, and only four are real states. Every render has to guess what the others mean, and bugs like a spinner next to an error live there. A union of four tagged states allows exactly those four."
+  },
+  {
+    "id": "discriminated-unions-ui-state.q02",
+    "topic": "discriminated-unions-ui-state",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["narrowing"],
+    "prompt": "With type State = { status: 'loading' } | { status: 'success'; data: User[] }, where can you read state.data?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Only after checking state.status === 'success', which narrows state to that member"
+      },
+      { "id": "b", "text": "Anywhere, as an optional property" },
+      { "id": "c", "text": "Only inside a try block" },
+      { "id": "d", "text": "Nowhere without a cast" }
+    ],
+    "answer": "a",
+    "explanation": "data only exists on the success member, so on the union it is an error. Checking the tag narrows state, and inside that branch data is a User[]: no optional chaining, no cast."
+  },
+  {
+    "id": "discriminated-unions-ui-state.q03",
+    "topic": "discriminated-unions-ui-state",
+    "type": "multi_select",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["discriminated-unions"],
+    "prompt": "type Result = { ok: true; value: number } | { ok: false; error: string }. Which values can be assigned to a Result? Pick every one.",
+    "options": [
+      { "id": "a", "text": "{ ok: true, value: 3 }" },
+      { "id": "b", "text": "{ ok: false, error: 'Timeout' }" },
+      { "id": "c", "text": "{ ok: true, error: 'Timeout' }" },
+      { "id": "d", "text": "{ ok: false }" }
+    ],
+    "answers": ["a", "b"],
+    "explanation": "The tag decides which member a value must match. ok: true needs a value and has no error; ok: false needs an error. Mixing members, or leaving out what a member requires, does not compile."
+  },
+  {
+    "id": "discriminated-unions-ui-state.q04",
+    "topic": "discriminated-unions-ui-state",
+    "type": "mcq",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["react", "usestate"],
+    "prompt": "In a React component, why keep one useState<RequestState> rather than three for isLoading, error and data?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Each update replaces the whole state in one step, so there is never a render where the flags disagree"
+      },
+      { "id": "b", "text": "React allows only one useState per component" },
+      { "id": "c", "text": "Three useState calls re-render three times as often" },
+      { "id": "d", "text": "A union makes the request faster" }
+    ],
+    "answer": "a",
+    "explanation": "With separate flags, every transition means setting several values and remembering to reset the others; forget one and the UI shows a stale error beside new data. setRequest({ status: 'success', data }) moves to a complete, valid state in one go."
+  },
+  {
+    "id": "discriminated-unions-ui-state.q05",
+    "topic": "discriminated-unions-ui-state",
+    "type": "predict_output",
+    "difficulty": 2,
+    "priority": "P0",
+    "usage": ["quiz", "review"],
+    "tags": ["switch", "narrowing"],
+    "prompt": "What does this log? Separate the values with a space or a comma.",
+    "code": "type State =\n  | { status: 'idle' }\n  | { status: 'success'; data: string[] }\n  | { status: 'error'; message: string };\n\nfunction label(state: State): string {\n  switch (state.status) {\n    case 'idle':\n      return 'Not loaded';\n    case 'success':\n      return `${state.data.length} found`;\n    case 'error':\n      return state.message;\n  }\n}\n\nconsole.log(label({ status: 'success', data: ['a', 'b'] }), label({ status: 'error', message: 'Offline' }));",
+    "answer": "2 found, Offline",
+    "explanation": "The first call matches the success case, where data is known to exist, and its length is 2. The second matches the error case and returns the message. console.log puts a space between its arguments."
+  }
+]

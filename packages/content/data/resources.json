@@ -60,6 +60,12 @@
     "type": "course"
   },
   {
+    "id": "bubbling-and-capturing",
+    "title": "Bubbling and capturing",
+    "url": "https://javascript.info/bubbling-and-capturing",
+    "type": "docs"
+  },
+  {
     "id": "bullmq",
     "title": "BullMQ",
     "url": "https://docs.bullmq.io/",
@@ -94,6 +100,12 @@
     "title": "Common mistakes with React Testing Library",
     "url": "https://kentcdodds.com/blog/common-mistakes-with-react-testing-library",
     "type": "article"
+  },
+  {
+    "id": "conditional-rendering",
+    "title": "Conditional Rendering",
+    "url": "https://react.dev/learn/conditional-rendering",
+    "type": "docs"
   },
   {
     "id": "conquering-responsive-layouts",
@@ -183,6 +195,12 @@
     "id": "event-delegation",
     "title": "Event delegation",
     "url": "https://javascript.info/event-delegation",
+    "type": "docs"
+  },
+  {
+    "id": "event-loop-microtasks-and-macrotasks",
+    "title": "Event loop: microtasks and macrotasks",
+    "url": "https://javascript.info/event-loop",
     "type": "docs"
   },
   {
@@ -486,6 +504,12 @@
     "type": "docs"
   },
   {
+    "id": "mdn-closures",
+    "title": "MDN: Closures",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Closures",
+    "type": "docs"
+  },
+  {
     "id": "mdn-http",
     "title": "MDN — HTTP",
     "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP",
@@ -501,6 +525,12 @@
     "id": "mdn-using-fetch",
     "title": "MDN: Using Fetch",
     "url": "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch",
+    "type": "docs"
+  },
+  {
+    "id": "mdn-using-promises",
+    "title": "MDN: Using promises",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises",
     "type": "docs"
   },
   {
@@ -630,6 +660,12 @@
     "type": "docs"
   },
   {
+    "id": "object-references-and-copying",
+    "title": "Object references and copying",
+    "url": "https://javascript.info/object-copy",
+    "type": "docs"
+  },
+  {
     "id": "odin-project-foundations",
     "title": "The Odin Project Foundations",
     "url": "https://www.theodinproject.com/paths/foundations/courses/foundations",
@@ -669,6 +705,12 @@
     "id": "passing-data-deeply-with-context",
     "title": "Passing Data Deeply with Context",
     "url": "https://react.dev/learn/passing-data-deeply-with-context",
+    "type": "docs"
+  },
+  {
+    "id": "passing-props-to-a-component",
+    "title": "Passing Props to a Component",
+    "url": "https://react.dev/learn/passing-props-to-a-component",
     "type": "docs"
   },
   {
@@ -804,6 +846,18 @@
     "type": "docs"
   },
   {
+    "id": "rendering-lists",
+    "title": "Rendering Lists",
+    "url": "https://react.dev/learn/rendering-lists",
+    "type": "docs"
+  },
+  {
+    "id": "responding-to-events",
+    "title": "Responding to Events",
+    "url": "https://react.dev/learn/responding-to-events",
+    "type": "docs"
+  },
+  {
     "id": "responsive-design",
     "title": "Responsive design",
     "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Responsive_Design",
@@ -820,6 +874,12 @@
     "title": "roadmap.sh — Node.js",
     "url": "https://roadmap.sh/nodejs",
     "type": "reference"
+  },
+  {
+    "id": "rules-of-hooks",
+    "title": "Rules of Hooks",
+    "url": "https://react.dev/reference/rules/rules-of-hooks",
+    "type": "docs"
   },
   {
     "id": "running-typescript-natively-in-node-js",
@@ -864,6 +924,24 @@
     "type": "interactive"
   },
   {
+    "id": "state-a-components-memory",
+    "title": "State: A Component's Memory",
+    "url": "https://react.dev/learn/state-a-components-memory",
+    "type": "docs"
+  },
+  {
+    "id": "state-as-a-snapshot",
+    "title": "State as a Snapshot",
+    "url": "https://react.dev/learn/state-as-a-snapshot",
+    "type": "docs"
+  },
+  {
+    "id": "stop-using-isloading-booleans",
+    "title": "Stop using isLoading booleans (Kent C. Dodds)",
+    "url": "https://kentcdodds.com/blog/stop-using-isloading-booleans",
+    "type": "article"
+  },
+  {
     "id": "structuring-content-with-html",
     "title": "Structuring content with HTML",
     "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content",
@@ -882,6 +960,12 @@
     "type": "reference"
   },
   {
+    "id": "synchronizing-with-effects",
+    "title": "Synchronizing with Effects",
+    "url": "https://react.dev/learn/synchronizing-with-effects",
+    "type": "docs"
+  },
+  {
     "id": "tailwind-css-docs",
     "title": "Tailwind CSS docs",
     "url": "https://tailwindcss.com/docs",
@@ -892,6 +976,12 @@
     "title": "TanStack Query: Overview",
     "url": "https://tanstack.com/query/latest/docs/framework/react/overview",
     "type": "docs"
+  },
+  {
+    "id": "tasks-microtasks-queues-and-schedules",
+    "title": "Tasks, microtasks, queues and schedules (Jake Archibald)",
+    "url": "https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/",
+    "type": "article"
   },
   {
     "id": "the-node-js-event-loop",
@@ -942,6 +1032,30 @@
     "type": "docs"
   },
   {
+    "id": "ts-handbook-generics",
+    "title": "TS Handbook: Generics",
+    "url": "https://www.typescriptlang.org/docs/handbook/2/generics.html",
+    "type": "docs"
+  },
+  {
+    "id": "ts-handbook-indexed-access-types",
+    "title": "TS Handbook: Indexed Access Types",
+    "url": "https://www.typescriptlang.org/docs/handbook/2/indexed-access-types.html",
+    "type": "docs"
+  },
+  {
+    "id": "ts-handbook-narrowing",
+    "title": "TS Handbook: Narrowing",
+    "url": "https://www.typescriptlang.org/docs/handbook/2/narrowing.html",
+    "type": "docs"
+  },
+  {
+    "id": "ts-handbook-object-types",
+    "title": "TS Handbook: Object Types",
+    "url": "https://www.typescriptlang.org/docs/handbook/2/objects.html",
+    "type": "docs"
+  },
+  {
     "id": "typescript-handbook",
     "title": "TypeScript Handbook",
     "url": "https://www.typescriptlang.org/docs/handbook/intro.html",
@@ -952,6 +1066,12 @@
     "title": "Understanding useMemo and useCallback",
     "url": "https://www.joshwcomeau.com/react/usememo-and-usecallback/",
     "type": "article"
+  },
+  {
+    "id": "updating-arrays-in-state",
+    "title": "Updating Arrays in State",
+    "url": "https://react.dev/learn/updating-arrays-in-state",
+    "type": "docs"
   },
   {
     "id": "useactionstate",
@@ -1053,6 +1173,12 @@
     "id": "you-might-not-need-an-effect",
     "title": "You Might Not Need an Effect",
     "url": "https://react.dev/learn/you-might-not-need-an-effect",
+    "type": "docs"
+  },
+  {
+    "id": "your-first-component",
+    "title": "Your First Component",
+    "url": "https://react.dev/learn/your-first-component",
     "type": "docs"
   },
   {

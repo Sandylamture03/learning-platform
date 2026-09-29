@@ -13,11 +13,19 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@lp/contracts": "workspace:*"
+    "@lp/contracts": "workspace:*",
+    "@lp/markdown": "workspace:*"
   },
   "devDependencies": {
     "@lp/config": "workspace:*",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/user-event": "catalog:",
     "@types/node": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "happy-dom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }

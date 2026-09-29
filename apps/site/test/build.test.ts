@@ -1,11 +1,11 @@
-import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync } from 'node:fs';
+import { cpSync, existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, posix } from 'node:path';
-import { loadContent } from '@lp/content';
+import { DATA_DIR, loadContent } from '@lp/content';
 import type { QuizData, ResourceCatalogue } from '@lp/contracts';
 import { HtmlValidate } from 'html-validate';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { buildSite } from '../src/build.ts';
+import { buildSite, renderPages } from '../src/build.ts';
 
 let outDir: string;
 let pages: string[];
@@ -13,13 +13,27 @@ let data: string[];
 const read = (page: string) => readFileSync(join(outDir, page), 'utf8');
 const readJson = <T>(file: string): T => JSON.parse(read(file));
 
-const QUIZ_PAGES = [
-  'quizzes/scope-and-closures.html',
-  'quizzes/arrays-and-objects.html',
-  'quizzes/dom-and-events.html',
-  'quizzes/async-code.html',
-  'quizzes/event-loop.html',
-];
+/** The written lessons of each track, in catalogue order. */
+const WRITTEN: Record<string, string[]> = {
+  javascript: ['scope-and-closures', 'arrays-and-objects', 'dom-and-events', 'async-code', 'event-loop'],
+  typescript: [
+    'types-and-interfaces',
+    'unions-and-literal-types',
+    'narrowing',
+    'reading-generics',
+    'discriminated-unions-ui-state',
+  ],
+  react: [
+    'jsx-components-props',
+    'lists-and-conditional-rendering',
+    'usestate-and-events',
+    'useeffect',
+    'custom-hooks',
+  ],
+};
+const WRITTEN_TOPICS = Object.values(WRITTEN).flat();
+const LESSON_PAGES = WRITTEN_TOPICS.map((topic) => `lessons/${topic}.html`);
+const QUIZ_PAGES = WRITTEN_TOPICS.map((topic) => `quizzes/${topic}.html`);
 
 beforeAll(() => {
   ({ outDir, pages, data } = buildSite({ outDir: mkdtempSync(join(tmpdir(), 'lp-site-')) }));
@@ -27,7 +41,7 @@ beforeAll(() => {
 afterAll(() => rmSync(outDir, { recursive: true, force: true }));
 
 describe('the built site', () => {
-  it('has the home, catalogue, track, resources, quiz, sign-up, thanks and 404 pages', () => {
+  it('has the home, catalogue, track, resources, lesson, quiz, sign-up, thanks and 404 pages', () => {
     expect(pages).toEqual([
       'index.html',
       'tracks/index.html',
@@ -37,6 +51,7 @@ describe('the built site', () => {
       'tracks/react.html',
       'tracks/nodejs.html',
       'resources.html',
+      ...LESSON_PAGES,
       ...QUIZ_PAGES,
       'signup.html',
       'thanks.html',
@@ -58,6 +73,7 @@ describe('the built site', () => {
     'tracks/index.html',
     'tracks/react.html',
     'resources.html',
+    ...LESSON_PAGES,
     'quizzes/event-loop.html',
     'signup.html',
     'thanks.html',
@@ -120,18 +136,81 @@ describe('the built site', () => {
     expect(titles).toEqual([...titles].sort((a, b) => a.localeCompare(b, 'en')));
   });
 
-  it('writes a quiz for each topic that has questions, linked from its track', () => {
-    const track = read('tracks/javascript.html');
-    for (const page of QUIZ_PAGES) {
-      const topic = posix.basename(page, '.html');
-      const quiz = readJson<QuizData>(`data/quizzes/${topic}.json`);
-      expect(quiz.topic.id).toBe(topic);
-      expect(quiz.track.id).toBe('javascript');
-      expect(quiz.passMark).toBe(0.8);
-      expect(quiz.questions.length, topic).toBeGreaterThanOrEqual(4);
-      for (const q of quiz.questions) expect(q.topic).toBe(topic);
-      expect(track).toContain(`<a href="../${page}">Quiz: ${quiz.questions.length} questions</a>`);
+  it.each(Object.entries(WRITTEN))(
+    'writes a quiz for each %s topic that has questions, linked from its track',
+    (trackId, topics) => {
+      const track = read(`tracks/${trackId}.html`);
+      for (const topic of topics) {
+        const quiz = readJson<QuizData>(`data/quizzes/${topic}.json`);
+        expect(quiz.topic.id).toBe(topic);
+        expect(quiz.track.id).toBe(trackId);
+        expect(quiz.passMark).toBe(0.8);
+        expect(quiz.questions.length, topic).toBeGreaterThanOrEqual(4);
+        for (const q of quiz.questions) expect(q.topic).toBe(topic);
+        expect(track).toContain(`<a href="../quizzes/${topic}.html">Quiz: ${quiz.questions.length} questions</a>`);
+      }
+    },
+  );
+
+  it.each(Object.entries(WRITTEN))(
+    'writes a lesson for each written %s topic: theory, examples, resources and a coding task',
+    (trackId, topics) => {
+      const content = loadContent();
+      const track = content.tracks.find((t) => t.id === trackId);
+      const written = track?.topics.filter((t) => t.status !== 'outline') ?? [];
+      expect(written.map((t) => t.id)).toEqual(topics);
+
+      for (const topic of written) {
+        const page = read(`lessons/${topic.id}.html`);
+        expect(page, topic.id).toContain(`<h1>${topic.title}</h1>`);
+        // Every part of the five-part template is on the page.
+        expect(
+          page.match(/<ul class="done-list">\n(?:<li>.*<\/li>\n){3}<\/ul>/),
+          `${topic.id} objectives`,
+        ).not.toBeNull();
+        expect(
+          page.match(/<div class="prose">[\s\S]*?<h2 id="say-it-in-an-interview">/),
+          `${topic.id} theory`,
+        ).not.toBeNull();
+        expect(page.match(/<section class="example" /g)).toHaveLength(topic.examples.length);
+        for (const r of topic.resources) {
+          const url = content.resources.find((w) => w.id === r.id)?.url;
+          expect(page, `${topic.id} links ${r.id}`).toContain(`<a href="${url}">`);
+        }
+        expect(page).toContain(`<a class="button" href="../quizzes/${topic.id}.html">Take the quiz</a>`);
+        for (const id of topic.assessment.challengeIds) {
+          const challenge = content.challenges.find((c) => c.id === id);
+          expect(page, `${topic.id} task ${id}`).toContain(`<h3>Coding task: ${challenge?.title}</h3>`);
+        }
+        expect(page.match(/<summary>Hint \d<\/summary>/g)).toHaveLength(3);
+        expect(page).toContain('<summary>Show a solution</summary>');
+      }
+    },
+  );
+
+  it('lists what the tests of a coding task check, and escapes its code', () => {
+    const page = read('lessons/dom-and-events.html');
+    expect(page).toContain('<h4>Done when it</h4>');
+    expect(page).toContain('<li>handles elements added after it was set up</li>');
+    // The XSS example shows its markup as text.
+    expect(page).toContain('{ author: &#39;&lt;img src=x onerror=alert(1)&gt;&#39;, text: &#39;Hi&#39; }');
+  });
+
+  it('links lessons to their track, their quiz and each other', () => {
+    for (const [trackId, topics] of Object.entries(WRITTEN)) {
+      const track = read(`tracks/${trackId}.html`);
+      for (const topic of topics) expect(track).toContain(`<a href="../lessons/${topic}.html">Lesson: `);
     }
+    const lesson = read('lessons/async-code.html');
+    expect(lesson).toContain('<a href="arrays-and-objects.html">Working with arrays and objects</a>'); // read first
+    expect(lesson).toContain('<a href="event-loop.html">The event loop lesson</a>'); // a lesson: link in the theory
+    expect(lesson).toContain('rel="prev" href="dom-and-events.html"');
+    expect(lesson).toContain('rel="next" href="event-loop.html"');
+    const quiz = read('quizzes/async-code.html');
+    expect(quiz).toContain('<li><a href="../lessons/async-code.html">Async code</a></li>');
+    expect(quiz).toContain('<a class="pager__link" href="../lessons/async-code.html">');
+    // A lesson can link to one in another track: lesson pages share one folder.
+    expect(read('lessons/discriminated-unions-ui-state.html')).toContain('href="lists-and-conditional-rendering.html"');
   });
 
   it('ships the widgets as written: every import resolves, and text never goes in as HTML', () => {
@@ -191,6 +270,24 @@ describe('the built site', () => {
       }
     }
     expect(problems).toEqual([]);
+  });
+
+  it('stops the build when lesson theory breaks the Markdown rules', () => {
+    const dataDir = mkdtempSync(join(tmpdir(), 'lp-content-'));
+    try {
+      cpSync(DATA_DIR, dataDir, { recursive: true });
+      const theory = join(dataDir, 'theory/javascript/event-loop.md');
+      writeFileSync(theory, `${readFileSync(theory, 'utf8')}\n## Resources\n\nMore links.\n`);
+      expect(() => renderPages(loadContent(dataDir), dataDir)).toThrow(
+        'theory/javascript/event-loop.md: the heading id "resources" is already used by the lesson page',
+      );
+      writeFileSync(theory, '<p>Raw HTML</p>\n');
+      expect(() => renderPages(loadContent(dataDir), dataDir)).toThrow(
+        'theory/javascript/event-loop.md:1: Unsupported Markdown',
+      );
+    } finally {
+      rmSync(dataDir, { recursive: true, force: true });
+    }
   });
 
   it('writes the 404 page with links from the site root', () => {

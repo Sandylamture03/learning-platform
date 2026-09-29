@@ -8,6 +8,7 @@ import {
   priorityBadge,
   resourceGroups,
   resourceList,
+  section,
   textList,
   trackStats,
   weeksLabel,
@@ -66,11 +67,14 @@ function moduleSection(track: Track, module: Module, resources: Resources): Safe
 function topicRow(topic: Topic, modules: ReadonlyMap<string, Module>, link: Link, questions?: number): SafeHtml {
   const module = modules.get(topic.module);
   const where = module && html`<a href="#${moduleAnchor(module)}">${weeksLabel(module) ?? module.title}</a>`;
+  const lesson =
+    topic.status !== 'outline' &&
+    html`<span class="data-table__where"><a href="${link(ROUTES.lesson(topic.id))}">Lesson: ${topic.estMinutes} minutes</a></span>`;
   const quiz =
     questions &&
     html`<span class="data-table__where"><a href="${link(ROUTES.quiz(topic.id))}">Quiz: ${questions} questions</a></span>`;
   return html`      <tr id="${topicAnchor(topic)}">
-        <th scope="row">${topic.title} ${priorityBadge(topic.priority)}<span class="data-table__where">${where}</span>${quiz}</th>
+        <th scope="row">${topic.title} ${priorityBadge(topic.priority)}<span class="data-table__where">${where}</span>${lesson}${quiz}</th>
         <td>${topic.why}</td>
       </tr>
 `;
@@ -107,13 +111,6 @@ function pager(link: Link, previous: Track | undefined, next: Track | undefined)
   ${back}
   ${forward}
 </nav>`;
-}
-
-function section(id: string, title: string, body: HtmlValue): SafeHtml {
-  return html`<section class="section" id="${id}" aria-labelledby="${id}-title">
-    <h2 id="${id}-title">${title}</h2>
-    ${body}
-  </section>`;
 }
 
 function intro(text: HtmlValue): SafeHtml {

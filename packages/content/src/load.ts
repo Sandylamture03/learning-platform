@@ -1,10 +1,13 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { Content } from '@lp/contracts';
 
-/** The content that ships with the repo. Tests and tools can point the loader at a copy instead. */
-export const DATA_DIR = fileURLToPath(new URL('../data/', import.meta.url));
+/**
+ * The content that ships with the repo. Tests and tools can point the loader at a copy instead.
+ * (import.meta.dirname rather than new URL(…, import.meta.url): the app's tests run in happy-dom, whose URL
+ * does not resolve file: URLs.)
+ */
+export const DATA_DIR = join(import.meta.dirname, '..', 'data');
 
 /** One problem, located by file and by the field inside it: `tracks/react.json topics[2].module`. */
 export interface ContentIssue {
@@ -53,6 +56,7 @@ interface Origin {
  *   library.json                files in your own study folders
  *   questions/*.json            Interview Vault questions (arrays), optional
  *   challenges/*.json           Practice Lab challenges (arrays), optional
+ *   challenges/<track>/<id>/    each challenge's starter, solution and tests files, named in its `files`
  *   theory/<track>/<topic>.md   theory for written topics
  */
 export function checkContent(dir: string = DATA_DIR): CheckResult {
@@ -140,6 +144,13 @@ export function checkContent(dir: string = DATA_DIR): CheckResult {
         issues.push({ file, path: `topics[${ti}].theory`, message: `Missing ${topic.theory}` });
       }
     });
+  });
+  content.challenges.forEach((challenge, i) => {
+    const { file, index } = challenges.origins[i] ?? { file: 'challenges/' };
+    for (const [part, path] of Object.entries(challenge.files)) {
+      if (!existsSync(join(dir, path)))
+        issues.push({ file, path: `[${index}].files.${part}`, message: `Missing ${path}` });
+    }
   });
   if (issues.length > 0) return { ok: false, issues };
 

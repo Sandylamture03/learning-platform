@@ -1,0 +1,11 @@
+{
+  "name": "@lp/styles",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The stylesheet the public site and the learning app share: reset, base, layout and components in cascade layers, built on @lp/design-tokens.",
+  "type": "module",
+  "exports": {
+    "./layers.css": "./layers.css",
+    "./styles.css": "./styles.css"
+  }
+}
